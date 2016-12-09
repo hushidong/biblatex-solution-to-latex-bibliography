@@ -1,0 +1,574 @@
+%================================================
+%     字体和页面布局
+%================================================
+%--------------------英文字体--------------------
+\usepackage{fontspec}
+%----英文字体第零套:用new roman------------------
+%不用任何设置
+%----英文字体第零1套:用new roman+dejavu----------
+%\setmainfont[Ligatures=TeX]{DejaVu Serif}
+%\setsansfont[Ligatures=TeX]{DejaVu Sans}
+%\setmonofont[Ligatures=TeX]{DejaVu Sans Mono}
+%----英文字体第零2套:用couriernew_libertine-----
+%\setmonofont[Ligatures=TeX]{Courier New}
+%\setmainfont[Ligatures=TeX]{Linux Libertine O}
+%\setsansfont[Ligatures=TeX]{Linux Biolinum O}
+%----英文字体第一套:衬线字体用new roman非衬线和等宽用Consolas---
+%\setsansfont[Path="fonts/"]{PTSansNarrow.ttf}
+%\setmonofont[Path="fonts/"]{PTSansNarrow.ttf}
+%\setmonofont[Path="fonts/"]{YaHei.Consolas.ttf}
+%----英文字体第二套:衬线字体用new roman非衬线和等宽用SourceCodePro---
+%\setsansfont[Path="fonts/"]{SourceCodePro-Regular.otf}
+%\setmonofont[Path="fonts/"]{SourceCodePro-Regular.otf}
+%----英文字体第三套:全部用linuxLibertine--------
+%\setmainfont{LinLibertine_R.otf}[
+%Path="fonts/",
+%BoldFont=LinLibertine_RB.otf,
+%ItalicFont=LinLibertine_RI.otf,
+%BoldItalicFont=LinLibertine_RBI.otf,
+%SlantedFont = LinLibertine_aRL.ttf,
+%BoldSlantedFont = LinLibertine_aBL.ttf,
+%SmallCapsFont = LinLibertine_aS.ttf
+%]
+%\setsansfont{LinBiolinum_R.otf}[
+%Path="fonts/",
+%BoldFont=LinBiolinum_RB.otf,
+%ItalicFont=LinBiolinum_RI.otf,
+%BoldItalicFont=LinBiolinum_RBO.otf,
+%]
+%\setsansfont{LinLibertine_M.otf}[
+%Path="fonts/",
+%BoldFont=LinLibertine_MB.otf,
+%ItalicFont=LinLibertine_MO.otf,
+%BoldItalicFont=LinLibertine_MBO.otf,
+%]
+%--------------中文字体-----------------------
+\usepackage[zihao=5]{ctex}
+\usepackage{xeCJKfntef}
+%--------中文字体第零套:采用windows字体-------
+%\setCJKmainfont[BoldFont={SimHei},ItalicFont={KaiTi}]{NSimSun}
+%\setCJKsansfont{SimHei}
+%\setCJKmonofont{FangSong}
+%\setCJKfamilyfont{zhsong}{NSimSun}
+%\setCJKfamilyfont{zhhei}{SimHei}
+%\setCJKfamilyfont{zhkai}{KaiTi}
+%\setCJKfamilyfont{zhfs}{FangSong}
+%\setCJKfamilyfont{zhli}{LiSu}
+%\setCJKfamilyfont{zhyou}{YouYuan}
+%----中文字体第一套:采用windows字体------------
+%\setCJKmainfont[Path="fonts/",
+%BoldFont={simhei.ttf},
+%ItalicFont=simkai.ttf]{simsun.ttc}
+%\setCJKsansfont[Path="fonts/"]{simhei.ttf}
+%\setCJKmonofont[Path="fonts/"]{simfang.ttf}
+%\setCJKfamilyfont{zhsong}[Path="fonts/"]{simsun.ttc}
+%\setCJKfamilyfont{zhhei}[Path="fonts/"]{simhei.ttf}
+%\setCJKfamilyfont{zhkai}[Path="fonts/"]{simkai.ttf}
+%\setCJKfamilyfont{zhfs}[Path="fonts/"]{simfang.ttf}
+%\setCJKfamilyfont{zhli}[Path="fonts/"]{simli.ttf}
+%\setCJKfamilyfont{zhyou}[Path="fonts/"]{simyou.ttf}
+%----中文字体第二套:采用adobe字体和思源字体----
+%\setCJKmainfont[Path="fonts/",
+%BoldFont={AdobeHeitiStd-Regular.otf},
+%ItalicFont=AdobeKaitiStd-Regular.otf]{AdobeSongStd-Light.otf}
+%\setCJKsansfont[Path="fonts/"]{AdobeHeitiStd-Regular.otf}
+%\setCJKmonofont[Path="fonts/"]{AdobeFangsongStd-Regular.otf}
+%\setCJKfamilyfont{zhsong}[Path="fonts/"]{AdobeSongStd-Light.otf}
+%\setCJKfamilyfont{zhhei}[Path="fonts/"]{AdobeHeitiStd-Regular.otf}
+%\setCJKfamilyfont{zhkai}[Path="fonts/"]{AdobeKaitiStd-Regular.otf}
+%\setCJKfamilyfont{zhfs}[Path="fonts/"]{AdobeFangsongStd-Regular.otf}
+%\setCJKfamilyfont{zhli}[Path="fonts/"]{NotoSansHans-Black.otf}
+%\setCJKfamilyfont{zhyou}[Path="fonts/"]{NotoSansHans-Thin-Windows.otf}
+%----------------中文字体命令定义-------------
+%\renewcommand{\songti}{\CJKfamily{zhsong}} % 宋体
+%\renewcommand{\heiti}{\CJKfamily{zhhei}}   % 黑体
+%\renewcommand{\kaishu}{\CJKfamily{zhkai}}   % 楷书
+%\newcommand*{\kaiti}{\CJKfamily{zhkai}}   % 楷书
+%\renewcommand{\fangsong}{\CJKfamily{zhfs}} % 仿宋
+%\renewcommand{\lishu}{\CJKfamily{zhli}}    % 隶书
+%\renewcommand{\youyuan}{\CJKfamily{zhyou}} % 幼圆
+%-----------------数学和其它字体-------------
+\usepackage{bbding,pifont} %特殊字体，参考latexfriend
+\usepackage{xltxtra} %用于输出tex的特殊文本格式，以及上下标的字符
+\usepackage{mflogo,texnames}
+%用于输出tex的特殊文本格式，texnames的说明文档没有找到
+\usepackage{amsmath}
+%使用宏包{美国数学协会数学}，有个功能可以将章节和方程号联系起来。
+\usepackage{amssymb} %使用宏包{美国数学协会符号}
+%----------------页面布局、双栏----------------
+\usepackage[a4paper,top=3cm, bottom=1.5cm, left=2.5cm, right=2.5cm]{geometry}
+\renewcommand{\baselinestretch}{1.35}
+\setlength{\headsep}{\baselineskip}%设置页面起始行与页眉间距
+\usepackage{multicol}
+\setlength{\columnsep}{5mm}
+\setlength{\parskip}{2pt plus 2pt minus 2pt} %段落间距设置为0
+\renewcommand{\abstractname}{} %摘要名不要
+%\usepackage{balance}
+
+
+%================================================
+%     自定义信息和工具命令
+%================================================
+%-------------------辅助宏包---------------------
+\usepackage{url}
+\usepackage{lipsum}
+\usepackage{xcolor}   %颜色
+\usepackage{etoolbox} %latex编程辅助
+\usepackage{ifthen}
+%--------------标题，作者等信息输入--------------
+\newcommand{\biaoti}[1]{\def\biaotiudf{#1}}
+\def\fubiaotiudf{}
+\newcommand{\fubiaoti}[1]{\def\fubiaotiudf{#1}}
+%定义作者输入等处理命令
+\DeclareListParser*{\forcsvlista}{;}
+\def\schoolinput#1{\def\schoollistudf{}%将输入信息传入列表结构中
+    \forcsvlista{\listadd\schoollistudf}{#1}}
+\def\authorinput#1{\def\authorlistudf{}%
+    \forcsvlista{\listadd\authorlistudf}{#1}}
+\def\includinput#1{\def\includelistudf{}%
+    \forcsvlista{\listadd\includelistudf}{#1}}
+
+\newcounter{includeno}
+\newcounter{authorno}
+\newcounter{authorna}%all
+\newcounter{schoolno}
+\newcounter{schoolna}%all
+
+\def\zuozhelist{%用于首页的作者信息
+\setcounter{includeno}{0}%利用计数器将作者上标信息存入\listI等命令中
+\renewcommand*{\do}[1]{\stepcounter{includeno}%
+\expandafter\def\csname list\romannumeral\theincludeno\endcsname{##1}}
+\dolistloop{\includelistudf}
+\setcounter{authorno}{0}%利用计数器完成列表结构中的作者和上标信息结合
+\renewcommand*{\do}[1]{\stepcounter{authorno}%
+##1\textsuperscript{\csname list\romannumeral\theauthorno\endcsname}\hspace{1em}}%
+\dolistloop{\authorlistudf}}
+
+\def\zuozhelistb{%用于页眉的作者信息
+\setcounter{authorna}{0}
+\renewcommand*{\do}[1]{\stepcounter{authorna}}%计算总共有多少记录
+\dolistloop{\authorlistudf}
+\setcounter{authorno}{0}
+\renewcommand*{\do}[1]{\stepcounter{authorno}
+\ifnumless{\theauthorno}{\theauthorna}{##1\hspace*{1em}}{##1\listbreak}}
+\dolistloop{\authorlistudf}}
+
+\def\danweilistb{%用于首页的作者单位信息
+\setcounter{schoolna}{0}%利用计数器确定列表结构中数据项总数
+\setcounter{schoolno}{0}%利用计数器完成列表结构中的不同位置项的不同格式处理
+\renewcommand*{\do}[1]{\stepcounter{schoolna}}%计算总共有多少记录
+\dolistloop{\schoollistudf}
+\renewcommand*{\do}[1]{\stepcounter{schoolno}%
+\ifnumless{\theschoolno}{\theschoolna}{\theschoolno.##1\\}{\theschoolno.##1\listbreak}}%
+\dolistloop{\schoollistudf}}
+
+\newcommand{\zhaiyao}[1]{\def\zhaiyaoudf{#1}}
+\newcommand{\guanjianci}[1]{\def\guanjianciudf{#1}}
+\newcommand{\diyizuozhe}[1]{\def\diyizuozheudf{#1}}
+\newcommand{\zuozhejianjie}[1]{\def\zuozhejianjieudf{#1}}
+
+\newcommand{\qikanming}[1]{\def\qikanmingudf{#1}}
+\newcommand{\nianfen}[1]{\def\nianfenudf{#1}}
+\newcommand{\juanshu}[1]{\def\juanshuudf{#1}}
+\newcommand{\qishu}[1]{\def\qishuudf{#1}}
+\newcommand{\zongqishu}[1]{\def\zongqishuudf{#1}}
+
+\newcommand{\zhongtu}[1]{\def\zhongtuudf{#1}}
+\newcommand{\wenxianbiaozhi}[1]{\def\wenxianbiaozhiudf{#1}}
+\newcommand{\wenzhangdoi}[1]{\def\wenzhangdoiudf{#1}}
+\newcommand{\wenzhangbianhao}[1]{\def\wenzhangbianhaoudf{#1}}
+%--------------首页通栏部分的样式---------------
+\newenvironment*{lrindentlist}
+  {\list{}{%
+     \setlength{\leftmargin}{1cm}%
+     \setlength{\rightmargin}{1cm}%
+     \item\relax}}
+  {\endlist}
+\newcommand{\kongge}{\hspace*{1em}}
+\def\temp{}
+%\ifthenelse{\equal{\youwuudf}{\temp}}{true}{false}
+\newcommand{\tonglan}{
+\begin{center}
+{\zihao{5}\heiti{Doi: }\wenzhangdoiudf\hfill
+\heiti{文章编号: }\wenzhangbianhaoudf}\\
+\vspace*{1.0cm}
+{\heiti{\zihao{-2}{\biaotiudf}}}\\
+{\vspace*{0.2cm}
+%\ifx\fubiaotiudf\temp\vspace*{0.2cm}\else{\heiti\zihao{3}\fubiaotiudf}\\\fi
+\ifthenelse{\equal{\fubiaotiudf}{\temp}}{\vspace*{0.2cm}}{\heiti\zihao{3}\fubiaotiudf\\}
+%\ifdefempty{\fubiaotiudf}{\vspace*{0.2cm}}{\heiti\zihao{3}\fubiaotiudf\\}
+\vspace*{0.2cm}}
+{\kaishu\zihao{4}\zuozhelist}\\
+{\vspace*{0.2cm}\kaishu\zihao{5}（\danweilistb）}
+\end{center}
+\begin{lrindentlist}
+\zihao{5}\heiti{摘\kongge 要~~}\fangsong{\zhaiyaoudf}\par
+\heiti{关键词~~}\fangsong{\guanjianciudf}\par
+\heiti{中图分类号~~}\zhongtuudf\hfill \heiti{文献标志码~~}\wenxianbiaozhiudf\hspace*{4.5cm}
+\end{lrindentlist}
+\vspace{0.5cm}}
+
+%================================================
+%     目录/题注/页眉页脚/图表样式
+%================================================
+%--------------------图表题注--------------------
+\usepackage{subfigure}
+\usepackage{ccaption}
+\captiondelim{~} %图序图题中间的间隔符号
+\captionnamefont{\zihao{-5}\heiti} %图序样式
+\captiontitlefont{\zihao{-5}\heiti} %图题样式
+\captionwidth{0.8\linewidth} %标题宽度
+\changecaptionwidth
+%\captionstyle{<style>} can be used to alter this. Sensible values for
+%style are: \centering, \raggedleft or \raggedright
+\captionstyle{\centering}
+%\precaption{\rule{\linewidth}{0.4pt}\par}
+%\postcaption{\rule[0.5\baselineskip]{\linewidth}{0.4pt}}
+\setlength{\belowcaptionskip}{0.1cm} %设置caption上下间距
+\setlength{\abovecaptionskip}{0.1cm}
+\setlength{\abovelegendskip}{0.1cm}  %设置legend上下间距
+\setlength{\belowlegendskip}{0.1cm}
+%注意用中文的图题时，用\\好像出错，而用\newline就没有问题
+%采用\\到图列表中时需要用保护命令\protect如：
+
+\newcommand{\listegcodename}{示~~ 例}
+\newcommand{\egcodename}{示例}
+\newfloatlist{egcode}{loc}{\listegcodename}{\egcodename}
+\newfixedcaption{\codecaption}{egcode}
+%目录命令
+%可以设置\cftbeforeZtitleskip，\cftafterZtitleskip长度，比如：
+\setlength{\cftbeforeloctitleskip}{\baselineskip}
+\setlength{\cftafterloctitleskip}{0.5\baselineskip}
+%可以设置\cftZtitlefont字体样式比如
+\renewcommand{\cftloctitlefont}{\hfill\Large\heiti}
+\renewcommand{\cftafterloctitle}{\hfill}
+\renewcommand{\cftegcodepresnum}{例}
+\renewcommand{\cftegcodeaftersnum}{.}
+\renewcommand{\cftegcodeaftersnumb}{~}
+%\cftsetindents{egcode}{0em}{3em}
+\setlength{\cftbeforeegcodeskip}{2mm}
+\renewcommand{\cftegcodepagefont}{\bfseries}
+
+%浮动体外使用标题，使用\tabcaptionfix命令产生在浮动体外
+%与table中默认的caption一致的标题效果
+\newfixedcaption{\tabcaption}{table}
+\newfixedcaption{\figcaption}{figure}
+%\newfixedcaption{\tabcaptionfix}{table}
+
+%双语标题
+%\bitwonumcaption[label]{short-1}{long-1}{NAME}{short-2}{long-2}
+%其中，label为标签，替代普通的\label
+%short-1，第一种语言的短标题
+%long-1，第一种语言的长标题
+%name，第二中语言的图序名称，如：英语的fig，中文的图
+%short-2，第二种语言的短标题
+%\bionenumcaption，与\bitwonumcaption类似，差别在于第二种语言在目录中不列序号
+%\bicaption[label]{short-1}{long-1}{NAME}{long-2},
+%也是类似，差别在于第二中语言不列入目录中
+%\midbicaption，类似于precaption和postcaption，双语标题，其本质是两次调用caption
+%使用\midbicaption命令就是在调用第二次caption前重设precaption和postcaption
+%比如\precaption{\rule{\linewidth}{0.4pt}\par}\postcaption{}
+%\midbicaption{\precaption{}\postcaption{\rule{\linewidth}{0.4pt}}}
+
+%续表的双语标题使用命令：
+%\bicontcaption{long-1}{NAME}{long-2}
+
+%注意ccaption与longtable一起使用，longtable需要在ccaption前调用
+%且双语的标题略有不同，需要特定的命令如下：
+%\longbitwonumcaption
+%\longbionenumcaption
+%\longbicaption
+%\midbicaption
+
+%关于子图的标题，利用宏包subfigure，具体参见说明文档2.5节
+%关于浮动体放文章最后的情况，利用宏包endfloat，具体参见说明文档2.6节
+
+%----------------------插入图片--------------------
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.eps,.mps,.pdf,.jpg,.png}
+\DeclareGraphicsRule{*}{eps}{*}{} %%声明不是eps结尾的图片都当成eps处理
+\graphicspath{{graph/}{img/}}
+
+%=====================tikz绘图===============================================
+\usepackage{pgf,tikz} %做tikz图所用宏包
+\usepackage{mathrsfs}
+%\usetikzlibrary{arrows}
+%\pagestyle{empty}
+\newcommand{\degre}{\ensuremath{^\circ}}
+
+%\usepackage{pgf}
+%\usepackage{pgfmath}
+%\usepackage{tikz}
+\usepgfmodule{shapes}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+\usetikzlibrary{math,mindmap,shapes.geometric,calc,intersections,through}
+\usetikzlibrary{knots}
+
+\colorlet{examplefill}{yellow!80!black}
+\definecolor{graphicbackground}{rgb}{0.96,0.96,0.8}
+\definecolor{codebackground}{rgb}{0.9,0.9,1}
+\definecolor{lightblue}{RGB}{199,232,250}
+\definecolor{darkblue}{RGB}{59,134,215}
+
+%\tikzstyle{startstop}=[rectangle,rounded corners,minimum width=2cm,minimum height=1cm,fill=red!30,text centered]
+%\tikzstyle{process}=[rectangle,rounded corners,minimum width=2cm,minimum height=1cm,fill=orange!30,text centered]
+%\tikzstyle{decision}=[diamond,minimum width=2cm,minimum height=1cm,fill=green!30,text centered]
+%\tikzstyle{io}=[trapezium,trapezium left angle=70,trapezium right angle=110,minimum width=2cm,minimum height=1cm,fill=blue!30,text centered]
+%\tikzstyle{arrowseta}=[thick,->,>=stealth]
+%\tikzstyle{arrowsetb}=[thick,<-,>=stealth]
+
+\newenvironment{insertfigure}[2]%
+{\begingroup\def\figcaptioninfo{#1}\def\figlabelinfo{#2}\centering}%
+{\figcaption{\figcaptioninfo}\label{\figlabelinfo}\par\endgroup}
+
+%-------------------表格相关--------------------
+\usepackage{multirow} %for excel2latex
+\usepackage{booktabs} %for excel2latex
+\usepackage{array}
+\usepackage{tabularx}
+%\usepackage{longtable} %注意longtable无法在multicol中使用
+\usepackage{supertabular} %使用supertabular来实现可以跨页的表格
+
+\newenvironment{inserttable}[2]%
+{\begingroup\tabcaption{#1}\label{#2}\par\noindent\centering}%
+{\par\endgroup}
+
+%--------------标题样式和页眉页脚定义-------------
+\usepackage[pagestyles]{titlesec}
+%注意titlesec带pagestyles选项之后与fancyhdr宏包有冲突，所以使用要注意
+\titleformat{\section}{\zihao{4}\heiti}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
+\titleformat{\subsection}{\zihao{5}\heiti}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{0pt}{0pt}[0pt]
+\titleformat{\subsubsection}{\zihao{5}\songti}{\thesubsubsection}{1em}{}
+\titlespacing*{\subsubsection}{0pt}{0pt}{0pt}[0pt]
+%设置页面页脚线存在bug不能直接设置\setheadrule{~pt}默认的宽度会冲掉它
+%所以使用下面的两句重定义命令进行修改
+\renewcommand\headrule{\setheadrule{1pt}}
+\renewcommand\footrule{\setfootrule{0pt}}
+
+\newpagestyle{main}{ %%内容奇数页左,偶数页右
+\sethead[{\zihao{-5}~\thepage~}]%偶数页左
+[{\zihao{-5}~\qikanmingudf}]%偶数页中
+[{\zihao{-5}\nianfenudf 年第\juanshuudf 卷}]%偶数页右
+{{\zihao{-5}~第\qishuudf 期}\hfil}%奇数页左
+{{\zihao{-5}\zuozhelistb :~\biaotiudf ~\fubiaotiudf}}%奇数页中
+{{\zihao{-5}~\thepage~}}%奇数页右
+\setfoot{}{}{}%
+\headrule%
+\footrule}%
+
+\newpagestyle{firstpageps}{ %%内容奇数页左,偶数页右
+\sethead[{\zihao{-5}~\thepage~~\qikanmingudf}]%偶数页左
+[]%偶数页中
+[\raisebox{0.0\baselineskip}{\parbox{7cm}{\raggedleft\zihao{-5}\nianfenudf 年第\juanshuudf 卷第\qishuudf 期（总第\zongqishuudf 期）}}]%偶数页右
+{{\zihao{-5}~\qikanmingudf}}%奇数页左
+{}%奇数页中
+{\raisebox{0.0\baselineskip}{\parbox{7cm}{\raggedleft\zihao{-5}\nianfenudf 年第\juanshuudf 卷第\qishuudf 期（总第\zongqishuudf 期）~~~~\thepage~}}}%奇数页右
+\setfoot{%\ ~
+%\vspace{0.5cm}
+\rule[2\baselineskip]{0.3\linewidth}{0.4pt}
+\raisebox{\baselineskip}{\hspace*{-0.3\linewidth}\parbox{\linewidth}{\renewcommand{\baselinestretch}{1.0}%
+\large\normalsize\raggedright{\heiti\zihao{6}{\diyizuozheudf}}%
+{\kaishu\zihao{6}\zuozhejianjieudf}}}
+}{}{}%
+\headrule}%
+%\footrule}%
+
+
+%================================================
+%        超链接，参考文献
+%================================================
+\usepackage[CJKbookmarks,%
+colorlinks=true,%
+bookmarksnumbered=true,%
+pdfstartview=FitH,%
+linkcolor=magenta,%
+anchorcolor=magenta,%
+citecolor=magenta]{hyperref}   %书签功能，选项去掉链接红色方框,
+%linkcolor=black,linkcolor=green,blue,red,cyan, magenta,
+%yellow, black, gray,white, darkgray, lightgray, brown,
+%lime, olive, orange, red,purple, teal, violet.
+%下面这两句保证多篇文章一起排时的超链接正确性
+\newcounter{Hsection}
+\preto\section{\stepcounter{Hsection}}
+\usepackage{titleref} %标题引用
+%-------------------参考文献---------------------
+%\usepackage[backend=bibtex8,sorting=none,citestyle=authoryear,bibstyle=alphabetic]{biblatex}
+%采用分章的参考文献的快捷方法
+\usepackage[backend=biber,%
+style=gb7714-2015]{biblatex}%biber
+\renewcommand{\bibfont}{\zihao{-5}\songti}
+\setlength{\bibitemsep}{2pt}
+\defbibheading{bibliography}[\bibname]{%
+	\section*{#1}}%
+%	\markboth{#1}{#1}}
+%注意在实际使用中用titsec宏包的页眉页脚也有点问题，一旦给出markboth就会出现问题
+%这里因为bibliography给出了markboth所以出错。因此重定义bibliography以消除问题
+%重定义命令中去掉了markboth那一句命令。
+%常用样式
+%style=trad-plain
+%style=trad-unsrt
+%style=trad-alpha
+%style=trad-abbrv
+%style=musuos
+%style=nature
+%style=nejm  %New England Journal of Medicine
+%style=phys  %follows the guidelines of the aip and aps
+%bibstyle=publist
+%style=science  %follows the guidelines of the journal Science
+
+%style=ieee % follows the guidelines of the ieee.
+%style=ieee-alphabetic
+%bibstyle=manuscripts,otheroption
+%style=chem-acs %American Chemistry Society journals.
+%style=chem-angew %Angewandte Chemie Chemistry – A European Journal.
+%style=chem-biochem %Biochemistry and a small number of other American Chemistry Society journals.
+%style=chem-rsc  %Royal Society of Chemistry journals.
+%style=authortitle-dw
+%style=footnote-dw
+
+
+
+%================================================
+%    代码呈现环境；listings宏包
+%================================================
+\usepackage{listings}
+\lstnewenvironment{texlist}%
+{\lstset{% general command to set parameter(s)
+%name=#1,
+%label=#2,
+%caption=\lstname,
+linewidth=\linewidth,
+breaklines=true,
+%showspaces=true,
+extendedchars=false,
+columns=fullflexible,%flexible,
+frame=none,
+fontadjust=true,
+language=[LaTeX]TeX,
+%backgroundcolor=\color{yellow}, %背景颜色
+%numbers=left,
+%numberstyle=\tiny\color{red},
+basicstyle=\scriptsize, % print whole listing small
+keywordstyle=\color{blue}\bfseries,%\underbar,
+% underlined bold black keywords
+identifierstyle=, % nothing happens
+commentstyle=\color{green!50!black}, % white comments
+stringstyle=\ttfamily, % typewriter type for strings
+showstringspaces=false}% no special string spaces
+}
+{}
+
+\lstnewenvironment{fortranlist}%
+{\lstset{% general command to set parameter(s)
+%name=#1,
+%label=#2,
+%caption=\lstname,
+linewidth=\linewidth,
+breaklines=true,
+%showspaces=true,
+extendedchars=false,
+columns=fullflexible,%flexible,
+frame=none,
+fontadjust=true,
+language=[08]Fortran,
+%backgroundcolor=\color{yellow}, %背景颜色
+%numbers=left,
+%numberstyle=\tiny\color{red},
+basicstyle=\scriptsize, % print whole listing small
+keywordstyle=\color{blue}\bfseries,%\underbar,
+% underlined bold black keywords
+identifierstyle=, % nothing happens
+commentstyle=\color{green!50!black}, % white comments
+stringstyle=\ttfamily, % typewriter type for strings
+showstringspaces=false}
+} % no special string spaces}
+{}
+
+\lstnewenvironment{mathlist}%
+{\lstset{% general command to set parameter(s)
+%name=#1,
+%label=#2,
+%caption=\lstname,
+linewidth=\linewidth,
+breaklines=true,
+%showspaces=true,
+extendedchars=false,
+columns=fullflexible,%flexible,
+frame=none,
+fontadjust=true,
+language=[5.2]Mathematica,
+%backgroundcolor=\color{yellow}, %背景颜色
+%numbers=left,
+%numberstyle=\tiny\color{red},
+basicstyle=\scriptsize, % print whole listing small
+keywordstyle=\color{blue}\bfseries,%\underbar,
+% underlined bold black keywords
+identifierstyle=, % nothing happens
+commentstyle=\color{green!50!black}, % white comments
+stringstyle=\ttfamily, % typewriter type for strings
+showstringspaces=false}
+} % no special string spaces}
+{}
+
+\lstnewenvironment{codetex}[2]%
+{\begin{center}\end{center}\centering\setlength{\abovecaptionskip}{1mm}\setlength{\belowcaptionskip}{1mm}%
+\vspace{-2\baselineskip}
+\codecaption{#1}\label{#2}%\nopagebreak
+\vspace{-1.0\baselineskip}
+\lstset{%general command to set parameter(s)
+%name=#1,
+%label=#2,
+%caption=\lstname,
+linewidth=\linewidth,
+breaklines=true,
+%showspaces=true,
+extendedchars=false,
+columns=fullflexible,%flexible,
+frame=tb,
+%frame=none,
+fontadjust=true,
+language=[LaTeX]TeX,
+%backgroundcolor=\color{yellow}, %背景颜色
+backgroundcolor=\color{codebackground},
+fillcolor=\color{codebackground},
+rulecolor=\color{green!50!black},
+numbers=left,
+numberstyle=\tiny\color{red},
+basicstyle=\scriptsize, % print whole listing small，footnotesize
+keywordstyle=\color{blue}\bfseries,%\underbar,
+% underlined bold black keywords
+identifierstyle=, % nothing happens
+commentstyle=\color{green!50!black}, % white comments
+stringstyle=\ttfamily, % typewriter type for strings
+showstringspaces=false}% no special string spaces
+%\renewcommand{\baselinestretch}{0.95}
+\ifodd\thepage{
+\begin{tikzpicture}[overlay,remember picture]
+\node[fill=yellow!50,inner sep=1pt] at ($(-0.5\linewidth,-2mm)-(4mm,0mm)$) {\tiny{代码}};
+\end{tikzpicture}}
+\else{
+\begin{tikzpicture}[overlay,remember picture]
+\node[fill=yellow!50,inner sep=1pt] at ($(0.5\linewidth,-2mm)+(4mm,0mm)$) {\tiny{代码}};
+\end{tikzpicture}}
+\fi
+}{}
+
+\def\figwd{0.6}%全局设置插图宽度与textwidth之比
+\graphicspath{{exampleandimage/}} %设置图片放置的位置
+
+\usepackage[inline]{enumitem} %重设list环境
+\setlist[itemize]{label=\color{blue}$\blacktriangleright$,topsep=2pt,partopsep=0pt,parsep=0pt,%
+itemsep=0pt,leftmargin=2em}%label=$\triangleright$
+%\setlist[itemize]{topsep=2pt,partopsep=0pt,parsep=0pt,%
+%itemsep=0pt,leftmargin=4em}%label=$\triangleright$
+\setlist[enumerate]{topsep=2pt,partopsep=0pt,parsep=0pt,%
+itemsep=0pt,leftmargin=4em}%label=$\triangleright$
+\setlist[description]{topsep=5pt,partopsep=0pt,parsep=0pt,%
+itemsep=0pt,leftmargin=2cm,rightmargin=0cm,labelwidth=2cm}
+
+\newcommand{\qd}[1]{%定义qd为强调命令
+{\bfseries\color{violet}#1}}
+%orange，brown，purple，teal，violet，olive，cyan
+
