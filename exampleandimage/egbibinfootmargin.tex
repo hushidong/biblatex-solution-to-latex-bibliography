@@ -1,0 +1,49 @@
+\documentclass[twoside]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{includemp,paperwidth=21cm,paperheight=19cm,%
+left=1cm,right=1cm,marginparwidth=6cm,top=1cm,bottom=1.5cm}
+\usepackage{xcolor}
+%书签功能，选项去掉链接红色方框
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}   
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource[location=local]{example.bib}
+
+%\newcommand{\itemcmd}[1]{#1\par}
+\defbibenvironment{marginref}{\begingroup}
+{\endgroup}{\zihao{6}\songti}%\newline\itemcmd
+\defbibheading{marginref}{}
+\newcommand{\pz}[1]{% 定义 pz 为旁注命令
+\marginpar[\flushright\textcolor{blue}{\scriptsize#1}]{\scriptsize#1}}
+
+\newcommand{\pzcite}[1]{%
+\cite{#1}
+\marginpar[\flushright\textcolor{blue}{{\printbibliography[env=marginref,keyword=#1,heading=marginref]}}]
+{\printbibliography[env=marginref,keyword=#1,heading=marginref]}}
+
+\begin{document}
+\section{脚注和旁注中的文献表}
+
+参考文献\pzcite{Eggrers--}中文段落参考文献中文段落参考文献中文段
+参考文献中文段落参考文献中文段落参考文献中文段落参考文献中文段落
+参考文献中文段落参考文献中文段落参考文献中文段落参考文献中文段落
+参考文献\pzcite{汤万金2013-09-30--}中文段落参考文献中文段落参考
+参考文献\footfullcite{刘裕国2013-01-12--}
+\footfullcite{Dublin2012-06-14--}
+\footfullcite{王夫之1845--}
+中文段落参考文献中文段落参考文献中文段落参考文献中文段落
+参考文献中文段落参考文献中文段落参考文献中文段落参考文献中文段落
+
+text text text text text text text text text
+\fbox{here is a marginpar}\pz{some note.}
+text text text text text text text text text
+text text text text text text text text text
+
+参考文献中文段落参考文献中文段落参考文献中文
+\fbox{这里是旁注}\pz{中文旁注}
+段落参考文献中文段落参考文献中文段落参考文献
+中文段落参考文献中文段落参考
+
+
+\printbibliography[title=【参考文献】]
+\end{document} 

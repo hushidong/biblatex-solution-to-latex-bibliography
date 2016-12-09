@@ -1,0 +1,23 @@
+\documentclass{report}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=12cm,paperheight=9cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm}
+\usepackage{titlesec}
+\titleformat{\chapter}{\zihao{5}\heiti}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
+\titleformat{\section}{\zihao{-5}\heiti}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
+\usepackage{hyperref}
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource[location=local]{example.bib}
+
+\begin{document}
+\chapter{序章}
+\begin{figure}[!htb]
+  \centering
+  \fbox{\parbox[c][2cm][c]{4cm}{\centering\large example figure}}
+  \caption{在题注中引用文献\cite{GPS1988--}}\label{cite:incaption}
+\end{figure}
+
+\printbibliography[heading=subbibliography,title=本章参考文献]
+\end{document} 

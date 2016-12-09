@@ -1,0 +1,20 @@
+\documentclass{report}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=12cm,paperheight=8cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\titleformat{\chapter}{\zihao{5}\heiti}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
+\titleformat{\section}{\zihao{-5}\heiti}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource[location=local]{example.bib}
+
+\begin{document}
+\chapter{序章}
+
+正文内容脚注中引用参考文献\footnote{biblatex使用可以参考宏包手册\cite{Lehman2015}}
+
+\printbibliography[heading=subbibliography,title=本章参考文献]
+\end{document} 

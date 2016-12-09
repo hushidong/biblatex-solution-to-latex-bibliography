@@ -1,0 +1,95 @@
+\documentclass{book}
+\usepackage{ctex}
+\usepackage[paperwidth=12cm,paperheight=6cm,top=1.5cm, bottom=1.5cm, left=1cm,right=1cm]{geometry}
+\usepackage[pagestyles]{titlesec}
+\titleformat{\chapter}{\zihao{4}\heiti}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{-1.0\baselineskip}{0.5\baselineskip}[0pt]
+\titleformat{\section}{\zihao{5}\heiti}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
+\usepackage[backend=biber,style=nature]{biblatex}
+\addbibresource[location=local]{example.bib}
+
+\renewcommand{\bibfont}{\zihao{-6}\songti}
+\setlength{\bibitemsep}{2pt}
+\defbibheading{bibliography}[\bibname]{%
+\phantomsection%
+\addcontentsline{toc}{chapter}{#1}%
+\chapter*{#1}}%
+\defbibheading{subbibliography}[\bibname]{%
+\phantomsection%
+\addcontentsline{toc}{section}{#1}%
+\section*{#1}}%
+\usepackage{hyperref}
+
+\newpagestyle{main}{%偶数页
+\sethead[\small$\cdot$~\thepage~$\cdot$][]
+[\small\,\thesection\quad\sectiontitle]%奇数页
+{\small\,\thechapter\quad\chaptertitle}{}{\small$\cdot$~\thepage~$\cdot$}
+\setfoot{}{}{}\headrule\footrule}
+%注意\sectiontitle应该是titlesec宏包定义的命令
+\renewcommand\headrule{\setheadrule{1pt}}
+\renewcommand\footrule{\setfootrule{0pt}}
+
+\newpagestyle{premain}{
+\sethead[\small$\cdot$~\thepage~$\cdot$][][\small\,目录]
+{\small\,\leftmark}{}{$\cdot$~\thepage~$\cdot$}
+\setfoot{}{}{}\headrule\footrule}
+
+\newpagestyle{pgref}{%
+	\sethead[\small\,~\thepage~]% 偶数页左
+	[]% 偶数页中
+	[\small\,参考文献]% 偶数页右
+	{\small\,\thechapter\quad\chaptertitle\hfil}% 奇数页左
+	{}% 奇数页中
+	{\small\,~\thepage~}% 奇数页右
+	\setfoot{}{}{}%
+	\headrule%
+}%
+
+\begin{document}
+\pagestyle{premain}
+\tableofcontents
+\cleardoublepage
+
+\begin{refsection}
+\pagestyle{main}
+\chapter{序章}
+\section{序节}
+序章内容\cite{GPS1988--}
+\defbibentryset{bilangyi2013}{易仕和2013--,Yi2013--}
+专著，双语文献引用\cite{bilangyi2013}
+%\newpage
+%\vfil\hspace{1pt}
+%\newpage
+\pagestyle{pgref}
+\printbibliography[heading=bibliography,title=本章参考文献]
+\cleardoublepage%页眉页脚分割正确需要该命令
+\end{refsection}
+
+\begin{refsection}
+\pagestyle{main}
+\chapter{正文章一}
+\section{正文节一}
+正文内容一\cite{杨洪升2013-56-75}
+%\newpage
+%\vfil\hspace{1pt}
+%\newpage
+\pagestyle{pgref}
+\printbibliography[heading=subbibliography,title=本章参考文献]
+\cleardoublepage
+\end{refsection}
+
+\begin{refsection}
+\pagestyle{main}
+\chapter{正文章二}
+\section{正文节二}
+正文内容二\cite{马克思2013-302-302}
+%\newpage
+%\vfil\hspace{1pt}
+%\newpage
+\pagestyle{pgref}
+\printbibliography[heading=subbibliography,title=本章参考文献]
+\cleardoublepage
+\end{refsection}
+
+\end{document} 

@@ -1,0 +1,25 @@
+\documentclass{report}
+\usepackage{ctex}
+\usepackage[paperwidth=12cm,paperheight=6cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm]{geometry}
+\usepackage{titlesec}
+\titleformat{\chapter}{\zihao{4}\heiti}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{0.0\baselineskip}{0.5\baselineskip}[0pt]
+\titleformat{\section}{\zihao{5}\heiti}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
+\usepackage[backend=biber,refsection=chapter,style=gb7714-2015]{biblatex}
+\addbibresource[location=local]{example.bib}
+
+
+\begin{document}
+\chapter{序章}
+序章内容\cite{GPS1988--}
+\printbibliography[heading=subbibliography,title=本章参考文献]
+
+\chapter{正文章一}
+正文内容一\cite{杨洪升2013-56-75}
+\printbibliography[heading=subbibliography,title=本章参考文献]
+
+\chapter{正文章二}
+正文内容二\cite{马克思2013-302-302}
+\printbibliography[heading=subbibliography,title=本章参考文献]
+\end{document} 

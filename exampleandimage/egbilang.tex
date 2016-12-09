@@ -1,0 +1,23 @@
+\documentclass{report}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=15cm,paperheight=9.5cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm}
+\usepackage{titlesec}
+\titleformat{\chapter}{\zihao{5}\heiti}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\titleformat{\section}{\zihao{-5}\heiti}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource[location=local]{example.bib}
+
+\begin{document}
+
+\chapter{序章}
+序章内容\cite{GPS1988--}
+\defbibentryset{bilangyi2013}{易仕和2013--,Yi2013--}
+\defbibentryset{bilangzhang2007}{张敏莉2007-500-503,Zhang2007-500-503}
+专著，双语文献引用\cite{bilangyi2013}\cite{bilangzhang2007}
+
+\printbibliography[heading=subbibliography,title=参考文献]
+
+\end{document} 

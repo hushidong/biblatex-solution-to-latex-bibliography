@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage{ctex,hyperref}
+\usepackage{geometry}
+\geometry{paperwidth=21cm,paperheight=26cm,%
+left=1cm,right=1cm,top=1cm,bottom=1.5cm}
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource{example.bib}
+\renewcommand{\bibfont}{\zihao{6}}
+\usepackage{titlesec}
+%\titleformat{command}[shape]{format}{label}{sep}{before}[after]
+\titleformat{\section}{\centering\bfseries}{第\thesection 节}{1em}{}[]
+\titlespacing*{\section}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\titleformat{\subsection}{\flushleft\bfseries}{\S\,\thesubsection}{1em}{}[]
+\titlespacing*{\subsection}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\DeclareBibliographyCategory{reportandthesis}
+\addtocategory{reportandthesis}{汤万金2013-09-30--,Calkin2011-8-9,吴云芳2003--,CALMS1965--}
+\begin{document}
+文献\cite{张伯伟2002--}
+\cite{CRAWFPRD1995--}
+\cite{陈志勇2011--}
+\cite{Babu2014--}
+\cite{汤万金2013-09-30--}
+\cite{Calkin2011-8-9}
+\cite{吴云芳2003--}
+\cite{CALMS1965--}
+\cite{张凯军2012-04-05--}
+\cite{KOSEKI2002--}
+\cite{全国广播电视标准化技术委员会2007-1-1}
+\cite{国家环境保护局科技标准司1996-2-3}
+\cite{楼梦麟2011-11-12}
+\cite{BUSECK1980-117-211}
+\cite{陈建军2010-93-93}
+\cite{DESMARAIS1992-605-609}
+\cite{张田勤2000--}
+\cite{萧钰2001--}
+
+\printbibliography[type=book,notkeyword=standard,title=【普通图书】]
+\defbibfilter{collections}{%
+type=collection
+or type=proceedings
+or type=incollection
+or type=inproceedings
+}
+\printbibliography[filter=collections,title=【论文集、会议录】]
+\defbibfilter{standard}{%
+( type=book or type=inbook )
+and keyword=standard
+}
+\printbibliography[filter=standard,title=【标准文献】]
+\printbibliography[type=inbook,notkeyword=standard,title=【专著中析出的文献】]
+\printbibliography[type=article,notkeyword=news,title=【期刊中析出的文献】]
+\printbibliography[type=article,keyword=news,title=【报纸析出的文献】]
+\printbibliography[category=reportandthesis,title=【报告和学位论文】]
+\printbibliography[notcategory=reportandthesis,title=【非报告和学位论文】]
+\end{document} 

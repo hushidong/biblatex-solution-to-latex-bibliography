@@ -1,0 +1,62 @@
+\documentclass{report}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=15cm,paperheight=12cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm}
+\usepackage{titlesec}
+\titleformat{\chapter}{\zihao{5}\heiti}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\titleformat{\section}{\zihao{-5}\heiti}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}%sorting=none,
+\addbibresource[location=local]{example.bib}
+
+\usepackage{fontspec}
+
+
+%\newcommand{\ftArial}{\fontspec{TeX Gyre Bonum}\selectfont}
+%\newcommand{\ftArial}{\fontspec{Latin Modern Roman}\selectfont}
+%\newcommand{\ftArial}{\fontspec{Droid Sans}\selectfont}
+\newcommand{\ftcouriernew}{\fontspec{DejaVu Sans}\selectfont}
+
+%\newcommand{\ftArial}{\fontspec{Iwona}\selectfont}
+\newcommand{\ftArial}{\fontspec{Source Sans Pro}\selectfont}
+%\newcommand{\ftArial}{\fontspec{Linux Libertine O}\selectfont}
+%\newcommand{\ftArial}{\fontspec{Cabin}\selectfont}
+
+
+%参考文献文本字体设置为默认，字号为6，利用ctex设置
+%如果不是利用ctex宏包，可以利用其它字号设置命令
+\renewcommand{\bibfont}{\zihao{6}}
+%设置各条参考文献之间的间距为0pt
+\setlength{\bibitemsep}{0pt}
+\setlength{\bibnamesep}{1ex}
+\setlength{\bibinitsep}{2ex}
+
+\makeatletter
+\newcommand{\itemcmd}[1]{#1\par}
+\defbibenvironment{marginref}{\begingroup
+\renewcommand{\baselinestretch}{0.8}
+%\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}}
+{\endgroup}{\itemcmd}%\newline%\@endparenv%\clearpage
+\makeatother
+
+\begin{document}
+
+\chapter{序章}
+\section{序节}
+%\tiny
+序章内容\cite{GPS1988--,杨洪升2013-56-75,马克思2013-302-302}
+正文内容一\cite{Andersen1995-42-49,BUSECK1980-117-211,Calkin2011-8-9}
+正文内容二\cite{Parsons2000b--,Parsons2000--,Parsons2000noloc--,Parsons2000nodate--}
+\printbibliography[heading=subbibliography,title=参考文献]
+\newpage
+\renewcommand{\bibfont}{\zihao{6}\ftArial\fangsong}
+\printbibliography[heading=subbibliography,title=参考文献]
+\newpage
+\renewcommand{\bibfont}{\zihao{6}\ttfamily}
+\printbibliography[heading=subbibliography,title=参考文献]
+\newpage
+\renewcommand{\bibfont}{\zihao{6}\ftcouriernew\kaishu}
+\printbibliography[env=marginref,heading=subbibliography,title=参考文献]
+\end{document} 
