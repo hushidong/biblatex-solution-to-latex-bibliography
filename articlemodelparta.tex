@@ -340,7 +340,8 @@
 \titlespacing*{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
 \titleformat{\subsection}{\zihao{5}\heiti}{\thesubsection}{1em}{}
 \titlespacing*{\subsection}{0pt}{0pt}{0pt}[0pt]
-\titleformat{\subsubsection}{\zihao{5}\songti}{\thesubsubsection}{1em}{}
+%\titleformat{\subsubsection}{\zihao{5}\songti}{\thesubsubsection}{1em}{}
+\titleformat{\subsubsection}{\zihao{5}\heiti}{\thesubsubsection}{1em}{}
 \titlespacing*{\subsubsection}{0pt}{0pt}{0pt}[0pt]
 %设置页面页脚线存在bug不能直接设置\setheadrule{~pt}默认的宽度会冲掉它
 %所以使用下面的两句重定义命令进行修改
@@ -536,7 +537,7 @@ fillcolor=\color{codebackground},
 rulecolor=\color{green!50!black},
 numbers=left,
 numberstyle=\tiny\color{red},
-basicstyle=\scriptsize, % print whole listing small，footnotesize
+basicstyle=\footnotesize, % print whole listing small，footnotesize
 keywordstyle=\color{blue}\bfseries,%\underbar,
 % underlined bold black keywords
 identifierstyle=, % nothing happens

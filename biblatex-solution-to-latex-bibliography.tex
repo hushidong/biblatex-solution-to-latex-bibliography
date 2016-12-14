@@ -171,6 +171,16 @@ texstudio软件可以在多平台使用，linux下因为没有winedt所以比较
 \end{filecontents}
 \end{codetex}
 
+\subsubsection{获取标准bib文件}
+上述给出的方法都是手动编写bib文件的方法，事实上这些手工编写方法还是比较繁琐的。那么是否有其它方法可以获取bib文件或其内容避免自己手工编写呢？答案是有的，latexstudio上共分享了几篇文章\cite{北京交通大学研究生公众号2016--}\cite{olref2016--}\cite{文献助手2016--}。总结起来主要有几个渠道:
+\begin{enumerate}
+  \item Google 学术: 检索文献 >> Cite（引用） >> BibTeX >> 复制粘贴到 mybibtex.bib 文件
+  \item CNKI，（以 firefox 为例）: (确保安装 Zotero 的 firefox 扩展 >>) CNKI 检索文献 >> 点击一下 url 输入框末尾的文件夹图标 >> 选中要导出的文献 >> 导出为 BibTeX 引用格式 >> 复制粘贴导出的 BibTeX 文献到 mybibtex.bib 文件。
+  \item 必应学术（必应 学术 – 学无止境，术有乾坤）、百度学术（百度学术 – 保持学习的态度）类似于google学术。
+  \item 学术性期刊的官网都是可以直接获取bib文件的，比如IEEE，Springer，Elsevier等等
+  \item 使用文献助手工具，地址:\url{http://cite.latexstudio.net}
+\end{enumerate}
+熟练使用这些方法，应该可以有效提高工作效率。
 
 \subsection{文档的组成}
 \LaTeX 文档源文件是由具有某一结构和模式的代码所构成，参考文献的生成自然也遵守这样的结构和模式。
@@ -234,6 +244,15 @@ citestyle=gb7714-2015%,backref=true%
 \begin{codetex}{参考文献表打印命令}{ref:bibprint:cmd}
 \printbibliography[heading=bibliography,title=参考文献]
 \end{codetex}
+
+\subsubsection{参考文献正反超链接}
+当加载hyperref宏包后，biblatex宏包除了提供正向超链接外还提供了功能强大的反向超链接。使用方式也很简单，就是使用backref选项。例\ref{ref:hyperlink:back}给出了代码:
+\begin{codetex}{参考文献反向超链接选项}{ref:hyperlink:back}
+\usepackage[backend=biber,bibstyle=gb7714-2015,citestyle=gb7714-2015,%
+backref=true%
+]{biblatex}
+\end{codetex}
+
 
 \subsection{文档的编译}
 文档的编译与\LaTeX 传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，准备参考文献数据用的命令是biber filename。编译命令可以利用软件调用，也可以自行在命令行输入，下面给出利用winedt、texstudio、命令行、和脚本等不同方式的具体操作过程。
@@ -345,7 +364,7 @@ rm -r *.aux *.bbl *.blg *.log *.out *.toc *.bcf *.xml *.synctex *.nlo *.nls *.ba
 \end{codetex}
 
 \subsection{分章参考文献和书后参考文献}
-分章参考文献在书籍写作中是一种比较常见的需求，使用biblatex宏包可以在一个\LaTeX 文档中实现多种形式的参考文献划分，分章参考文献可以利用refsection环境或者宏包选项来实现。
+分章参考文献在书籍写作中是一种比较常见的需求。在latex传统方法中,利用thebibliography 环境可是实现,但其格式只能在bibitem内输入,对于文献量较大时是不适合的。而利用bibliographystyle 和 bibliography 命令生成的参考文献可以与thebibliography 环境同时存在，生成多个不同的文献表，可以插入多个文献表但却是相同的，这是因为编译文档时，所有的信息都是写入一个 aux 文件中的。所以要实现分章参考文献表,需要使用 chapterbib宏包,并且要把需要生成文献表的章放到单独的tex文件中,然后用include命令包含进主文件,这样可以生成多个aux文件以便生成分章参考文献表。而使用biblatex宏包可以很方便的在一个\LaTeX 文档中实现多种形式的参考文献划分，其中分章参考文献可以利用refsection环境或者宏包选项来实现。
 \subsubsection{利用refsection环境分章}
 
 利用refsection环境可以显式的设置需要打印参考文献的文档结构部分，比如把chapter的所有内容放在refsection环境内，那么在该refsection中使用参考文献打印命令printbibliography就会得到该环境内的参考文献信息，例\ref{bib:refsection}给出的代码，其结果如图\ref{bib:refsection:resa}，\ref{bib:refsection:resb}所示。
@@ -397,7 +416,6 @@ rm -r *.aux *.bbl *.blg *.log *.out *.toc *.bcf *.xml *.synctex *.nlo *.nls *.ba
 
 \subsubsection{利用宏包refsection选项分章}
 除了利用refsection环境显式方法外，还可以利用宏包选项refsection=chapter等来设置需要区分打印参考文献的文档结构，这里设置refsection=chapter表示以章为单位区分打印参考文献，也可以设置成section，那么就是以节为单位进行区分打印。例\ref{bib:opt:refsection}给出的代码，其结果如图\ref{bib:refsection:resc}所示，可以看到与图\ref{bib:refsection:resa}完全一致。
-
 \begin{codetex}{利用宏包选项实现分章参考文献}{bib:opt:refsection}
 \documentclass{report}%%file:egrefsectionb.tex
 \usepackage{ctex}
@@ -849,7 +867,7 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 
 同时，因为bibfont等命令的使用具有局部性，所以可以在文档中多次定义，用于打印不同效果的文献表。例\ref{bib:fontset:eg}给出一个完成的测试代码，其中打印了4个参考文献表，分别用了不同的字体。同时设置了bibitemsep、bibnamesep、bibinitsep三个尺寸控制各条文献的间距。并且自定义了一个参考文献表环境marginref，并没有使用list环境，而是简单的编组后打印环境，可以看到其中各条文献的缩进效果。
 
-\begin{codetex}{参考文献表内容修改举例}{bib:fontset:eg}
+\begin{codetex}{参考文献表内容格式修改举例}{bib:fontset:eg}
 %file:egbibfont.tex
 \documentclass{report}
 \usepackage{ctex}
@@ -938,7 +956,7 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
 样式包的主要特点包括:
 \begin{enumerate}
   \item 实现了GB/T 7714-2015标准的完整功能，不仅包括两种编制方式下的各类型参考文献著录格式和标注格式等基本功能，还包括:双语文献格式，带页码的标注格式，作者年制下文献的自动排序和仅有年的标注格式，两种编码制方式下责任者缺省不同处理，其他信息缺省时的自动处理，一些信息如页码卷期等自动解析等特殊功能。
-  \item 实现了用户文献数据录入优化，用户在录入参考文献数据的时候，只需要录入文献的实际信息即可，不需要录入文献标识符和载体标识符，不需要录入language或者其它域信息用来区分中英文文献，完全实现自动中英文判断并处理。仅需要针对报纸文章和标准文章在note域输入news和standard用以区分。
+  \item 实现了用户文献数据录入优化，用户在录入参考文献数据的时候，只需要录入文献的实际信息即可，不需要录入文献标识符和载体标识符，不需要录入language或者其它域信息用来区分中英文文献，完全实现自动中英文判断并处理。仅需要针对报纸文章和标准文章在note域输入news和standard 用以区分。
   \item 实现了对biblatex不同版本的兼容，能够应用于biblatex3.2以前的老版本，也能用于3.3以后姓名处理方式改变后的版本。即可以与texlive2014/2015/2016配合使用，无需升级biblatex情况下安装biblatex-gb7714-2015宏包即可使用。
   \item 使用文档详细介绍了各种条目类型的著录格式及其在biblatex中对应域的构成，说明了域信息的录入方法和一些注意点，说明了样式文件的使用方法和注意事项，并严格按照GB/T 7714-2015标准测试了各种类型的文献。
 \end{enumerate}
@@ -948,7 +966,7 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
 biblatex-gb7714-2015样式宏包可以使用tlmgr或离线方式安装。
 在texlive 2016下，使用tlmgr比较方便，步骤如下:
 
-(a) 打开tlmgr-gui，在选项通用里面设置中国的ctan镜像源，比如http://mirrors.ustc.edu.cn/CTAN/systems/texlive/tlnet
+(a) 打开tlmgr-gui，在选项通用里面设置中国的ctan镜像源，比如\url{http://mirrors.ustc.edu.cn/CTAN/systems/texlive/tlnet}
 
 (b) 点击，加载缺省软件包仓库。加载完成后可能要求升级tlmgr，那么先升级tlmgr。
 
@@ -970,6 +988,56 @@ texlive 2016 当然也可以用这种方式离线安装。
 在texlive安装包或者ctan上面可以找到更多的定制样式，有针对某些期刊的文献样式比如nature，science，nejm等等，有些是作者自己兴趣所做比如:biblatex-caspervector样式包，该包作者本来是根据GB/T 7714-2005做的样式，后进一步形成了自己喜欢的风格。用户可以测试各样式包，并按需使用，进一步也可以参考其代码，修改自己需要的样式。
 
 总的来说，因为biblatex提供了参考文献数据的完全访问能力，所以定义任何需要的样式都是可能的。因此用户可以根据需要对选择使用合适的样式或者定制需要的样式。
+
+\subsubsection{快速定制/临时定制}
+有的时候对于参考文献格式会有一些特殊的需求,而且往往这些格式并没有一个对应能够满足其要求的参考文献样式包,这种情况下就需要进行定制,比如\cite{olqa2016--}提出的问题。在latex传统方法中,当文献量较小时,这种临时定制采用thebibliography环境是比较方便的,因为thebibliography 环境显式的将其中的内容插入,因此需要什么样的格式,那么就在bibitem中输入指定格式的条目内容即可。但该环境存在一个问题即:无论引用与否环境中的参考文献都会全部打印。该环境也可以用来生成多个参考文献表,当然文献量较大时还采用这种手动输入方式毕竟是不方便的。
+
+事实上利用biblatex可以实现快速的定制,biblatex宏包使用手册的Bibliography Style Files给出了样式文件定义的一般模式和方法。依据该模式是容易实现样式快速定制的，因为在一般情况下定制样式文件，其实并不需要处理太多的内容。总结起来，定制简单的参考文献格式需要处理的主要内容包括:
+\begin{enumerate}
+  \item 加载定制所需的基础样式比如标准样式或其它样式
+  \item 设置宏包选项
+  \item 设置单元或块的标点
+  \item 设置域格式
+  \item 设置驱动格式
+\end{enumerate}
+当然对于一些复杂的参考文献样式(比如gb7714-2015)还需要处理更多的内容,包括:
+\begin{enumerate}
+  \item 增加和应用需要的判断和函数
+  \item 动态数据处理
+  \item 增加一些域格式,增加修改应用本地化字符等
+\end{enumerate}
+在上述ctex论坛上的提问中,参考文献格式主要需要修改的内容是分块、分块的标点、分块内容的格式。其中: 作者是一个块作为一行，标题是一个块作为一行，其它是一个块作为一行，那么把块标点设置为换行，就可以实现多行。同时各块的内容的字体不同，作者是粗体，标题是等宽，其它是斜体，那么把对应的块所构成域的格式改成需要的格式即可。这里给出该问题的一个简单解答，如图\ref{bib:style}所示。采用的样式文件代码如例\ref{bib:style:customize}所示，其中为了简化修改，把一些条目设置成了相同的格式。
+
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[width=0.8\textwidth,page=1]{egstylecustomize.pdf}}
+  \caption{参考文献样式快速定制}\label{bib:style}
+\end{figure}
+
+\begin{codetex}{参考文献样式定制举例}{bib:style:customize}
+\ProvidesFile{studf.bbx}[2016/12/07 v1.0e biblatex bibliography style]
+略，详见源文件。
+\end{codetex}
+源代码见\href{run:./exampleandimage/studf.bbx}{tex文件}。
+
+如果对于中文参考文献需要一些特殊的处置,那么可以基于gb7714-2015进行修改,如例\ref{style:customize:gb}给出的代码。其结果如图\ref{bib:style:gba}，\ref{bib:style:gbb}所示。
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[width=0.7\textwidth,page=1]{egstylecustomizegb.pdf}}
+  \caption{国标风格的参考文献样式快速定制A}\label{bib:style:gba}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[width=0.7\textwidth,page=2]{egstylecustomizegb.pdf}}
+  \caption{国标风格的参考文献样式快速定制B}\label{bib:style:gbb}
+\end{figure}
+
+\begin{codetex}{参考文献样式定制举例-国标样式}{style:customize:gb}
+\ProvidesFile{gbudf.bbx}[2016/12/07 v1.0e biblatex bibliography style]
+略，详见源文件。
+\end{codetex}
+源代码见\href{run:./exampleandimage/gbudf.bbx}{tex文件}。
 
 \subsection{多语言文献}
 
