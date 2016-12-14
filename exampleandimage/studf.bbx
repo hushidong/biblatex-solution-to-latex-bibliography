@@ -1,0 +1,245 @@
+\ProvidesFile{studf.bbx}[2016/12/07 v1.0e biblatex bibliography style]
+
+%=====================================================================
+%加载标准样式
+\RequireBibliographyStyle{numeric-comp}
+\RequireBibliographyStyle{standard}
+
+%=====================================================================
+%设置宏包选项
+\ExecuteBibliographyOptions{
+  sorting=none,
+  useprefix=true,  %名字的信息包括前缀
+  %firstinits=true,    %名字有缩写，参考3.1.2.3 Internal
+  giveninits=true,
+  date         = year,  %日期仅写到年
+  %maxnames     = 3 ,    %设置名字最大数量
+  minnames     = 3       %设置缩减后的名字最小数量
+  %uniquename   = init
+}
+
+%=====================================================================
+%设置单元或块的标点
+\renewcommand*{\revsdnamepunct}{}%
+\renewcommand*{\subtitlepunct}{\addcolon\space} %修改标题和其它标题信息间的标点
+\renewcommand*{\newblockpunct}{\par\nobreak}
+\renewcommand*{\bibpagespunct}{\addcolon\space}%页码引用格式的修改%修改为用冒号
+
+%=====================================================================
+%设置域格式
+\DeclareFieldFormat{labelnumberwidth}{\mkbibbrackets{#1}\hfill} %修改序号标签格式为左对齐,注意各参考文献内容还是对齐的，
+\DeclareFieldFormat{title}{\texttt{#1}\adddot\addthinspace}% \textit，sl，emph-楷体，\textbf，sf-黑体，\texttt-仿宋，\textsc，md，up-宋体
+\DeclareFieldFormat{journaltitle}{\itshape#1\isdot}
+\DeclareFieldFormat{issuetitle}{\itshape#1}
+\DeclareFieldFormat{maintitle}{\itshape#1}
+\DeclareFieldFormat{booktitle}{\itshape#1}
+\DeclareFieldFormat%将期刊等文献的标题中原来带的引号去掉
+  [article,patent,thesis,unpublished]
+  {title}{\texttt{#1}\adddot\addthinspace}%
+\DeclareFieldFormat%将期刊等文献的标题中原来带的引号去掉
+  [inbook,incollection,inproceedings]
+  {title}{\texttt{#1}\nopunct\unspace}%
+\DeclareListFormat{publisher}{\itshape%%重设出版社格式，加\itshape
+  \usebibmacro{list:delim}{#1}%
+  #1\isdot
+  \usebibmacro{list:andothers}}
+\DeclareListFormat{location}{\itshape%%重设出版地格式，加\itshape
+  \usebibmacro{list:delim}{#1}%
+  #1\isdot
+  \usebibmacro{list:andothers}}
+\DeclareFieldFormat{titlecase}{\MakeCapital#1}%重设标题格式，将其修改为首字母大写
+\DeclareFieldFormat{pages}{#1}%页码引用格式的修改%去掉前面引导页码的pp.等字符
+\renewbibmacro*{name:given-family}[4]{\bfseries%重设姓名格式，设置粗体。name域格式使用该bibmacro格式
+  \usebibmacro{name:delim}{#2#3#1}%
+  \usebibmacro{name:hook}{#2#3#1}%
+  \ifdefvoid{#2}{}{\mkbibnamegiven{#2}\isdot\bibnamedelimd}%
+  \ifdefvoid{#3}{}{%
+    \mkbibnameprefix{#3}\isdot
+    \ifprefchar
+      {}
+      {\ifuseprefix{\bibnamedelimc}{\bibnamedelimd}}}%
+  \mkbibnamefamily{#1}\isdot
+  \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}
+\newbibmacro*{name:family-given}[4]{\bfseries%%重设姓名格式，设置粗体
+  \ifuseprefix
+    {\usebibmacro{name:delim}{#3#1}%
+     \usebibmacro{name:hook}{#3#1}%
+     \ifdefvoid{#3}{}{%
+       \ifcapital
+         {\mkbibnameprefix{\MakeCapital{#3}}\isdot}
+         {\mkbibnameprefix{#3}\isdot}%
+       \ifprefchar{}{\bibnamedelimc}}%
+     \mkbibnamefamily{#1}\isdot
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}%
+     \ifdefvoid{#2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{#2}\isdot}}
+    {\usebibmacro{name:delim}{#1}%
+     \usebibmacro{name:hook}{#1}%
+     \mkbibnamefamily{#1}\isdot
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}%
+     \ifboolexpe{%
+       test {\ifdefvoid{#2}}
+       and
+       test {\ifdefvoid{#3}}}
+       {}
+       {\revsdnamepunct}%
+     \ifdefvoid{#2}{}{\bibnamedelimd\mkbibnamegiven{#2}\isdot}%
+     \ifdefvoid{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}}}
+
+%=====================================================================
+%设置驱动格式
+\DeclareBibliographyAlias{incollection}{inbook} %inbook类
+\DeclareBibliographyAlias{inproceedings}{inbook}
+\DeclareBibliographyAlias{proceedings}{book} %book类
+\DeclareBibliographyAlias{collection}{book}
+\DeclareBibliographyAlias{unpublished}{book}
+\DeclareBibliographyAlias{manual}{book}
+\DeclareBibliographyAlias{report}{book}
+\DeclareBibliographyAlias{thesis}{book}
+\DeclareBibliographyAlias{online}{book}
+\DeclareBibliographyAlias{patent}{book}
+\DeclareBibliographyDriver{book}{%%设置驱动,将一些块去掉
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/editor+others/translator+others}%
+  \setunit{\printdelim{nametitledelim}}\newblock
+  \usebibmacro{maintitle+title}%
+  \newunit
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit%\newblock
+  \usebibmacro{byeditor+others}%
+  \newunit%\newblock
+  \printfield{edition}%
+  \newunit
+  \iffieldundef{maintitle}
+    {\printfield{volume}%
+     \printfield{part}}
+    {}%
+  \newunit
+  \printfield{volumes}%
+  \newunit%\newblock
+  \usebibmacro{series+number}%
+  \newunit%\newblock
+  \printfield{note}%
+  \newunit%\newblock
+  \usebibmacro{publisher+location+date}%
+  \newunit%\newblock
+  \usebibmacro{chapter+pages}%
+  \newunit
+  \printfield{pagetotal}%
+  \newunit%\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{isbn}}
+    {}%
+  \newunit%\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit%\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}%\newblock
+  \usebibmacro{pageref}%
+  \newunit%\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}%
+     \usebibmacro{related}}
+    {}%
+  \usebibmacro{finentry}}
+\newbibmacro*{doi+eprint+url}{%%%设置bibmacro,将一些块去掉
+  \iftoggle{bbx:doi}
+    {\printfield{doi}}
+    {}%
+  \newunit%\newblock
+  \iftoggle{bbx:eprint}
+    {\usebibmacro{eprint}}
+    {}%
+  \newunit%\newblock
+  \iftoggle{bbx:url}
+    {\usebibmacro{url+urldate}}
+    {}}
+\DeclareBibliographyDriver{article}{%%%设置驱动,将一些块去掉
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\printdelim{nametitledelim}}\newblock
+  \usebibmacro{title}%
+  \newunit
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit%\newblock
+  \usebibmacro{bytranslator+others}%
+  \newunit%\newblock
+  \printfield{version}%
+  \newunit%\newblock
+  \usebibmacro{in:}%
+  \usebibmacro{journal+issuetitle}%
+  \newunit
+  \usebibmacro{byeditor+others}%
+  \newunit
+  \usebibmacro{note+pages}%
+  \newunit%\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{issn}}
+    {}%
+  \newunit%\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit%\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}%\newblock
+  \usebibmacro{pageref}%
+  \newunit%\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}%
+     \usebibmacro{related}}
+    {}%
+  \usebibmacro{finentry}}
+\DeclareBibliographyDriver{inbook}{%%%设置驱动,将一些块去掉
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\printdelim{nametitledelim}}\newblock
+  \usebibmacro{title}%
+  \newunit
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit%\newblock
+  \usebibmacro{in:}%
+  \usebibmacro{bybookauthor}%
+  \newunit%\newblock
+  \usebibmacro{maintitle+booktitle}%
+  \newunit%\newblock
+  \usebibmacro{byeditor+others}%
+  \newunit%\newblock
+  \printfield{edition}%
+  \newunit
+  \iffieldundef{maintitle}
+    {\printfield{volume}%
+     \printfield{part}}
+    {}%
+  \newunit
+  \printfield{volumes}%
+  \newunit%\newblock
+  \usebibmacro{series+number}%
+  \newunit%\newblock
+  \printfield{note}%
+  \newunit%\newblock
+  \usebibmacro{publisher+location+date}%
+  \newunit%\newblock
+  \usebibmacro{chapter+pages}%
+  \newunit%\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{isbn}}
+    {}%
+  \newunit%\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit%\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}%\newblock
+  \usebibmacro{pageref}%
+  \newunit%\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}%
+     \usebibmacro{related}}
+    {}%
+  \usebibmacro{finentry}}
