@@ -285,9 +285,11 @@
 
 %----------------------插入图片--------------------
 \usepackage{graphicx}
+%\usepackage{graphics}
 \DeclareGraphicsExtensions{.eps,.mps,.pdf,.jpg,.png}
 \DeclareGraphicsRule{*}{eps}{*}{} %%声明不是eps结尾的图片都当成eps处理
-\graphicspath{{graph/}{img/}}
+\graphicspath{{graph/}{img/}{./exampleandimage/}} %设置图片放置的位置
+\def\figwd{0.6}%全局设置插图宽度与textwidth之比
 
 %=====================tikz绘图===============================================
 \usepackage{pgf,tikz} %做tikz图所用宏包
@@ -556,8 +558,7 @@ showstringspaces=false}% no special string spaces
 \fi
 }{}
 
-\def\figwd{0.6}%全局设置插图宽度与textwidth之比
-\graphicspath{{exampleandimage/}} %设置图片放置的位置
+
 
 \usepackage[inline]{enumitem} %重设list环境
 \setlist[itemize]{label=\color{blue}$\blacktriangleright$,topsep=2pt,partopsep=0pt,parsep=0pt,%
