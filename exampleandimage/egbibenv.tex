@@ -1,0 +1,151 @@
+\documentclass[twoside]{report}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=15cm,paperheight=15cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm}
+\usepackage{titlesec}
+\titleformat{\chapter}{\zihao{4}\heiti}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{0.0\baselineskip}{0.5\baselineskip}[0pt]
+\titleformat{\section}{\centering\bfseries}{第\thesection 节}{1em}{}[]
+\titlespacing*{\section}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\titleformat{\subsection}{\flushleft\bfseries}{\S\,\thesubsection}{1em}{}[]
+\titlespacing*{\subsection}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\usepackage{xcolor}
+%书签功能，选项去掉链接红色方框
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource[location=local]{example.bib}
+
+\makeatletter
+\def\blx@bibitem#1{%
+  \blx@ifdata{#1}
+    {\begingroup
+     \blx@getdata{#1}%
+     \blx@bibcheck
+     \iftoggle{blx@skipentry}{}{%
+       \blx@setdefaultrefcontext{#1}%
+       \global\let\blx@noitem\@empty
+       \blx@setoptions@type\abx@field@entrytype
+       \blx@setoptions@entry
+       \blx@thelabelnumber
+       \addtocounter{instcount}\@ne
+       \blx@initsep
+       \blx@namesep
+       \csuse{blx@item@\blx@theenv}\relax
+%       \blx@initsep   %移动到上面去，恢复bibnamesep等的作用机制
+%       \blx@namesep
+       \csuse{blx@hook@bibitem}%
+       \blx@execute
+       \blx@initunit
+       \blx@anchor
+       \blx@beglangbib
+       \bibsentence
+       \blx@pagetracker
+       \blx@driver\abx@field@entrytype
+       \blx@postpunct
+       \blx@endlangbib}%
+     \par\endgroup}%这里增加了一个\par
+    {}}
+\makeatother
+\newcommand{\itemcmd}{%
+\stepcounter{bibentrynumber}
+\settowidth{\lengthid}{[\arabic{bibentrynumber}]}
+\addtolength{\lengthid}{\biblabelsep}
+\setlength{\lengthlw}{\textwidth}
+\addtolength{\lengthlw}{-\lengthid}
+\addvspace{\bibitemsep}%恢复\bibitemsep的作用
+%\parshape 2 0em \textwidth \lengthid \lengthlw
+\hangindent\lengthid
+[\arabic{bibentrynumber}]\hspace{\biblabelsep}}
+\newcounter{bibentrynumber}
+\newlength{\lengthid}
+\newlength{\lengthlw}
+\defbibenvironment{envtest}
+{\begingroup\setlength{\parindent}{0em}\setcounter{bibentrynumber}{0}}
+{\endgroup}
+{\itemcmd}%\newline\itemcmd
+%
+%参考文献文本字体设置为默认，字号为6，利用ctex设置
+%如果不是利用ctex宏包，可以利用其它字号设置命令
+\renewcommand{\bibfont}{\zihao{5}}
+%设置各条参考文献之间的间距为0pt
+\setlength{\bibitemsep}{0ex}
+\setlength{\bibnamesep}{0ex}
+\setlength{\bibinitsep}{0ex}
+
+
+\newcommand{\itemcmdb}{\addvspace{\bibitemsep}}
+\defbibenvironment{marginref}{\begingroup\setlength{\parindent}{0em}}
+{\endgroup}{\itemcmdb}%\newline%\@endparenv%\clearpage
+
+\defbibenvironment{bibliography}
+{\list
+{\printfield[labelnumberwidth]{labelnumber}}%标签，由域labelnumber信息的提供
+{\setlength{\labelwidth}{\labelnumberwidth}%标签宽度设置为labelnumberwidth
+\setlength{\leftmargin}{\labelwidth}%
+\setlength{\labelsep}{\biblabelsep}%标签与内容间距设置为\biblabelsep
+\addtolength{\leftmargin}{\labelsep}%缩进宽度设置为\labelwidth+\labelsep
+\setlength{\itemsep}{\bibitemsep}%垂直间距
+\setlength{\parsep}{\bibparsep}}%
+\renewcommand*{\makelabel}[1]{\hss##1\hfill}}
+{\endlist}
+{\item}
+
+\begin{document}
+\chapter{文献表自定义}
+\begin{refsection}
+\section{文献表自定义}
+
+{\hangindent=2em \par She very soon came to an open field, with
+a wood on the other side of it: it looked much darker
+than the last wood, and Alice felt a little timid
+about going into it.\par}
+
+{\hangindent=2em She very soon came to an open field, with
+a wood on the other side of it: it looked much darker
+than the last wood, and Alice felt a little timid
+about going into it.\par}
+
+{\hangindent=2em She very soon came to an open field, with
+a wood on the other side of it: it looked much darker
+than the last wood, and Alice felt a little timid
+about going into it.}
+
+ She very soon came to an open field, with
+a wood on the other side of it: it looked much darker
+than the last wood, and Alice felt a little timid
+about going into it.
+
+序章内容\cite{GPS1988--,杨洪升2013-56-75,马克思2013-302-302}
+正文内容一\cite{Andersen1995-42-49,BUSECK1980-117-211,Calkin2011-8-9}
+正文内容二\cite{Parsons2000b--,Parsons2000--,Parsons2000noloc--,Parsons2000nodate--}
+\cite{1977-49-49,亚洲地质图编目组1978-194-208,陈晋镳1980-56-114}
+
+
+
+\printbibliography[heading=subbibintoc,env=envtest,title=【参考文献】]
+\end{refsection}
+
+\chapter{文献表自定义}
+\begin{refsection}
+\section{文献表自定义}
+
+序章内容\cite{GPS1988--,杨洪升2013-56-75,马克思2013-302-302}
+正文内容一\cite{Andersen1995-42-49,BUSECK1980-117-211,Calkin2011-8-9}
+正文内容二\cite{Parsons2000b--,Parsons2000--,Parsons2000noloc--,Parsons2000nodate--}
+\cite{1977-49-49,亚洲地质图编目组1978-194-208,陈晋镳1980-56-114}
+
+\printbibliography[heading=subbibintoc,env=marginref,title=【参考文献】]
+\end{refsection}
+
+\chapter{文献表自定义}
+\begin{refsection}
+\section{文献表自定义}
+
+序章内容\cite{GPS1988--,杨洪升2013-56-75,马克思2013-302-302}
+正文内容一\cite{Andersen1995-42-49,BUSECK1980-117-211,Calkin2011-8-9}
+正文内容二\cite{Parsons2000b--,Parsons2000--,Parsons2000noloc--,Parsons2000nodate--}
+\cite{1977-49-49,亚洲地质图编目组1978-194-208,陈晋镳1980-56-114}
+
+\printbibliography[heading=subbibintoc,title=【参考文献】]
+\end{refsection}
+\end{document} 
