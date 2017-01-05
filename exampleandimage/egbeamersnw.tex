@@ -1,0 +1,53 @@
+%\let\itemudf=\item
+\documentclass{beamer}
+\usepackage{chemformula}
+\usepackage[utf8]{inputenc}
+\usepackage[german, english]{babel} % required for rendering German special characters
+\usepackage{siunitx} %pretty measurement unit rendering
+\usepackage{hyperref} %enable hyperlink for urls
+\usepackage{ragged2e}
+\usepackage[font=scriptsize,justification=justified]{caption}
+\usepackage{array,booktabs,tabularx}
+\usepackage[backend=biber,bibstyle=gb7714-2015-m,%nature,%
+citestyle=gb7714-2015,%,backref=true%gb，gbt7714_2005_n，
+align=left%
+]{biblatex}%biber，caspervector
+\renewcommand{\bibfont}{\footnotesize}
+\addbibresource[location=local]{bib.bib}
+\defbeamertemplate*{bibliography item}{numeric}
+{\hbox{[\printfield{labelnumber}]}}
+\setbeamertemplate{bibliography item}[numeric]%book,numeric
+
+
+\title{\huge Opto-fMRI of Monoaminergic Systems and Psychotropic Drugs}
+\author{Horea-Ioan Ioanas$^{1,2}$, Bechara Saab$^{2}$, Markus Rudin$^{1}$}
+\institute[ETH]{$^{1}$Institute for Biomedical Engineering, ETH and University of Zurich \\ $^{2}$Preclinical Laboratory for Translational Research into Affective Disorders, DPPP, Psychiatric Hospital, University of Zurich}
+\date{\today}
+
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+\fbox{img/ag1}%
+reference
+\cite{Paivi}
+\cite{Oegren2008}
+\end{frame}
+
+\begin{frame}
+\begin{block}{References}
+\footnotesize
+\printbibliography[heading=bibliography,title=bibliography]
+\end{block}
+\end{frame}
+
+\begin{frame}{References}
+\footnotesize
+\printbibliography[heading=bibliography,title=bibliography]
+\end{frame}
+
+\end{document}

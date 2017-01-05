@@ -1,0 +1,63 @@
+\documentclass{beamer}
+\usepackage{chemformula}
+\usepackage[utf8]{inputenc}
+\usepackage[german, english]{babel} % required for rendering German special characters
+\usepackage{siunitx} %pretty measurement unit rendering
+\usepackage{hyperref} %enable hyperlink for urls
+\usepackage{ragged2e}
+\usepackage[font=scriptsize,justification=justified]{caption}
+\usepackage{array,booktabs,tabularx}
+\usepackage[backend=biber,style=gb7714-2015%gb7714-2015,%nature,%
+%,backref=true%gb，gbt7714_2005_n，
+]{biblatex}%biber，caspervector
+\renewcommand{\bibfont}{\footnotesize}
+\addbibresource[location=local]{bib.bib}
+%颜色设置-有效
+\setbeamercolor{bibliography item}{fg=yellow}
+\setbeamercolor{bibliography entry author}{fg=red}
+\setbeamercolor{bibliography entry title}{fg=green}
+\setbeamercolor{bibliography entry location}{fg=blue}
+%\setbeamercolor{bibliography entry note}{fg=pink}
+\setbeamertemplate{bibliography item}[book]
+%段落格式设置-无效
+%\defbeamertemplate*{bibliography entry article}{default}{}
+%\defbeamertemplate*{bibliography entry title}{default}{\par}
+%\defbeamertemplate*{bibliography entry location}{default}{\par}
+%\defbeamertemplate*{bibliography entry note}{default}{\par}
+\setbeamertemplate{bibliography entry article}[default]
+\setbeamertemplate{bibliography entry title}[default]
+\setbeamertemplate{bibliography entry location}[default]
+\setbeamertemplate{bibliography entry note}[default]
+%\setbeamertemplate{bibliography entry article}{\newline}
+%\setbeamertemplate{bibliography entry title}{\newline}
+%\setbeamertemplate{bibliography entry location}{\newline}
+%\setbeamertemplate{bibliography entry note}{\newline}
+%字体设置-无效
+\setbeamerfont{bibliography item}{family=\rmfamily,size=\small,shape=\itshape}
+\setbeamertemplate{bibliography entry article}{shape=\itshape}
+\setbeamertemplate{bibliography entry title}{shape=\itshape}
+\setbeamertemplate{bibliography entry location}{shape=\itshape}
+\setbeamertemplate{bibliography entry note}{shape=\itshape}
+
+\title{\huge Opto-fMRI of Monoaminergic Systems and Psychotropic Drugs}
+\author{Horea-Ioan Ioanas$^{1,2}$, Bechara Saab$^{2}$, Markus Rudin$^{1}$}
+\institute[ETH]{$^{1}$Institute for Biomedical Engineering, ETH and University of Zurich \\ $^{2}$Preclinical Laboratory for Translational Research into Affective Disorders, DPPP, Psychiatric Hospital, University of Zurich}
+\date{\today}
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+\fbox{img/ag1}%
+reference
+\cite{Paivi}
+\cite{Oegren2008}
+\end{frame}
+
+\begin{frame}{References}
+\printbibliography[heading=bibliography,title=bibliography]
+\end{frame}
+
+\end{document}
