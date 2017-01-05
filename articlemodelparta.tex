@@ -236,6 +236,8 @@
 \newfloatlist{egcode}{loc}{\listegcodename}{\egcodename}
 \newfixedcaption{\codecaption}{egcode}
 %目录命令
+\renewcommand{\contentsname}{\Large\hfill 目~~录\hfill }
+\renewcommand{\listfigurename}{\Large\hfill 插~~图\hfill }
 %可以设置\cftbeforeZtitleskip，\cftafterZtitleskip长度，比如：
 \setlength{\cftbeforeloctitleskip}{\baselineskip}
 \setlength{\cftafterloctitleskip}{0.5\baselineskip}
@@ -399,7 +401,7 @@ citecolor=magenta]{hyperref}   %书签功能，选项去掉链接红色方框,
 %-------------------参考文献---------------------
 %\usepackage[backend=bibtex8,sorting=none,citestyle=authoryear,bibstyle=alphabetic]{biblatex}
 %采用分章的参考文献的快捷方法
-\usepackage[backend=biber,%
+\usepackage[backend=biber,backref=true,%
 style=gb7714-2015]{biblatex}%biber
 \renewcommand{\bibfont}{\zihao{-5}\songti}
 \setlength{\bibitemsep}{2pt}
