@@ -42,8 +42,12 @@
                                                 %use \kongge as separation
 
                                           %收稿等时间,第一/通信作者简介,
-\def\versionnumber{v1.0}    %版本和修改时间信息
-\def\versiondate{2016-12-07}
+%% history:
+%% 2016-12-07 v1.0
+%% 2017-01-05 v1.0a
+
+\def\versionnumber{v1.0a}    %版本和修改时间信息
+\def\versiondate{2017-01-05}
 \diyizuozhe{The files have version number \versionnumber, last revised \versiondate.\\ 第一作者简介：}
                                           %introduction of corresponding author
 \zuozhejianjie{HU ZHENZHEN，A \LaTeX ~LOVER，Email: hzzmail@163.com。}
@@ -536,7 +540,7 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 \begin{figure}[!htb]
 	\centering
 	% Requires \usepackage{graphicx}
-	\includegraphics[width=0.9\linewidth]{egbibdiv.pdf}\\
+	\fbox{\includegraphics[width=0.9\linewidth]{egbibdiv.pdf}}\\
 	\caption{全局参考文献综合示例}\label{fig:eg:global:complex}
 \end{figure}
 
@@ -849,7 +853,7 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 \end{figure}
 
 
-\subsection{参考文献内容格式}
+\subsection{参考文献内容格式}\label{sec:bib:content:md}
 
 参考文献内容格式的格式可以重定义biblatex宏包提供的命令来实现。
 
@@ -928,30 +932,30 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=0.85\textwidth,page=1]{egbibfont.pdf}}
+  \fbox{\includegraphics*[viewport=0cm 2cm 15cm 12cm,clip=true,scale=0.8,page=1]{egbibfont.pdf}}
   \caption{参考文献表格式默认字体字号六}\label{bib:font:normal}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=0.85\textwidth,page=2]{egbibfont.pdf}}
+  \fbox{\includegraphics*[viewport=0cm 4.5cm 15cm 12cm,clip=true,scale=0.8,page=2]{egbibfont.pdf}}
   \caption{参考文献表格式仿宋字体字号六}\label{bib:font:fs}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=0.85\textwidth,page=3]{egbibfont.pdf}}
+  \fbox{\includegraphics*[viewport=0cm 3cm 15cm 12cm,clip=true,scale=0.8,page=3]{egbibfont.pdf}}
   \caption{参考文献表格式等宽字体字号六}\label{bib:font:tt}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=0.85\textwidth,page=4]{egbibfont.pdf}}
+  \fbox{\includegraphics*[viewport=0cm 4.5cm 15cm 12cm,clip=true,scale=0.8,page=4]{egbibfont.pdf}}
   \caption{参考文献表格式楷书字体字号六}\label{bib:font:kt}
 \end{figure}
 
 \subsubsection{自定义环境举例}
-如上一小节所述，可以利用defbibenvironment命令来自定义参考文献环境，其代码格式为如例\ref{bib:bibenvironment:eg}所示。其中还给出了顺序制样式的基本环境。对list的水平参数进行设置，以达到参考文献内容缩进对齐的效果。其中默认情况下，标签是右对齐的。如果要修改对齐方式为左对齐，可以有两种方式，一是设置域格式labelnumberwidth，二是进一步重设makelabel命令，如例\ref{bib:alignleft:eg}所示，两种方式选其一即可。事实上，我们看GB/T 7714 2015标准可以发现，其中顺序制的参考文献表中标签样式不是全部文献内容对齐，而是以当前参考文献项自身为基准进行对齐，这种方式如果通过list环境来实现修改起来会比较麻烦，因为其leftmargin需要根据每一项重设，熟悉list环境源码的朋友可以尝试一下。当然如果不使用list环境，我们可以利用hangindent或parshape来实现段落的格式。例\ref{bib:aligngbt:eg}给出了本文作者的一种实现方式，其中需要重定义\verb|\blx@bibitem|命令。详细的内容可以参考:\href{run:./exampleandimage/egbibenv.tex}{tex源文件}，其结果如图\ref{bib:env:gb}所示。
+如上一小节所述，可以利用defbibenvironment命令来自定义参考文献环境，其代码格式为如例\ref{bib:bibenvironment:eg}所示。其中还给出了顺序制样式的基本环境。对list的水平参数进行设置，以达到参考文献内容缩进对齐的效果。其中默认情况下，标签是右对齐的。如果要修改对齐方式为左对齐，可以有两种方式，一是设置域格式labelnumberwidth，二是进一步重设makelabel命令，如例\ref{bib:alignleft:eg}所示，两种方式选其一即可。事实上，我们看GB/T 7714 2015标准可以发现，其中顺序制的参考文献表中标签样式不是全部文献内容对齐，而是以当前参考文献项自身为基准进行对齐，这种方式如果通过list环境来实现修改起来会比较麻烦，因为其leftmargin需要根据每一项重设，熟悉list环境源码的朋友可以尝试一下。当然如果不使用list环境，我们可以利用hangindent或parshape来实现段落的格式。例\ref{bib:aligngbt:eg}给出了本文作者的一种实现方式，其中需要重定义\verb|\blx@bibitem|命令。详细的内容可以参考:\href{run:./exampleandimage/egbibenv.tex}{tex源文件}，其结果如图\ref{bib:env:gb}所示，注意其中参考文献条目的顺序编码序号是用一个新的计数器处理的，事实上biblatex有提供相应的信息，利用该信息的一种实现可以参考biblatex-gb7714-2015样式包的gb7714-2015.bbx文件。
 \begin{codetex}{自定义参考文献表环境举例}{bib:bibenvironment:eg}
 %defbibenvironment命令格式为:
 \defbibenvironment{环境名}{环境开始代码}{环境结束代码}{各项的代码}
@@ -978,7 +982,8 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 \renewcommand*{\makelabel}[1]{\hss##1\hfill}
 \end{codetex}
 
-\begin{codetex}{GB/T 7714 2015方式的参考文献表环境}{bib:aligngbt:eg}
+\begin{codetex}{以当前条目为基准对齐的参考文献表环境}{bib:aligngbt:eg}
+%file:egbibenv.tex
 \makeatletter
 \def\blx@bibitem#1{%
   \blx@ifdata{#1}
@@ -1031,19 +1036,19 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=0.85\textwidth,page=2]{egbibenv.pdf}}
-  \caption{GB/T 7714 2015方式的参考文献表环境}\label{bib:env:gb}
+  \fbox{\includegraphics*[viewport=0cm 2cm 15cm 15cm,clip=true,scale=0.8,page=2]{egbibenv.pdf}}
+  \caption{以当前条目为基准对齐的参考文献表环境}\label{bib:env:gb}
 \end{figure}
 
 
-\subsection{参考文献著录和标注样式}
+\subsection{参考文献著录和标注样式}\label{sec:bib:style}
 参考文献著录和标注样式是排版的主要内容之一，但对于普通用户来说只要学会选择使用即可，因为其格式已经由样式作者所设定。当然如果用户需要在某种样式的基础上有进一步的修改，那么完全可以开展这方面的工作。其中著录样式的在*.bbx文件中修改，而标注样式在*.cbx文件中修改。
 \subsubsection{标准样式}
 biblatex提供了一些标准的样式，比如numeric，authoryear，这两个样式是比较常用的，也是样式作者定制自定义样式的重要基础。biblatex还提供了更多著录样式，比如alphabetic，authortitle，verbose等，详见biblatex手册Bibliography Styles一节。标注样式也还有numeric-comp，numeric-verb，alphabetic，authortitle等，详见biblatex手册Citation Styles一节。
 
 读者可以测试这些样式的效果，以便在需要的时候选择使用，而且著录和标注可以分别使用不同的样式，著录是一种，而标注则是另一种。需要注意: 还有一种情况是在同一种标注样式下有的标注需要是上标，有的则不需要，而且这种应用看来是比较常见的，网友海阔天空和xmtangjun都提出了这种需求，在标准样式下有supercite命令提供上标模式，而cite和parencite命令提供非上标模式。而在下一节的gb7714-2015样式中，xmtangjun朋友提出把已经修改成上标模式parencite恢复成非上标模式，那么可以由cite命令提供上标模式，而parencite命令提供非上标模式，这种方法是可取的。
 
-\subsubsection{gb7714-2015}
+\subsubsection{gb7714-2015样式}
 本文的作者在学习GB/T 7714-2015标准的基础上，定制了符合该标准的gb7714-2015样式包，分顺序制和作者年制两类。其加载方式见例\ref{code:pkg:load}。
 
 样式包的主要特点包括:
@@ -1083,7 +1088,7 @@ texlive 2016 当然也可以用这种方式离线安装。
 总的来说，因为biblatex提供了参考文献数据的完全访问能力，所以定义任何需要的样式都是可能的。因此用户一定可以选择合适的样式或者定制合适的样式来满足自身需要。
 
 \subsubsection{快速定制/临时定制}
-有的时候对于参考文献格式会有一些特殊的需求，而且往往这些格式并没有一个对应能够满足其要求的参考文献样式包,这种情况下就需要进行定制,比如\cite{olqa2016--}提出的问题。在latex传统方法中，当文献量较小时，这种临时定制采用thebibliography环境是比较方便的，因为thebibliography 环境显式的将其中的内容插入，因此需要什么样的格式，那么就在bibitem中输入指定格式的条目内容即可。但该环境存在一个问题即: 无论引用与否环境中的参考文献都会全部打印。该环境也可以用来生成多个参考文献表，当然文献量较大时采用这种手动输入方式毕竟是繁琐的。
+有的时候对于参考文献格式会有一些特殊的需求，而且往往这些格式并没有一个对应能够满足其要求的参考文献样式包,这种情况下就需要进行定制,比如\parencite{olqa2016--}提出的问题。在latex传统方法中，当文献量较小时，这种临时定制采用thebibliography环境是比较方便的，因为thebibliography 环境显式的将其中的内容插入，因此需要什么样的格式，那么就在bibitem中输入指定格式的条目内容即可。但该环境存在一个问题即: 无论引用与否环境中的参考文献都会全部打印。该环境也可以用来生成多个参考文献表，当然文献量较大时采用这种手动输入方式毕竟是繁琐的。
 
 事实上利用biblatex可以实现快速的定制，biblatex宏包使用手册的Bibliography Style Files给出了样式文件定义的一般模式和方法。依据该模式是容易实现样式快速定制的，因为在一般情况下定制样式文件，其实并不需要处理太多的内容。总结起来，定制简单的参考文献格式需要处理的主要内容包括:
 \begin{enumerate}
@@ -1114,7 +1119,7 @@ texlive 2016 当然也可以用这种方式离线安装。
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=0.8\textwidth,page=1]{egstylecustomize.pdf}}
+  \fbox{\includegraphics*[viewport=0cm 1cm 20cm 19cm,clip=true,scale=0.8,page=1]{egstylecustomize.pdf}}
   \caption{参考文献样式快速定制}\label{bib:style}
 \end{figure}
 
@@ -1122,18 +1127,19 @@ texlive 2016 当然也可以用这种方式离线安装。
 \ProvidesFile{studf.bbx}[2016/12/07 v1.0e biblatex bibliography style]
 略，详见源文件。
 \end{codetex}
-源代码见\href{run:./exampleandimage/studf.bbx}{tex文件}。
+源代码见\href{run:./exampleandimage/studf.bbx}{studf.bbx}，
+测试文件见\href{run:./exampleandimage/egstylecustomize.tex}{egstylecustomize.tex}。
 
 如果对于中文参考文献需要一些特殊的处置,那么可以基于gb7714-2015进行修改,如例\ref{style:customize:gb}给出的代码。其结果如图\ref{bib:style:gba}，\ref{bib:style:gbb}所示。
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=0.7\textwidth,page=1]{egstylecustomizegb.pdf}}
+  \fbox{\includegraphics[viewport=0cm 1.5cm 12cm 20.5cm,clip=true,scale=0.8,page=1]{egstylecustomizegb.pdf}}
   \caption{国标风格的参考文献样式快速定制A}\label{bib:style:gba}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=0.7\textwidth,page=2]{egstylecustomizegb.pdf}}
+  \fbox{\includegraphics[viewport=0cm 8cm 12cm 20.5cm,clip=true,scale=0.8,page=2]{egstylecustomizegb.pdf}}
   \caption{国标风格的参考文献样式快速定制B}\label{bib:style:gbb}
 \end{figure}
 
@@ -1141,7 +1147,8 @@ texlive 2016 当然也可以用这种方式离线安装。
 \ProvidesFile{gbudf.bbx}[2016/12/07 v1.0e biblatex bibliography style]
 略，详见源文件。
 \end{codetex}
-源代码见\href{run:./exampleandimage/gbudf.bbx}{tex文件}。
+源代码见\href{run:./exampleandimage/gbudf.bbx}{gbudf.bbx}，
+测试文件见\href{run:./exampleandimage/egstylecustomizegb.tex}{egstylecustomizegb.tex}。
 
 \subsection{多语言文献}
 
@@ -1528,6 +1535,7 @@ and keyword=standard
 \subsection{beamer类中的参考文献}\label{sec:bib:inbeamer}
 在beamer类中使用biblatex生成参考文献与一般文档类中大体上一致，略有差别，主要是refsection无法使用。在实际应用中，beamer 类有两种文献表是主要的，一是文末的文献表，二是脚注中的文献表。
 
+\subsubsection{文末文献表和脚注文献表}
 文末的文献表，一般示全局文献，所以可以不使用任何的refsection或者refsegment，也可以使用refsegment环境。不用refsegment时在frame中需要引用文献的位置加入cite等命令，在某一frame中printbibliography打印输出即可。使用refsegment环境时，将引用参考文献的内容包含在各个refsegment环境中，然后使用一个全局的printbibliography命令遍历各个refsegment打印输出。这两种方法在beamer中都可以使用。
 
 脚注中的文献表类似于一般文档类中的做法，使用biblatex提供的footfullcite命令即可。例\ref{eg:bib:beamer}给出了一个测试代码。其结果如图\ref{fig:eg:bibinbeamerfoot}，\ref{fig:eg:bibinbeamer}所示。
@@ -1586,6 +1594,116 @@ Biblatex宏包使用和GB/T7714-2015参考文献样式}
   \centering
   \fbox{\includegraphics[width=\figwd\textwidth,page=3]{egbibinbeamer.pdf}}
   \caption{beamer类全局参考文献表}\label{fig:eg:bibinbeamer}
+\end{figure}
+
+\subsubsection{文献表中的条目序号}
+
+因为beamer类中重定义了一些内容，比如空格，list环境的标签等，或者因为一些非标准标签的块环境自定义，biblatex默认使用的文献表环境，可能会导致文献表的序号丢失(图\ref{fig:eg:bibinblock:nsw}中文献表只有第一条有序号)或者不是想要的顺序编码的标签(图\ref{fig:eg:bibinbeamer}中的文献表就是一个图标，而不是一个序号，这也许不是想要的)。这个序号丢失的问题来自ctex论坛的提问\cite{olqa2016--}。
+
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics*[viewport=38cm 15.5cm 83cm 28.5cm,clip=true,scale=0.25]{egpostersnw.pdf}}
+  %\fbox{}%bb=40cm 10cm 83cm 30cm,bbllx=40cm,bblly=10cm,bburx=83cm,bbury=30cm
+  \caption{一个自定义block中参考文献表(序号丢失)}\label{fig:eg:bibinblock:nsw}
+\end{figure}
+
+这种情况下，要得到参考文献表的顺序编码序号，有两种方法: 一是使用自定义的参考文献环境，避免使用基于list的环境，二是将list环境命令的标签重新设置回来。第一种方法比如利用gb7714-2015样式文件，设置其align选项为gb7714-2015就可以得到顺序标签，
+代码如例\ref{eg:bib:beamer:sngb}所示，结果如图\ref{fig:eg:bibinbeamer:sngb}所示。第二种方法，最方便的是设置beamer的内部主题，比如defbeamertemplate*\{bibliography item\}和setbeamertemplate\{bibliography item\}，
+代码如例\ref{eg:bib:beamer:sninner}所示，结果如图\ref{fig:eg:bibinbeamer:sninner}所示，其中利用setbeamertemplate\{bibliography item\}命令也可以设置成其他标签形式，beamer标准主题\pagescite[][96]{Tantau2015--}提供了default，article，book，online，triangle，text等6种形式，当不想要例\ref{fig:eg:bibinbeamer:sninner}中顺序编码标签时，完全可以选择这些标签形式。
+
+\begin{codetex}{beamer中biblatex使用gb7714-2015定义的align=gb7714-2015选项}{eg:bib:beamer:sngb}
+%file:egbeamersn.tex
+\usepackage[backend=biber,bibstyle=gb7714-2015-m,%nature,%
+citestyle=gb7714-2015,%,backref=true%gb，gbt7714_2005_n，
+align=gb7714-2015%
+]{biblatex}%biber，caspervector
+\renewcommand{\bibfont}{\footnotesize}
+\addbibresource[location=local]{bib.bib}
+\end{codetex}
+
+\begin{codetex}{beamer中biblatex利用内部主题设置文献表标签}{eg:bib:beamer:sninner}
+%file:egbeamersnw.tex
+\usepackage[backend=biber,bibstyle=gb7714-2015-m,%nature,%
+citestyle=gb7714-2015,%,backref=true%gb，gbt7714_2005_n，
+align=left%
+]{biblatex}%biber，caspervector
+\renewcommand{\bibfont}{\footnotesize}
+\addbibresource[location=local]{bib.bib}
+\defbeamertemplate*{bibliography item}{numeric}
+{\hbox{[\printfield{labelnumber}]}}
+\setbeamertemplate{bibliography item}[numeric]%book,numeric
+\end{codetex}
+
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[viewport=0.5cm 3cm 12.3cm 7cm,clip=true,scale=0.8,page=3]{egbeamersn.pdf}}
+  \caption{beamer中biblatex使用gb7714-2015定义的align=gb7714-2015选项后的文献表}\label{fig:eg:bibinbeamer:sngb}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[viewport=0.5cm 3cm 12.3cm 7cm,clip=true,scale=0.8,page=3]{egbeamersnw.pdf}}
+  \caption{beamer中biblatex利用内部主题设置文献表标签后的文献表}\label{fig:eg:bibinbeamer:sninner}
+\end{figure}
+
+但需要注意的是，第二种方法对于标准beamer类或符合其规范的环境下才有效，对于一些自定义的环境可能无法起到作用，
+比如在\href{run:./exampleandimage/egpostersnw.tex}{egpostersnw.tex文件}中的自定义的myblock环境中就没有效果。因此只能采用第一种方法，具体见\href{run:./exampleandimage/egpostersn.tex}{egpostersn.tex文件}的内容。其结果如图\ref{fig:eg:bibinblock:ns}所示。
+
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics*[viewport=38cm 15.5cm 83cm 28.5cm,clip=true,scale=0.25]{egpostersn.pdf}}
+  %\fbox{}%bb=40cm 10cm 83cm 30cm,bbllx=40cm,bblly=10cm,bburx=83cm,bbury=30cm
+  \caption{自定义block中使用gb7714-2015定义的align=gb7714-2015选项后的文献表}\label{fig:eg:bibinblock:ns}
+\end{figure}
+
+观察egpostersnr.tex文件所使用的主题beamerthemeZH.sty，理论上看beamer中定义block应该不会导致序号丢失的，但为什么这里就丢失了呢？仔细查看后，发现其中使用了ragged2e宏包中的justify命令，但事实上ragged2e说明文档中并没有该命令，而指有justifying命令，所以序号丢失的问题我估计是主题作者的justifying命令笔误了，导致了一些未知的问题。事实上只要把这个命令改回来，就不存在丢失的问题了，那么第二种方法的应用自然也没有问题。
+详见\href{run:./exampleandimage/egpostersnr.tex}{egpostersnr.tex}，
+\href{run:./exampleandimage/egpostersnr.tex}{egpostersnr.pdf}，
+\href{run:./exampleandimage/beamerthemeZHM.sty}{beamerthemeZHM.sty}文件，其中beamerthemeZHM.sty就是原beamerthemeZH.sty文件的修正。
+
+\subsubsection{beamer中biblatex参考文献表内容格式}
+参考文献表的内容格式(包括段落、字体和颜色等)的修改，除了可以利用biblatex提供的钩子(见\ref{sec:bib:content:md}节)、自定义参考文献环境(见\ref{sec:bib:content:md}节)、设计和使用特定的参考文献样式(见\ref{sec:bib:style}节)外，还可以利用beamer主题进行修改，可以从Template/Color/Font三个角度进行修改。从实践看，因为biblatex中给出的各条目参考文献中各块各单元都是一个编组，且这些编组都有其相应的域格式控制，因此段落格式(包括标点)和字体是不能通过beamer主题修改的，而因为biblatex的各单元的域格式并没有对颜色进行设置，因此beamer主题可以修改其颜色，代码如例\ref{eg:bib:beamer:color}所示，
+结果如图\ref{fig:eg:bibinbeamer:color}所示。这里格式添加的原理是在条目开始时添加一个设置信息，遇到一个block时又添加一个设置信息，因为biblatex没有对域格式进行颜色设置，所以在各单元的编组外的颜色设置信息能够起到作用，而字体和标点设置信息因为编组内就有，编组外的设置信息自然无法起到作用。这里的遇到block产生添加信息也无非两条路子，一是重定义newblock命令，二是使用appto等命令在其后或前添加命令。
+
+\begin{codetex}{beamer中biblatex利用颜色主题设置文献颜色}{eg:bib:beamer:color}
+%file:egbeamer.tex
+\usepackage[backend=biber,style=gb7714-2015%gb7714-2015,%nature,%
+%,backref=true%gb，gbt7714_2005_n，
+]{biblatex}%biber，caspervector
+\renewcommand{\bibfont}{\footnotesize}
+\addbibresource[location=local]{bib.bib}
+%颜色设置-有效
+\setbeamercolor{bibliography item}{fg=yellow}
+\setbeamercolor{bibliography entry author}{fg=red}
+\setbeamercolor{bibliography entry title}{fg=green}
+\setbeamercolor{bibliography entry location}{fg=blue}
+%\setbeamercolor{bibliography entry note}{fg=pink}
+\setbeamertemplate{bibliography item}[book]
+%段落格式设置-无效
+%\defbeamertemplate*{bibliography entry article}{default}{}
+%\defbeamertemplate*{bibliography entry title}{default}{\par}
+%\defbeamertemplate*{bibliography entry location}{default}{\par}
+%\defbeamertemplate*{bibliography entry note}{default}{\par}
+\setbeamertemplate{bibliography entry article}[default]
+\setbeamertemplate{bibliography entry title}[default]
+\setbeamertemplate{bibliography entry location}[default]
+\setbeamertemplate{bibliography entry note}[default]
+%\setbeamertemplate{bibliography entry article}{\newline}
+%\setbeamertemplate{bibliography entry title}{\newline}
+%\setbeamertemplate{bibliography entry location}{\newline}
+%\setbeamertemplate{bibliography entry note}{\newline}
+%字体设置-无效
+\setbeamerfont{bibliography item}{family=\rmfamily,size=\small,shape=\itshape}
+\setbeamertemplate{bibliography entry article}{shape=\itshape}
+\setbeamertemplate{bibliography entry title}{shape=\itshape}
+\setbeamertemplate{bibliography entry location}{shape=\itshape}
+\setbeamertemplate{bibliography entry note}{shape=\itshape}
+\end{codetex}
+
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[viewport=0.5cm 3cm 12.3cm 7cm,clip=true,scale=0.85,page=3]{egbeamer.pdf}}
+  \caption{beamer中biblatex利用颜色主题设置文献颜色}\label{fig:eg:bibinbeamer:color}
 \end{figure}
 
 
