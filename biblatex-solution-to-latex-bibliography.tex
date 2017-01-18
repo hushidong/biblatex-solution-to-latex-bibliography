@@ -43,11 +43,12 @@
 
                                           %收稿等时间,第一/通信作者简介,
 %% history:
-%% 2016-12-07 v1.0
-%% 2017-01-05 v1.0a
+%% 2016-12-07 v1.0  完成基本内容
+%% 2017-01-05 v1.0a beamer类下的内容完善
+%% 2017-01-18 v1.0b 修正一些错别字，加了后记
 
-\def\versionnumber{v1.0a}    %版本和修改时间信息
-\def\versiondate{2017-01-05}
+\def\versionnumber{v1.0b}    %版本和修改时间信息
+\def\versiondate{2017-01-18}
 \diyizuozhe{The files have version number \versionnumber, last revised \versiondate.\\ 第一作者简介：}
                                           %introduction of corresponding author
 \zuozhejianjie{HU ZHENZHEN，A \LaTeX ~LOVER，Email: hzzmail@163.com。}
@@ -1054,7 +1055,7 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
 样式包的主要特点包括:
 \begin{enumerate}
   \item 实现了GB/T 7714-2015标准的完整功能，不仅包括两种编制方式下的各类型参考文献著录格式和标注格式等基本内容，还包括:双语文献格式，带页码的标注格式，作者年制下文献的自动排序和仅有年的标注格式，两种编码制方式下责任者缺省不同处理，其他信息缺省时的自动处理，一些信息如页码卷期等自动解析等特殊功能，而且增加了一个顺序编码制的标签对齐选项，提供右对齐、左对齐和项对齐三种方式。
-  \item 实现了用户文献数据录入优化，用户在录入参考文献数据的时候，只需要录入文献的实际信息即可，不需要录入文献标识符和载体标识符，不需要录入language或者其它域信息用来区分中英文文献，完全实现自动中英文判断并处理。仅需要针对报纸文章和标准文章在note域输入news和standard用以区分。
+  \item 实现了用户文献数据录入优化，用户在录入参考文献数据的时候，只需要录入文献的实际信息即可，不需要录入文献标识符和载体标识符，不需要录入language或者其它域信息用来区分中英文文献，完全实现自动中英文判断并处理。仅需要针对报纸文章和标准文章在note域输入news和standard 用以区分。
   \item 实现了对biblatex不同版本的兼容，能够应用于biblatex3.2以前的老版本，也能用于3.3以后姓名处理方式改变后的版本。即可以与texlive2014/2015/2016配合使用，无需升级biblatex情况下安装biblatex-gb7714-2015宏包即可使用。
   \item 实现了常规文档类book/report/article以及beamer类下的样式文件测试，均能达到要求。文档详细介绍了各条目类型的著录格式及其在biblatex 中对应域的构成，以及域信息的录入方法和一些注意点，说明了样式文件的使用方法和注意事项，并严格按照GB/T 7714-2015 标准测试了各种类型的文献。
 \end{enumerate}
@@ -1414,9 +1415,9 @@ anchorcolor=violet,citecolor=magenta]{hyperref}%书签功能，选项去掉链�
   \caption{旁注中的参考文献表}\label{fig:eg:bibinmargin}
 \end{figure}
 
-\subsubsection{使用自定义方式环境方式实现旁注文献表}
+\subsubsection{使用自定义环境实现旁注文献表}
 
-旁注的文献表还可以通过自定义参考文献环境命令的方式实现，这种方式下可以同时存在脚注和旁注参考文献。例\ref{eg:bib:infootmargin}给出了测试代码，这也是参考文献表环境定义的一个例子。需要注意，这里定义的命令中使用了kewword域中的引用关键词信息，这一信息是由gb7714-2015样式文件处理提供的，所以使用这种方式必须加载gb7714-2015样式。而且这里的环境定义相对比较简单，可以进一步改进。或者也可以利用biblatex提供的接口使用文献的条目类型驱动，具体可以参考biblatex宏包说明的Mixing Programming Interfaces 一节。
+旁注的文献表还可以通过自定义参考文献环境命令的方式实现，这种方式下可以同时存在脚注和旁注参考文献。例\ref{eg:bib:infootmargin}给出了测试代码，这也是参考文献表环境定义的一个例子。需要注意，这里定义的命令中使用了kewword域中的引用关键词信息，这一信息是由gb7714-2015样式文件处理后提供的，所以使用这种方式必须加载gb7714-2015样式。而且这里的环境定义相对比较简单，可以进一步改进。或者也可以利用biblatex提供的接口使用文献的条目类型驱动，具体可以参考biblatex宏包说明的Mixing Programming Interfaces 一节。
 
 \begin{codetex}{另一种脚注和旁注参考文献表}{eg:bib:infootmargin}
 %file:egbibinfootmargin
@@ -1478,7 +1479,9 @@ text text text text text text text text text
 \subsection{文献表分类筛选打印}
 
 除了前述的分章节打印外参考文献可以分类筛选打印，主要基于printbibliography命令的type，nottype，keyword，notkeyword，category，notcategory，filter选项来实现，其中category和filter是需要人工定义的。
-type，nottype分别表示打印是和不是某种条目类型的文献，keyword，notkeyword分别表示打印keywords域中含有或不含有某一个关键词的文献，category，notcategory分别表示是或不是某一设定的category的文献，filter表示属于某一设定筛选器的文献。注意因为category必须要在导言区设置，其实使用并不方便。例\ref{eg:bib:filter}给出了这些选项的测试，分别利用type和keyword区分了图书等文献，定义了collections和standard两个筛选器用于打印论文集会议录和标准文献，定义了名为reportandthesis的category用于打印学位论文和报告。结果如图\ref{fig:eg:bibfilter}所示。
+type，nottype分别表示打印是和不是某种条目类型的文献，keyword，notkeyword分别表示打印keywords域中含有或不含有某一个关键词的文献，category，notcategory分别表示是或不是某一设定的category的文献，filter表示属于某一设定筛选器的文献。注意因为category必须要在导言区设置，其实使用并不方便。
+
+例\ref{eg:bib:filter}给出了这些选项的测试，分别利用type和keyword区分了图书等文献，定义了collections和standard两个筛选器用于打印论文集会议录和标准文献，定义了名为reportandthesis的category用于打印学位论文和报告。结果如图\ref{fig:eg:bibfilter}所示。
 
 \begin{codetex}{分类筛选打印参考文献表}{eg:bib:filter}
 %file:egbibfilter
@@ -1533,10 +1536,10 @@ and keyword=standard
 \end{figure}
 
 \subsection{beamer类中的参考文献}\label{sec:bib:inbeamer}
-在beamer类中使用biblatex生成参考文献与一般文档类中大体上一致，略有差别，主要是refsection无法使用。在实际应用中，beamer 类有两种文献表是主要的，一是文末的文献表，二是脚注中的文献表。
+在beamer类中使用biblatex生成参考文献与一般文档类中大体上一致，略有差别，主要是refsection环境无法使用。在实际应用中，beamer 类有两种文献表是主要的，一是文末的文献表，二是脚注中的文献表。
 
 \subsubsection{文末文献表和脚注文献表}
-文末的文献表，一般示全局文献，所以可以不使用任何的refsection或者refsegment，也可以使用refsegment环境。不用refsegment时在frame中需要引用文献的位置加入cite等命令，在某一frame中printbibliography打印输出即可。使用refsegment环境时，将引用参考文献的内容包含在各个refsegment环境中，然后使用一个全局的printbibliography命令遍历各个refsegment打印输出。这两种方法在beamer中都可以使用。
+文末的文献表，一般是全局文献，所以可以不使用任何的refsection或者refsegment，也可以使用refsegment环境。不用refsegment时，在frame中需要引用文献的地方加入cite等命令，在某一frame中用printbibliography打印输出即可。使用refsegment环境时，将引用参考文献的内容包含在各个refsegment环境中，然后使用一个全局的printbibliography命令遍历各个refsegment打印输出。这两种方法在beamer中都可以使用。
 
 脚注中的文献表类似于一般文档类中的做法，使用biblatex提供的footfullcite命令即可。例\ref{eg:bib:beamer}给出了一个测试代码。其结果如图\ref{fig:eg:bibinbeamerfoot}，\ref{fig:eg:bibinbeamer}所示。
 
@@ -1656,14 +1659,17 @@ align=left%
   \caption{自定义block中使用gb7714-2015定义的align=gb7714-2015选项后的文献表}\label{fig:eg:bibinblock:ns}
 \end{figure}
 
-观察egpostersnr.tex文件所使用的主题beamerthemeZH.sty，理论上看beamer中定义block应该不会导致序号丢失的，但为什么这里就丢失了呢？仔细查看后，发现其中使用了ragged2e宏包中的justify命令，但事实上ragged2e说明文档中并没有该命令，而指有justifying命令，所以序号丢失的问题我估计是主题作者的justifying命令笔误了，导致了一些未知的问题。事实上只要把这个命令改回来，就不存在丢失的问题了，那么第二种方法的应用自然也没有问题。
+观察egpostersnr.tex文件所使用的主题beamerthemeZH.sty，理论上看beamer中定义block应该不会导致序号丢失的，但为什么这里就丢失了呢？仔细查看后，发现其中使用了ragged2e宏包中的justify命令，但事实上ragged2e说明文档中并没有该命令，而只有justifying命令，所以序号丢失的问题我估计是主题作者的justifying命令笔误了，导致了一些未知的问题。事实上只要把这个命令改回来，就不存在丢失的问题了，那么第二种方法的应用自然也没有问题。
 详见\href{run:./exampleandimage/egpostersnr.tex}{egpostersnr.tex}，
 \href{run:./exampleandimage/egpostersnr.tex}{egpostersnr.pdf}，
 \href{run:./exampleandimage/beamerthemeZHM.sty}{beamerthemeZHM.sty}文件，其中beamerthemeZHM.sty就是原beamerthemeZH.sty文件的修正。
 
 \subsubsection{beamer中biblatex参考文献表内容格式}
-参考文献表的内容格式(包括段落、字体和颜色等)的修改，除了可以利用biblatex提供的钩子(见\ref{sec:bib:content:md}节)、自定义参考文献环境(见\ref{sec:bib:content:md}节)、设计和使用特定的参考文献样式(见\ref{sec:bib:style}节)外，还可以利用beamer主题进行修改，可以从Template/Color/Font三个角度进行修改。从实践看，因为biblatex中给出的各条目参考文献中各块各单元都是一个编组，且这些编组都有其相应的域格式控制，因此段落格式(包括标点)和字体是不能通过beamer主题修改的，而因为biblatex的各单元的域格式并没有对颜色进行设置，因此beamer主题可以修改其颜色，代码如例\ref{eg:bib:beamer:color}所示，
-结果如图\ref{fig:eg:bibinbeamer:color}所示。这里格式添加的原理是在条目开始时添加一个设置信息，遇到一个block时又添加一个设置信息，因为biblatex没有对域格式进行颜色设置，所以在各单元的编组外的颜色设置信息能够起到作用，而字体和标点设置信息因为编组内就有，编组外的设置信息自然无法起到作用。这里的遇到block产生添加信息也无非两条路子，一是重定义newblock命令，二是使用appto等命令在其后或前添加命令。
+参考文献表的内容格式(包括段落、字体和颜色等)的修改，除了可以利用biblatex提供的钩子(见\ref{sec:bib:content:md}节)、自定义参考文献环境(见\ref{sec:bib:content:md}节)、设计和使用特定的参考文献样式(见\ref{sec:bib:style}节)外，还可以利用beamer主题进行修改，可以从Template/Color/Font三个角度进行修改。
+
+从实践看，因为biblatex中给出的各条目参考文献中各块各单元都是一个编组，且这些编组都有其相应的域格式控制，因此段落格式(包括标点)和字体是不能通过beamer主题修改的，而因为biblatex的各单元的域格式并没有对颜色进行设置，因此beamer主题可以修改其颜色，代码如例\ref{eg:bib:beamer:color}所示，结果如图\ref{fig:eg:bibinbeamer:color}所示。
+
+这里格式添加的原理是在条目开始时添加一个设置信息，遇到一个block时又添加一个设置信息，因为biblatex没有对域格式进行颜色设置，所以在各单元的编组外的颜色设置信息能够起到作用，而字体和标点设置信息因为编组内就有，编组外的设置信息自然无法起到作用。这里的遇到block产生添加信息也无非两条路子，一是重定义newblock命令，二是使用appto等命令在其后或前添加命令。
 
 \begin{codetex}{beamer中biblatex利用颜色主题设置文献颜色}{eg:bib:beamer:color}
 %file:egbeamer.tex
@@ -1710,6 +1716,8 @@ align=left%
 \section{结论}
 通过本文的工作给出了\LaTeX 文档中文参考文献相关问题的biblatex解决方案包括:基本参考文献生成、分章参考文献、指定格式的著录和标注样式等，基本能够满足日常的各类参考文献生成需求，能够为\LaTeX 文档写作提供帮助。
 
+\section{后记}
+因水平有限，难免存在一些错误，欢迎各位朋友批评指正。如果使用biblatex生成参考文献过程中遇到什么问题，也可以邮件联系，我们可以互相交流。
 
 %%----------------------------------------------------------------
 \input{articlemodelpartc.tex}
