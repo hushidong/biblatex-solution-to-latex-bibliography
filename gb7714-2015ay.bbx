@@ -105,12 +105,11 @@
 
 %=====================================================================
 %设置宏包选项
+\iftoggle{iftexlivesix}{% Alter settings that carry through from biblatex
+%biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
 %增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
 %因为在作者年制中，不需要使用，这里也增加，为了与顺序年制的兼容性考虑。
 \DeclareBibliographyOption[string]{align}[right]{}%
-
-\iftoggle{iftexlivesix}{% Alter settings that carry through from biblatex
-%biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
 \ExecuteBibliographyOptions{
   useprefix = true,  %名字的信息包括前缀
   %firstinits = true,    %名字有缩写，参考3.1.2.3 Internal
@@ -122,6 +121,9 @@
   minbibnames=3,
 }}
 {%biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
+%增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
+%因为在作者年制中，不需要使用，这里也增加，为了与顺序年制的兼容性考虑。
+\DeclareBibliographyOption{align}[right]{}%
 \ExecuteBibliographyOptions{
   useprefix = true,  %名字的信息包括前缀
   firstinits = true,    %名字有缩写，参考3.1.2.3 Internal
