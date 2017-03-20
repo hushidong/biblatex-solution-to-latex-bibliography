@@ -10,7 +10,7 @@ call compiler
 
 cd ..
 
-call gbtclear
+call makeclear
 
 xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
@@ -20,7 +20,7 @@ xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
 xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
-call gbtclear
+::call makeclear
 
 
 
