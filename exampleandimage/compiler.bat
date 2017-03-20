@@ -2,7 +2,7 @@
 
 setlocal enabledelayedexpansion
 for  %%a in ( eg*.tex ) do (
-call gbtclear
+call makeclear
 set jobfile=%%a
 set jobname=!jobfile:~0,-4!
 echo %%a
@@ -14,6 +14,6 @@ xelatex.exe --synctex=-1 !jobfile!
 )
 setlocal DISABLEDELAYEDEXPANSION
 
-call gbtclear
+call makeclear
 
 ::pause

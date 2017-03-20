@@ -11,7 +11,7 @@ cd exampleandimage
 
 cd ..
 
-./gbtclear.sh
+./makeclear.sh
 
 xelatex --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
@@ -21,6 +21,6 @@ xelatex --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
 xelatex --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
-./gbtclear.sh
+./makeclear.sh
 
 

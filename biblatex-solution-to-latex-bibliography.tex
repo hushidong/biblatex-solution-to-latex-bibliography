@@ -62,9 +62,9 @@
 
 参考文献是科技文档写作中的重要组成部分。在写作中常碰到这样的问题，比如：怎么在文档合适位置插入满足格式要求的参考文献引用？怎么生成满足格式要求的参考文献表？怎么采用不同的宏包实现一些特殊的功能如分章文献？等等。这些问题尽管不会成为困扰，但的确会牵扯文档作者不少精力。为使\LaTeX 文档作者能够更方便地生成进行参考文献，有必要对各种参考文献问题进行梳理总结并给出解决方案，以便随时参考、移植和应用。
 
-简单需求的参考文献生成其实并不困难，采用传统的\LaTeX 的方法就可以满足，该方法的具体实践可以参考刘海洋\cite{刘海洋2013--}或者胡伟\cite{胡伟2011--}的专著。但是如果需要实现一些较复杂的功能，就可能需要应用一些其他宏包，比如chapterbib，natbib等，这样问题就变得复杂起来。事实上随着biblatex宏包的完善，利用它可以满足对于参考文献的绝大多数功能需求。如果利用一个宏包就能完成以前多个宏包才能实现的功能，那么问题实际上就简化了，这正是用户所期待的。利用biblatex宏包“简单化、便利化”地满足\LaTeX 文档写作中的各种中文参考文献需求正是本文写作的初衷所在。
+简单需求的参考文献生成其实并不困难，采用传统的\LaTeX 的方法就可以满足，该方法的具体实践可以参考刘海洋\cite{刘海洋2013--}或者胡伟\cite{胡伟2011--}的专著。但是如果需要实现一些较复杂的功能，就可能需要应用一些其他宏包，比如chapterbib，natbib等，这样问题就变得复杂起来，而且因为bibtex/bibtex8程序的原因，无法使用中文的引用关键词(bibtex键)，甚至当参考文献量足够大时可能出现内存不足的情况。事实上随着biblatex宏包及其biber后端程序的完善，利用它可以满足对于参考文献的绝大多数功能需求。如果利用一个宏包就能完成以前多个宏包才能实现的功能，那么问题实际上就简化了，这正是用户所期待的。利用biblatex宏包“简单化、便利化”地满足\LaTeX 文档写作中的各种中文参考文献需求正是本文写作的初衷所在。
 
-关于biblatex宏包的详细介绍可以参考其手册\cite{Lehman2015}和biblatex-gb7714-2015样式包的说明文档\cite{胡振震2016}。需要注意的是本文所有的示例和说明都基于texlive平台，2015或者2016均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装可以参考texlive安装手册\cite{Berry2016--}以及ctex论坛或latex开源小屋分享的各种方法。
+关于biblatex宏包的详细介绍可以参考其手册\cite{Lehman2015}及其中译版\footnote{biblatex manual 中译版，地址:https://github.com/hushidong/biblatex-zh-cn}和biblatex-gb7714-2015样式包的说明文档\cite{胡振震2016}。需要注意的是本文所有的示例和说明都基于texlive平台，2015或者2016均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装可以参考texlive安装手册\cite{Berry2016--}以及ctex论坛或latex开源小屋分享的各种方法。
 
 \section{需求分析}
 \LaTeX 中文写作对于参考文献一般会有哪些需求？最直接地，我们会想到文章投稿时的参考文献格式要求，比如:参考文献标题的字体字号前后间距段落格式;参考文献内容的字体字号;各条目的间距;条目的内容格式如文献标识符、标点等;双语参考文献;上标、带年份、带页码等标注要求等等。在书籍之类的文档排版中有时也会遇到比如:分章参考文献表;文后参考文献总表;参考文献的目录链接;脚注中引用参考文献;脚注中直接显示参考文献;在合适位置按需插入文献表等等。还有一些比如文献的排序;PDF文档中标注和文献条目的正反超链接等。总结起来可能包括如下11条需求(注意这里所列的问题可能并不全面，仅列出了本文作者所知道的一些问题，更多未遇问题只能以后完善，也希望大家帮助一起完善)，这里根据本文作者的理解，按照重要程度列出:
@@ -190,6 +190,17 @@ texstudio软件可以在多平台使用，linux下因为没有winedt所以比较
 
 熟练使用这些方法，应该可以进一步提高工作效率。说明一下: latexstudio网站原创、收集、整理了很多latex方面的知识、信息和资源，内容不一，对不同程度的latex爱好者都具有一定的参考价值，各位朋友可以了解学习。
 
+
+\subsubsection{从pdf或文本文件转换bib文件}
+批量生成参考文献数据构成bib文件，还有一种方式是从参考文献表文本转换。比如从一个包含gb7714-2015格式的参考文献表的pdf文件中拷贝文献表到一个文本文件中，比如textfilename文件，其中每一条文献信息构成一个行。
+然后利用biblatex-gb7714-2015样式宏包附带的perl脚本gb7714texttobib.pl将其转换为bib文件比如bibfilename。该脚本的使用命令为:
+
+\begin{codetex}{利用gb7714texttobib.pl将参考文献文本转换为bib文件}{code:trans2bib}
+perl gb7714texttobib.pl in=textfilename out=bibfilename
+\end{codetex}
+
+其中in=后面是输入的参考文献文本文件，out=后面是输出的bib文件。
+
 \subsection{文档的组成}
 \LaTeX 文档源文件是由具有某种结构和模式的代码所构成，参考文献自然也遵守这样的结构和模式。
 
@@ -212,9 +223,11 @@ texstudio软件可以在多平台使用，linux下因为没有winedt所以比较
 \end{codetex}
 
 \subsubsection{biblatex宏包、参考文献数据源和样式的加载}
-biblatex宏包和参考文献数据源都在导言区加载(例\ref{code:pkg:load})，宏包加载命令为usepackage，数据源加载命令为addbibresource。参考文献样式作为biblatex宏包的可选参数加载，即用bibstyle选项加载著录样式，用citestyle选项加载标注样式，当两者使用同名样式时，可以用一个选项style表示，例\ref{code:pkg:load}中bibstyle和citestyle都选择使用gb7714-2015样式。实际上，标注样式和著录样式分开加载有时是很有用的，有朋友问我说想用gb7714-2015的参考文献著录样式，但引用标注又不想要用上标怎么办？最简单的方式是著录样式使用gb7714-2015样式，而标注样式使用其他样式比如numeric-comp。当然修改gb7714-2015的标注样式文件中cite等命令也可以实现。
+biblatex宏包和参考文献数据源都在导言区加载(例\ref{code:pkg:load})，宏包加载命令为usepackage，数据源加载命令为addbibresource。参考文献样式作为biblatex宏包的可选参数加载，即用bibstyle选项加载著录样式，用citestyle选项加载标注样式，当两者使用同名样式时，可以用一个选项style表示，例\ref{code:pkg:load}中bibstyle和citestyle都选择使用gb7714-2015样式。实际上，标注样式和著录样式分开加载有时是很有用的，有朋友问说想用gb7714-2015的参考文献著录样式，但引用标注又不想要用上标怎么办？最简单的方式是著录样式使用gb7714-2015样式，而标注样式使用其他样式比如numeric-comp。当然修改gb7714-2015的标注样式文件中cite等命令也可以实现。参考文献样式还有许多，具体参见\label{sec:bib:style}节，用户可以根据需要选择使用。
 
 为利用biblatex实现复杂功能，后端backend采用biber而不用bibtex(如果backend为bibtex8，则biblatex宏包利用bibtex8和aux文件进行编译(\LaTeX 传统方法)，而backend为biber则是利用biber和bcf文件进行编译)。参考文献样式还可以使用biblatex宏包提供的标准样式(标准样式详见biblatex手册Standard Styles一节)，或者使用其它作者提供的定制样式，比如nature，science等。
+
+biblatex宏包还提供一系列宏包选项，用于控制文献著录表，标注的标签等内容，详细内容参考biblatex手册宏包选项一节。
 \begin{codetex}{biblatex宏包、数据源和样式的加载}{code:pkg:load}
 %biblatex宏包加载
 %其中后端backend使用biber
@@ -247,6 +260,13 @@ citestyle=gb7714-2015%,backref=true%
 见赵耀东\yearpagescite[][205]{赵耀东1998--}和Simon\yearpagescite[][15]{Simon2001--}的文献。
 \end{codetex}
 
+当需要在参考文献表中打印不标注的文献时，可以使用nocite命令引入这些文献。其参数是具体条目的引用关键词(bibtex键)或者星号，星号表示将bib文件中所有的参考文献引入。使用命令如:
+
+\begin{codetex}{不标注的文献的引用命令}{ref:nocite:cmd}
+参考文献表中打印不标注的文献引入\nocite{Miroslav2004--,蔡敏2006--}。
+参考文献表中打印不标注的文献引入，引入bib文件中中全部文献\nocite{*}。
+\end{codetex}
+
 \subsubsection{文献表打印命令}
 
 基于biblatex宏包的参考文献表的打印与\LaTeX 传统方式不同，采用的命令是printbibliography。如果全文仅需一个参考文献，那么只要在合适的地方插入如下命令即可。
@@ -266,6 +286,8 @@ backref=true%
 
 \subsection{文档的编译}
 文档的编译与\LaTeX 传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，准备参考文献数据用的命令是biber filename。编译命令可以利用软件调用，也可以自行在命令行输入，下面给出利用winedt、texstudio、命令行、和脚本等不同方式的具体操作过程。
+
+需要注意，无论采用哪种方式编译，如果参考文献数据中存在一些特殊符号比如\&等，编译时会报错。对于这个问题除了手动修改bib文件中参考文献信息这一种方法外，还有两种自动处理方式，一是利用jabref，jabref有bibtex和biblatex两种模式，在biblatex模式下，对于一些特殊字符的输入，比如\&，jabref会自动将其转换为\textbackslash\&。二是使用gb7714-2015样式，在bib数据源不经任何处理的情况下，gb7714-2015样式也能自动处理特殊字符。
 
 \subsubsection{利用winedt}
 当文档准备好之后，第一步点击winedt工具栏的xelatex按钮(\parbox{1.2cm}{\includegraphics[width=1.2cm]{button-compiler-winedt}}图中红框内的按钮)完成第一遍\LaTeX 编译；
@@ -1041,11 +1063,23 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
   \caption{以当前条目为基准对齐的参考文献表环境}\label{bib:env:gb}
 \end{figure}
 
+\subsubsection{参考文献表中的行溢出问题}
+
+参考文献表中各条参考文献由可能长度大于文本宽度，因此会涉及到断行的问题。一般情况下，断行不会出现问题。但有的时候，特别是在biblatex-gb7714-2015 1.0g版以前，诸如inbook等类型标题标识符后的//后没有空格导致其后紧跟的单词无法断行，进而导致行的溢出。这种情况下，可以采用设置更大的tolerance值来解决，或者可以hyphenation利用命令指定断行点。这些设置可以与文献表打印命令放在一个编组内，如例所示。
+
+\begin{codetex}{参考文献表行溢出问题解决}{bib:biblist:outbox}
+{
+%\hyphenation{Proce-edings}
+\tolerance=500 %丑度，10000为最大无溢出盒子，参考the texbook 第6章
+ \hbadness=100  %如果丑度超过hbadness这一阀值，那么就会发出警告
+\printbibliography[heading=subbibintoc,title=【参考文献】]
+}
+\end{codetex}
 
 \subsection{参考文献著录和标注样式}\label{sec:bib:style}
 参考文献著录和标注样式是排版的主要内容之一，但对于普通用户来说只要学会选择使用即可，因为其格式已经由样式作者所设定。当然如果用户需要在某种样式的基础上有进一步的修改，那么完全可以开展这方面的工作。其中著录样式的在*.bbx文件中修改，而标注样式在*.cbx文件中修改。
 \subsubsection{标准样式}
-biblatex提供了一些标准的样式，比如numeric，authoryear，这两个样式是比较常用的，也是样式作者定制自定义样式的重要基础。biblatex还提供了更多著录样式，比如alphabetic，authortitle，verbose等，详见biblatex手册Bibliography Styles一节。标注样式也还有numeric-comp，numeric-verb，alphabetic，authortitle等，详见biblatex手册Citation Styles一节。
+biblatex提供了一些标准的样式，比如numeric，authoryear，这两个样式是比较常用的，也是样式作者定制自定义样式的重要基础。biblatex还提供了更多著录样式，比如alphabetic，authortitle，verbose等，详见biblatex手册Bibliography Styles一节。标注样式也还有numeric-comp，numeric-verb，alphabetic，authortitle等，详见biblatex手册Citation Styles 一节。
 
 读者可以测试这些样式的效果，以便在需要的时候选择使用，而且著录和标注可以分别使用不同的样式，著录是一种，而标注则是另一种。需要注意: 还有一种情况是在同一种标注样式下有的标注需要是上标，有的则不需要，而且这种应用看来是比较常见的，网友海阔天空和xmtangjun都提出了这种需求，在标准样式下有supercite命令提供上标模式，而cite和parencite命令提供非上标模式。而在下一节的gb7714-2015样式中，xmtangjun朋友提出把已经修改成上标模式parencite恢复成非上标模式，那么可以由cite命令提供上标模式，而parencite命令提供非上标模式，这种方法是可取的。
 
