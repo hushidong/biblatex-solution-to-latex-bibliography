@@ -1,0 +1,41 @@
+\documentclass[twocolumn]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{papersize={21cm,18cm},top=2.5cm, bottom=2.5cm, left=1cm,right=1cm}
+\usepackage{xcolor}
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
+\usepackage[backend=biber,style=zazhi]{biblatex}%
+
+\addbibresource[location=local]{egbib.bib}
+%\renewcommand{\bibfont}{\zihao{6}}
+%\setlength{\bibitemsep}{0ex}
+%\setlength{\bibnamesep}{0ex}
+%\setlength{\bibinitsep}{0ex}
+
+\begin{document}
+
+\newpage
+\section{bibliography}
+\begin{refsection}
+one author\cite{Harker1987-20-25}
+\cite{Hsin1990-15-20,Prigogine1976-93-134}
+\cite{USL2001--,,Cone1963--,ISO1982--}
+
+two authors\cite{Carter2011--}
+
+three or more authors\cite{Hino1993-173-193,Miller1984-435-454,Miller1984-435-454a}
+
+
+\printbibliography[heading=bibliography]
+\end{refsection}
+
+\newgeometry{top=1.5cm, bottom=1.5cm, left=1cm,right=1cm}
+\section{文献表}
+\begin{refsection}
+文献\cite{McEliece1984-44-53,Mittelbach2004--,MARTIN1996-85-96,
+FOURNEY1971-17-38,HOPKINSON--,TACHIBANA2002--,Eggrers--,ISO1982--,CALMS1965--}
+
+\printbibliography[heading=bibliography]
+\end{refsection}
+
+\end{document} 

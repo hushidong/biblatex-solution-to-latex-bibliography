@@ -34,7 +34,8 @@
                                      %一位作者的多个所属单位用英文逗号隔开
 
                                                 %摘要,abstract
-\zhaiyao{针对\LaTeX 文档的中文参考文献问题，对其需求展开分析，提出利用biblatex宏包的解决思路，并针对性地给出了各项需求的解决方案(包括示例代码)，为\LaTeX 文档参考文献生成提供便利。}
+\zhaiyao{针对\LaTeX 文档的中文参考文献问题，分析了参考文献生成的一般需求，基于biblatex宏包，从文献数据源文件准备，tex源文档的组成，tex/bib文件的编译，分章参考文献和书后文献表，文献表标题和内容格式，参考文献著录和标注样式，多语言文献，脚注题注小页环境中的引用，脚注旁注中的文献表，文献表分类筛选打印，beamer 类中的参考文献等方面，针对性地给出了全套解决方案，并提供所有示例代码，为\LaTeX 文档参考文献生成提供参考。同时也给出一个参考文献样式定制项目的示例，介绍了bbx和cbx文件开发的方法、步骤和过程，揭示了基于biblatex标准样式定制参考文献的一般原理，为定制参考文献样式提供完整示范。}
+%old-bak-20171031:针对\LaTeX 文档的中文参考文献问题，对其需求展开分析，提出利用biblatex宏包的解决思路，并针对性地给出了各项需求的解决方案(包括示例代码)，为\LaTeX 文档参考文献生成提供便利。
 
                                                 %关键词,keywords
                                                 %多个关键词用\kongge隔开
@@ -47,8 +48,8 @@
 %% 2017-01-05 v1.0a beamer类下的内容完善
 %% 2017-01-18 v1.0b 修正一些错别字，加了后记
 
-\def\versionnumber{v1.0b}    %版本和修改时间信息
-\def\versiondate{2017-01-18}
+\def\versionnumber{v1.0d}    %版本和修改时间信息
+\def\versiondate{2017-10-31}
 \diyizuozhe{The files have version number \versionnumber, last revised \versiondate.\\ 第一作者简介：}
                                           %introduction of corresponding author
 \zuozhejianjie{HU ZHENZHEN，A \LaTeX ~LOVER，Email: hzzmail@163.com。}
@@ -64,10 +65,10 @@
 
 简单需求的参考文献生成其实并不困难，采用传统的\LaTeX 的方法就可以满足，该方法的具体实践可以参考刘海洋\cite{刘海洋2013--}或者胡伟\cite{胡伟2011--}的专著。但是如果需要实现一些较复杂的功能，就可能需要应用一些其他宏包，比如chapterbib，natbib等，这样问题就变得复杂起来，而且因为bibtex/bibtex8程序的原因，无法使用中文的引用关键词(bibtex键)，甚至当参考文献量足够大时可能出现内存不足的情况。事实上随着biblatex宏包及其biber后端程序的完善，利用它可以满足对于参考文献的绝大多数功能需求。如果利用一个宏包就能完成以前多个宏包才能实现的功能，那么问题实际上就简化了，这正是用户所期待的。利用biblatex宏包“简单化、便利化”地满足\LaTeX 文档写作中的各种中文参考文献需求正是本文写作的初衷所在。
 
-关于biblatex宏包的详细介绍可以参考其手册\cite{Lehman2015}及其中译版\footnote{biblatex manual 中译版，地址:https://github.com/hushidong/biblatex-zh-cn}和biblatex-gb7714-2015样式包的说明文档\cite{胡振震2016}。需要注意的是本文所有的示例和说明都基于texlive平台，2015或者2016均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装可以参考texlive安装手册\cite{Berry2016--}以及ctex论坛或latex开源小屋分享的各种方法。
+关于biblatex宏包的详细介绍可以参考其手册\cite{Lehman2015}及其中译版\footnote{biblatex manual 中译版，地址:\url{https://github.com/hushidong/biblatex-zh-cn}}和biblatex-gb7714-2015样式包的说明文档\cite{胡振震2016}。需要注意的是本文所有的示例和测试都基于texlive平台，2015/2016/2017均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装可以参考texlive安装手册\cite{Berry2016--}以及ctex论坛或latex开源小屋分享的各种方法。
 
 \section{需求分析}
-\LaTeX 中文写作对于参考文献一般会有哪些需求？最直接地，我们会想到文章投稿时的参考文献格式要求，比如:参考文献标题的字体字号前后间距段落格式;参考文献内容的字体字号;各条目的间距;条目的内容格式如文献标识符、标点等;双语参考文献;上标、带年份、带页码等标注要求等等。在书籍之类的文档排版中有时也会遇到比如:分章参考文献表;文后参考文献总表;参考文献的目录链接;脚注中引用参考文献;脚注中直接显示参考文献;在合适位置按需插入文献表等等。还有一些比如文献的排序;PDF文档中标注和文献条目的正反超链接等。总结起来可能包括如下11条需求(注意这里所列的问题可能并不全面，仅列出了本文作者所知道的一些问题，更多未遇问题只能以后完善，也希望大家帮助一起完善)，这里根据本文作者的理解，按照重要程度列出:
+\LaTeX 中文写作对于参考文献一般会有哪些需求？最直接地，我们会想到文章投稿时的参考文献格式要求，比如: 参考文献标题的字体字号前后间距段落格式; 参考文献内容的字体字号; 各条目的间距; 条目的内容格式如文献标识符、标点等; 双语参考文献; 上标、带年份、带页码等标注要求等等。在书籍之类的文档排版中有时也会遇到比如: 分章参考文献表; 文后参考文献总表; 参考文献的目录链接; 脚注中引用参考文献; 脚注中直接显示参考文献; 在合适位置按需插入文献表等等。还有一些比如文献的排序;PDF文档中标注和文献条目的正反超链接等。总结起来可能包括如下11条需求(注意这里所列的问题可能并不全面，仅列出了本文作者所知道的一些问题，更多未遇问题只能以后完善，也希望大家帮助一起完善)，这里根据本文作者的理解，按照重要程度列出:
 \begin{enumerate}
   \item 参考文献表基本生成方法-数据源文件准备(手动、利用winedt、利用texstudio 、Jabref、随\LaTeX 文档生成)
   \item 参考文献表基本生成方法-文档的组成(基本结构、宏包加载、样式包加载、文献引用、文献表打印)
@@ -1122,7 +1123,7 @@ texlive 2016 当然也可以用这种方式离线安装。
 
 总的来说，因为biblatex提供了参考文献数据的完全访问能力，所以定义任何需要的样式都是可能的。因此用户一定可以选择合适的样式或者定制合适的样式来满足自身需要。
 
-\subsubsection{快速定制/临时定制}
+\subsubsection{快速定制/临时定制}\label{sec:style:def}
 有的时候对于参考文献格式会有一些特殊的需求，而且往往这些格式并没有一个对应能够满足其要求的参考文献样式包,这种情况下就需要进行定制,比如\parencite{olqa2016--}提出的问题。在latex传统方法中，当文献量较小时，这种临时定制采用thebibliography环境是比较方便的，因为thebibliography 环境显式的将其中的内容插入，因此需要什么样的格式，那么就在bibitem中输入指定格式的条目内容即可。但该环境存在一个问题即: 无论引用与否环境中的参考文献都会全部打印。该环境也可以用来生成多个参考文献表，当然文献量较大时采用这种手动输入方式毕竟是繁琐的。
 
 事实上利用biblatex可以实现快速的定制，biblatex宏包使用手册的Bibliography Style Files给出了样式文件定义的一般模式和方法。依据该模式是容易实现样式快速定制的，因为在一般情况下定制样式文件，其实并不需要处理太多的内容。总结起来，定制简单的参考文献格式需要处理的主要内容包括:
@@ -1746,9 +1747,749 @@ align=left%
   \caption{beamer中biblatex利用颜色主题设置文献颜色}\label{fig:eg:bibinbeamer:color}
 \end{figure}
 
+\section{参考文献样式定制项目示例}
+
+\subsection{介绍}
+这是一个国内某期刊英文版的参考文献定制样式，项目不是很复杂，给出了两个示例，一是文献表示例(图\ref{fig:proj:bibl:ega})，二是引用标签示例(图\ref{fig:proj:cite:ega})。我们需要根据这两个示例来开发相应的样式，即bbx和cbx文件。
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.9\textwidth]{project-ega-bibliography.png}
+  \caption{定制项目文献表示例}\label{fig:proj:bibl:ega}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{project-ega-citation.png}
+  \caption{定制项目引用标签示例}\label{fig:proj:cite:ega}
+\end{figure}
+
+相比之下，这种只有有限示例，而没有像GB/T7714-2015标准那样详细规定的样式，开发起来会自由一些，因为只要实现示例中的格式即可，未定义的作者可以自己把握，而不需要详细测试每一条规定。此外因为该格式只有英文文献，语言只有英文，也不存在多语言的问题。但该格式也有一些有挑战的东西，特别是引用标签与文献表的作者标签存在明显不同，对于使用相同钩子的两个标签，可能需要特别的处理，以实现不同的格式。
+
+参考文献样式的定制前面已经有了初步介绍，详见\ref{sec:style:def}节，本项目开发也是类似的，关于定制的基本方法不再赘述，下面主要介绍定制需要的所有功能是如何实现的。
+
+\subsection{bbx文件开发}
+如前所述，biblatex样式文件开发方法，有一个非常便捷的方式是基于标准样式进行。这种方式不仅相对简单，而且对biblatex的兼容性也更好。当biblatex升级时，除非有api改动，绝大多数情况下可以不用修改即可复用。
+
+在本项目开发中，可以看到参考文献表的样式与标准样式很像，因此完全可以在其基础上进行开发，同时还可以利用gb7714-2015ay样式，其中有不少符合中文规范的处理。本项目主要利用这两个样式的代码进行开发。
+
+\subsubsection{文献表环境}
+
+看文献表的第一眼可以观察到各条目的缩进格式，即第一行顶格，第二行开始缩进约3个字母宽度，这是由biblatex参考文献环境控制，通常是list环境构建，设置合适的参数就可以实现目标。
+
+\begin{codetex}{重定义参考文献环境确定缩进}{eg:proj:bibenv}
+%=====================================================================
+%参考文献列表环境
+%=====================================================================
+  \defbibenvironment{bibliography}%修改参考文献列表环境，不要缩进
+  {\list
+     {}
+     {%\setlength{\leftmargin}{\bibhang}%
+      %\setlength{\itemindent}{-\leftmargin}%
+      \setlength{\leftmargin}{1.5em}%
+      \setlength{\itemindent}{-1.5em}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}}}
+  {\endlist}
+  {\item}
+\end{codetex}
+
+\subsubsection{作者域处理}
+接着我们看示例中个条目类型相同的部分，主要是作者和页码。这里先处理作者域。显然，作者标签有点像中文风格，姓在前，名的缩写为大小首字母，且没有加点。firstname和givenname之间没有空格，姓的后面也没有标点，姓的首字母大写，其它小写。这种格式与gb7714-2015的风格有点像，可以复用其代码，略作大小写修改，同时使用几个钩子将标点和空格处理完毕。
+
+\begin{codetex}{作者域处理}{eg:proj:author}
+\renewrobustcmd*{\bibinitperiod}{}
+\renewcommand*{\revsdnamepunct}{\space}
+\renewcommand*{\bibnamedelimd}{}
+\renewcommand*{\bibnamedelima}{}
+\renewcommand*{\bibinitdelim}{}
+
+\renewbibmacro*{author}{%
+  \ifboolexpr{
+    test \ifuseauthor
+    and
+    not test {\ifnameundef{author}}
+  }
+    {\usebibmacro{bbx:dashcheck}
+       {%\bibnamedash
+       \printnames{author}%
+       }%
+       {\usebibmacro{bbx:savehash}%
+        \printnames{author}%
+        \iffieldundef{authortype}
+          {\setunit{\addspace}}
+          {\setunit{\addcomma\space}}}%
+     \iffieldundef{authortype}
+       {}
+       {\usebibmacro{authorstrg}%
+        \setunit{\addspace}}}%
+    {\global\undef\bbx@lasthash
+     \usebibmacro{labeltitle}%
+     \setunit*{\addspace}}%
+     \setunit{\addcomma\space}%增加一个逗号
+  \usebibmacro{date+extrayear}
+  }
+
+%biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
+\renewbibmacro*{name:given-family}[4]{%利用family-given定义given-family
+  \ifuseprefix
+    {\usebibmacro{name:delim}{#3#1}%
+     \usebibmacro{name:hook}{#3#1}%
+     \ifdefvoid{#3}{}{%
+       \ifcapital
+         {\mkbibnameprefix{\MakeCapital{#3}}\isdot}
+         {\mkbibnameprefix{#3}\isdot}%
+       \ifprefchar{}{\bibnamedelimc}}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{\MakeSentenceCase{#1}}}\isdot
+     \ifdefvoid{#2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{\MakeUppercase{#2}}\isdot}%\MakeCapital{#2}
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}
+    {\usebibmacro{name:delim}{#1}%
+     \usebibmacro{name:hook}{#1}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{\MakeSentenceCase{#1}}}\isdot
+     %
+     \ifboolexpe{%
+       test {\ifdefvoid{#2}}
+       and
+       test {\ifdefvoid{#3}}}
+       {}
+       {\revsdnamepunct}%
+     \ifdefvoid{#2}{}{\bibnamedelimd\mkbibnamegiven{\MakeUppercase{#2}}\isdot}%\MakeCapital{#2}
+     \ifdefvoid{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}}
+
+\renewbibmacro*{name:family-given}[4]{%利用family-given定义given-family
+  \ifuseprefix
+    {\usebibmacro{name:delim}{#3#1}%
+     \usebibmacro{name:hook}{#3#1}%
+     \ifdefvoid{#3}{}{%
+       \ifcapital
+         {\mkbibnameprefix{\MakeCapital{#3}}\isdot}
+         {\mkbibnameprefix{#3}\isdot}%
+       \ifprefchar{}{\bibnamedelimc}}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{\MakeSentenceCase{#1}}}\isdot
+     \ifdefvoid{#2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{\MakeUppercase{#2}}\isdot}%\MakeCapital{#2}
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}
+    {\usebibmacro{name:delim}{#1}%
+     \usebibmacro{name:hook}{#1}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{\MakeSentenceCase{#1}}}\isdot
+     %
+     \ifboolexpe{%
+       test {\ifdefvoid{#2}}
+       and
+       test {\ifdefvoid{#3}}}
+       {}
+       {\revsdnamepunct}%
+     \ifdefvoid{#2}{}{\bibnamedelimd\mkbibnamegiven{\MakeUppercase{#2}}\isdot}%%\MakeCapital{#2}
+     \ifdefvoid{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}}
+\end{codetex}
+
+此外，多个姓名之间用逗号分隔，最后一个姓名前不用and，而使用逗号，可以通过使用钩子以及处理本地化字符串and来实现。
+\begin{codetex}{本地化字符串处理}{eg:proj:localbibstr}
+\DefineBibliographyStrings{english}{
+and         = {\addcomma},%将第2和3人名见的and符号改成 逗号，用\finalnamedelim命令也可以定义，参见3.9.1节
+byeditor    = {\mkbibparens{Eds\adddot\isdot}},
+urlseen     = {Accessed on},
+january          = {Jan\adddot},
+february         = {Feb\adddot},
+  march            = {Mar\adddot},
+  april            = {Apr\adddot},
+  may              = {May},
+  june             = {June},
+  july             = {July},
+  august           = {Aug\adddot},
+  september        = {Sept\adddot},
+  october          = {Oct\adddot},
+  november         = {Nov\adddot},
+  december         = {Dec\adddot},
+}
+\end{codetex}
+
+\subsubsection{条目类型及其使用的域}
+
+接下来我们首先来看一下示例中所给出的条目类型(表\ref{tab:proj:entrytypes})及其所使用的域。
+\begin{table}[!hbtp]
+\centering
+\caption{支持的条目类型}\label{tab:proj:entrytypes}
+\begin{tabular}{|l|c|l|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  entry type  &  & references \\ \hline
+article                        & for & journals' paper \\
+inproceedings                  & for & proceedings' paper\\
+book                           & for & whole books\\
+inbook                         & for & monographs or chapters in edited books\\
+report                         & for & reports\\
+thesis/phdthesis/masterthesis  & for & thesis\\
+patent                         & for & patents\\
+standard                       & for & standards\\
+online/www                     & for & websites  \\
+  \hline
+\end{tabular}
+\end{table}
+
+根据对各条目内容的分析可以得到各条目使用的域为:
+\begin{codetex}{各条目使用的域}{eg:proj:fields}
+article:
+author,date or year.title.journaltitle,volume(number),pages.doi
+
+inproceedings:
+author,date or year.title.booktitle.publisher,address or location,pages
+
+book:
+author,date or year.title.edition.publisher,address or location,pages
+
+inbook:
+author,date or year.title.editor or bookauthor.booktitle.edition.publisher,address or location,pages
+
+report:
+author,date or year.title.publisher,address or location.type or number,pages
+
+thesis/phdthesis/masterthesis:
+author,date or year.title.type.institution,address or location,pages
+
+patent:
+author,date or year.title.number
+
+standard:
+author,date or year.title.translator.publisher,address or location,pages
+
+online/www:
+author,date or year.title.organization.url.urldate
+\end{codetex}
+
+\subsubsection{article类型处理}
+article条目中，标题为正常字体，期刊名为斜体，卷为粗体，期用圆括号包围，页码前面的符号为逗号，无引导词如pp.，而且doi需要换行。
+
+修改期刊名钩子，卷期定义一个新的域格式，调整页码的引导符，修改doi格式，可以处理完成。
+\begin{codetex}{article条目处理}{eg:proj:article}
+\DeclareFieldFormat{journaltitle}{\mkbibitalic{#1}\isdot}%添加\isdot，用于缩写名带点情况，将其转换为缩写点便于标点追踪
+\DeclareFieldFormat%将期刊等文献的标题中原来带的引号去掉
+  [article,patent,unpublished,incollection,inproceedings,inbook]
+  {title}{#1\adddot\addthinspace}
+\DeclareFieldFormat{titlecase}{\MakeCapital#1}%重设标题格式，将其修改为首字母大写
+
+\DeclareFieldFormat{pages}{#1}%去掉前面引导页码的pp.等字符
+
+\DeclareFieldFormat{addnumflag}{%%增加一个number带括号的格式，避免使用mkbibparens而引入一个不必要的空格
+\nobreak\printtext{(}\nobreak #1\nobreak\printtext{)}}
+\DeclareFieldFormat{addvolflag}{\mkbibbold{#1}}
+
+\renewbibmacro*{journal+issuetitle}{%
+  \usebibmacro{journal}%
+  \setunit*{\addspace}%
+  \iffieldundef{series}
+    {\setunit{\addcomma\addspace}}
+    {\newunit
+     \printfield{series}%
+     \setunit{\addcomma\addspace}}%
+  \usebibmacro{volume+number+eid}%
+  \setunit{\addcomma\addspace}%
+  \usebibmacro{issue+date}%
+  \setunit{\addcolon\space}%
+  \usebibmacro{issue}%
+  \newunit}
+
+\newbibmacro*{journal}{%
+  \iffieldundef{journaltitle}
+    {}
+    {\printtext[journaltitle]{%
+       \printfield{journaltitle}%
+       \setunit{\subtitlepunct}%
+       \printfield{journalsubtitle}}}}
+
+%调整期刊卷和期的格式，
+\renewbibmacro*{volume+number+eid}{%
+  \printfield[addvolflag]{volume}%
+  %\setunit*{\adddot}%去掉点号
+  %\printfield{number}%
+  \iffieldundef{number}{}{\printfield[addnumflag]{number}}%
+  %\iffieldundef{number}{}{\printtext{\mkbibparens{\printfield{number}}}}%增加一个圆括号
+  \iffieldundef{eid}{}{%
+  \setunit{\addcomma\space}%
+  \printfield{eid}}}
+
+\renewbibmacro*{doi+eprint+url}{%
+  \iftoggle{bbx:eprint}
+    {\usebibmacro{eprint}}
+    {}%
+  \newunit\newblock
+  \iftoggle{bbx:url}
+    {\usebibmacro{url+urldate}}
+    {}
+  \newunit\newblock
+  \iftoggle{bbx:doi}
+    {\iffieldundef{doi}{}{\printtext{\newline}}\printfield{doi}}%注意这里printtext的运用，避免前面点的跳行
+    {}}
+
+%修改article的驱动，期刊文章，连续出版物中的析出文献的格式
+\DeclareBibliographyDriver{article}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\printdelim{nametitledelim}}\newblock
+  \usebibmacro{title}%
+  \newunit
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  \usebibmacro{bytranslator+others}%
+  \newunit\newblock
+  \printfield{version}%
+  \newunit\newblock
+  %\usebibmacro{in:}%
+  \usebibmacro{journal+issuetitle}%
+  \newunit
+  \usebibmacro{byeditor+others}%
+  \newunit
+  \usebibmacro{note+pages}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{issn}}
+    {}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}%
+     \usebibmacro{related}}
+    {}%
+  \usebibmacro{finentry}}
+\end{codetex}
+
+\subsubsection{inproceedings类型处理}
+
+标题为正常字体，文集名为斜体，需要出版项，同时观察book，report类型可以发现，出版项中，出版者在前，出版地在后，中间逗号连接，出版者缺省时不输出。
+
+修改文集名的钩子，修改出版项格式，页码由前面的article中做的全局处理实现。注意到文集名后出版项前的符号是逗号，但这里使用了点号，因为作者认为这样更合理，不同信息块之间通常是由点分隔，示例中绝大部分情况都是如此。当然用逗号分隔也没有任何难度，只需在驱动中出版项前加入一个逗号标点即可。
+\begin{codetex}{inproceedings条目处理}{eg:proj:inproceedings}
+\DeclareFieldFormat{maintitle}{\mkbibemph{#1}}
+\DeclareFieldFormat{booktitle}{\mkbibemph{#1}}
+\DeclareFieldFormat%将期刊等文献的标题中原来带的引号去掉
+  [article,patent,unpublished,incollection,inproceedings,inbook]
+  {title}{#1\adddot\addthinspace}
+
+\renewbibmacro*{publisher+location+date}{%
+\printlist{publisher}
+\iflistundef{location}{}{\setunit*{\addcomma\space}}%
+  \printlist{location}%%
+  \setunit*{\addcomma\space}%
+  \usebibmacro{date}%
+  \newunit}
+
+%会议论文格式修改
+\DeclareBibliographyDriver{inproceedings}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\printdelim{nametitledelim}}\newblock
+  \usebibmacro{title}%
+  \newunit
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  %\usebibmacro{in:}%
+  \usebibmacro{maintitle+booktitle}%
+  \newunit\newblock
+  \usebibmacro{event+venue+date}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \iffieldundef{maintitle}
+    {\printfield{volume}%
+     \printfield{part}}
+    {}%
+  \newunit
+  \printfield{volumes}%
+  \newunit\newblock
+  \usebibmacro{series+number}%
+  \newunit\newblock
+  \printfield{note}%
+  \newunit\newblock
+  \printlist{organization}%
+  \newunit
+  \usebibmacro{publisher+location+date}%
+  \newunit\newblock
+  \usebibmacro{chapter+pages}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{isbn}}
+    {}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}%
+     \usebibmacro{related}}
+    {}%
+  \usebibmacro{finentry}}
+\end{codetex}
+
+\subsubsection{book类型处理}
+书名为斜体，出版项使用与inproceedings一致的全局处理。驱动无需修改使用标准样式提供的即可。
+\begin{codetex}{book条目处理}{eg:proj:book}
+\DeclareFieldFormat%
+  [book,report,thesis]
+  {title}{\mkbibemph{#1}}
+\end{codetex}
+
+
+\subsubsection{inbook类型处理}
+章节名正常字体，全书名为斜体，同时全书还需要作者或编者，章节和书名之间用in:表示，出版项和页码使用前述的全局处理。
+设置书名钩子，处理in的本地化字符串格式后，最重要是是全书编者中跟着的提示信息(Eds.)。这种提示信息常是由本地化字符串提供，显然eds表示编者，通常全书的作者还可以用bookauthor域表示，但这里为了体现eds信息，使用editor域，于是我们需要对editor域输出格式做修改，得到符合要求的结果。其中byeditor本地化字符串处理，见例\ref{eg:proj:localbibstr}。
+\begin{codetex}{inbook条目处理}{eg:proj:inbook}
+\DeclareFieldFormat{maintitle}{\mkbibemph{#1}}
+\DeclareFieldFormat{booktitle}{\mkbibemph{#1}}
+
+\renewbibmacro*{in:}{%
+  \printtext{%
+    \mkbibitalic{\bibstring{in}}\intitlepunct}}
+
+\renewbibmacro*{byeditor+others}{%
+  \ifnameundef{editor}
+    {}
+    {\printnames[byeditor]{editor}%
+     \setunit{\addspace}%
+     \usebibmacro{byeditor+othersstrg}%
+     \clearname{editor}%
+     \newunit}%
+  \usebibmacro{byeditorx}%
+  \usebibmacro{bytranslator+others}}
+
+%修改inbook的驱动
+\DeclareBibliographyDriver{inbook}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\printdelim{nametitledelim}}\newblock
+  \usebibmacro{title}%
+  \newunit
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  \usebibmacro{in:}%
+  \usebibmacro{bybookauthor}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \usebibmacro{maintitle+booktitle}%
+  \newunit\newblock
+  \printfield{edition}%
+  \newunit
+  \iffieldundef{maintitle}
+    {\printfield{volume}%
+     \printfield{part}}
+    {}%
+  \newunit
+  \printfield{volumes}%
+  \newunit\newblock
+  \usebibmacro{series+number}%
+  \newunit\newblock
+  \printfield{note}%
+  \newunit\newblock
+  \usebibmacro{publisher+location+date}%
+  \newunit\newblock
+  \usebibmacro{chapter+pages}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{isbn}}
+    {}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}%
+     \usebibmacro{related}}
+    {}%
+  \usebibmacro{finentry}}
+\end{codetex}
+
+\subsubsection{report类型处理}
+在report类中，标题为斜体，后面是出版项，和报告类型及编号。修改驱动调整出版项和报告类型的顺序。也要注意两者之间示例给出的逗号分隔符，这里作者仍然使用了点号，原因如前所述，不同信息块的分隔用点号，当然如果要改成逗号也非常简单。唯一需要注意的是，通常报告的出版者用institution域表示，所以对其做域publisher类似的处理。
+\begin{codetex}{report条目处理}{eg:proj:report}
+\DeclareFieldFormat%
+  [book,report,thesis]
+  {title}{\mkbibemph{#1}}
+
+\renewbibmacro*{institution+location+date}{%
+  \printlist{institution}%
+  \iflistundef{location}{}{\setunit*{\addcomma\space}}%
+  \printlist{location}%
+  \setunit*{\addcomma\space}%
+  \usebibmacro{date}%
+  \newunit}
+
+%report
+\DeclareBibliographyDriver{report}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author}%
+  \setunit{\printdelim{nametitledelim}}\newblock
+  \usebibmacro{title}%
+  \newunit
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  \printfield{version}%
+  \newunit
+  \printfield{note}%
+  \newunit\newblock
+  \usebibmacro{institution+location+date}%
+  \newunit\newblock
+  \printfield{type}%
+  \setunit*{\addspace}%
+  \printfield{number}%
+  \newunit\newblock
+  \usebibmacro{chapter+pages}%
+  \newunit
+  \printfield{pagetotal}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{isrn}}
+    {}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}%
+     \usebibmacro{related}}
+    {}%
+  \usebibmacro{finentry}}
+\end{codetex}
+
+\subsubsection{thesis类型处理}
+标题是斜体，带论文类型，后面是出版项和页码。标题修改使用钩子，出版项和页码使用前述的全局设置。主要是论文类型。目前没有做任何的额外处理，因为biblatex自动会将phdthesis，masterthesis转换为thesis，并设置type。如果用户直接使用thesis，并且需要type信息，那么需要在type域中输入类型是phdthesis或masterthesis。
+
+\subsubsection{patent类型处理}
+标题为正常字体，后面跟专利号。无需任何处理。
+
+\subsubsection{standard类型处理}
+因为standard类型在biblatex中没有定义，因此需要增加一个standard类型的驱动，类似于book的驱动，只是标题改为正常字体。
+
+\begin{codetex}{standard条目处理}{eg:proj:standard}
+%增加标准的驱动
+\DeclareBibliographyDriver{standard}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/editor+others/translator+others}%
+  \setunit{\printdelim{nametitledelim}}\newblock
+  \usebibmacro{maintitle+title}%
+  \newunit
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \printfield{edition}%
+  \newunit
+  \iffieldundef{maintitle}
+    {\printfield{volume}%
+     \printfield{part}}
+    {}%
+  \newunit
+  \printfield{volumes}%
+  \newunit\newblock
+  \usebibmacro{series+number}%
+  \newunit\newblock
+  \printfield{note}%
+  \newunit\newblock
+  \usebibmacro{publisher+location+date}%
+  \newunit\newblock
+  \usebibmacro{chapter+pages}%
+  \newunit
+  \printfield{pagetotal}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}
+    {\printfield{isbn}}
+    {}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  \iftoggle{bbx:related}
+    {\usebibmacro{related:init}%
+     \usebibmacro{related}}
+    {}%
+  \usebibmacro{finentry}}
+\end{codetex}
+
+\subsubsection{online类型处理}
+最后是online类型，标题后跟的是组织，后面跟的是网址及其访问日期。主要要修改的是url和urldate的域格式。因为urldate域需要提供所有的年月日信息，所以设置urldate宏包选项，注意区别于date域的选项。同时因为其特殊的形式，修改月份的本地化字符串，如例\ref{eg:proj:localbibstr}所示。
+
+\begin{codetex}{online条目处理}{eg:proj:online}
+\ExecuteBibliographyOptions{
+  useprefix = true,  %名字的信息包括前缀
+  %firstinits = true,    %名字有缩写，参考3.1.2.3 Internal
+  giveninits = true,
+  date   = year,  %日期仅写到年
+  urldate= comp,
+  %maxnames     = 3 , %设置名字最大数量
+  %minnames     = 3,  %设置缩减后的名字最小数量
+  maxbibnames=3, %将文献列表和引用中最大名字数量区分开
+  minbibnames=3,
+}
+
+\DeclareFieldFormat{url}{Available from\space\url{#1}}
+\DeclareFieldFormat{urldate}{\mkbibbrackets{\bibstring{urlseen}\space#1}}
+\end{codetex}
+
+\subsubsection{全局选项及texlive兼容性处理}
+全局选项设置如例\ref{eg:proj:online}所示，使用类似于gb7714-2015的设置，使用姓名前缀和缩写，设置文献表中作者标签最大和最小姓名数为3。
+
+对于biblatex的兼容性，因为升级可能带来的变化，这里特别做了处理，主要是texlive2016和texlive2017，其中的biblatex版本分别为3.4和3.7。对于本项目，其中有一个命令存在差异，因此换个版本会报错，因此特别做出处理，处理方式类似于gb7714-2015样式。
+
+\begin{codetex}{texlive兼容性处理}{eg:proj:texlive}
+\providetoggle{iftexlivesix}
+\providetoggle{iftexliveseven}%为处理texlive2016到2017的变化
+%版本判断，根据biblatex更新历史可知，版本3.3开始使用新的姓名机制
+%所以当版本大于3.2开始，就用设置\toggletrue{iftexlivesix}
+\def\numparserta#1.#2\relax{#1}%注意relax的重要性
+\def\numparsertb#1.#2\relax{#2}
+\def\numinteger{\expandafter\numparserta\abx@version\relax}
+\def\numdigital{\expandafter\numparsertb\abx@version\relax}
+\ifnumcomp{\numdigital}{>}{2}{\toggletrue{iftexlivesix}}{\togglefalse{iftexlivesix}}
+\ifnumcomp{\numdigital}{>}{6}{\toggletrue{iftexliveseven}}{\togglefalse{iftexliveseven}}
+
+\iftoggle{iftexliveseven}{%
+  \renewbibmacro*{date+extrayear}{%
+    \iffieldundef{labelyear}
+      {}
+      {\printtext{%[parens]%这里把括号去掉
+         \iffieldsequal{year}{labelyear}
+           {\printlabeldateextra}%
+           {\printfield{labelyear}%
+            \printfield{extrayear}}}}}%
+}{%
+\renewbibmacro*{date+extrayear}{%
+    \iffieldundef{\thefield{datelabelsource}year}
+      {}
+      {\printtext{%[parens]%这里把括号去掉
+         \iffieldsequal{year}{\thefield{datelabelsource}year}
+           {\printdateextralabel}%
+           {\printfield{labelyear}%
+            \printfield{extrayear}}}}}%
+}
+\end{codetex}
+
+如此完成了bbx文件的开发。
+
+\subsection{cbx文件开发}
+下面进行cbx文件开发。cbx引用标签样式示例给出了3个。分别是1位作者、2位、3位或以上作者的情况。可以看到2位作者时全部给出，超过3位则只给出一位，这可以通过设置宏包选项实现，例\ref{eg:proj:cbxopt}中给出的其它选项，与gb7714-2015相同。单个姓名的标签采用默认的方式处理，作者和年份之间的分隔符，修改对应的钩子即可。
+
+\begin{codetex}{cbx设置宏包选项}{eg:proj:cbxopt}
+\ExecuteBibliographyOptions{
+  %autocite  = superscript ,
+  %autopunct = true       ,
+  %sorting   = none        ,
+  maxcitenames=2,
+  mincitenames=1,
+  uniquename=init,%因为使用了名字缩写选项，所以需要设置uniquename=init而不是full避免冲突
+  labeldate=true,
+  uniquelist=minyear,
+}
+
+\DeclareDelimFormat{nameyeardelim}{\addcomma\addspace}
+\end{codetex}
+
+除此之外，还有几个格式需要实现，包括:
+\begin{itemize}
+  \item et al. 的斜体
+  \item 两位作者时，and连接
+  \item 同作者文献，连续出现，作者名只出现一次
+\end{itemize}
+
+这三个问题其实是本项目最复杂的地方。因为一般情况下，引用标签与文献表中的作者标签使用相同的钩子，因此格式相同。那么在文献表中作者格式确定的情况下，无法全局的重定义这些钩子，否则会影响文献表。
+
+好在tex的作用域机制保证了重定义可以作用在局部范围内。于是重定义name:andothers宏来实现etal斜体，重定义finalnamedelim来实现and连接。但是作者省略的问题，还无法解决，思考解决方法，找到authoryear文献表中存在的省略，这里其实也可以复用其中的宏，于是新定义一个cite:labelname取代直接打印姓名的方式，重定义cite宏实现要求，最后重定义cite命令，在引用标签外加上圆括号。
+
+\begin{codetex}{cbx重定义实现要求}{eg:proj:cbxredef}
+\newbibmacro*{cite:labelname}{%
+    \usebibmacro{bbx:dashcheck}%
+       {}%\bibnamedash%
+       {\usebibmacro{bbx:savehash}%
+        \printnames{labelname}%
+        \setunit{\printdelim{nameyeardelim}}}}
+
+\renewbibmacro*{cite}{%
+  \iffieldundef{shorthand}%
+    {\ifthenelse{\ifnameundef{labelname}\OR\iffieldundef{labelyear}}%
+       {\usebibmacro{cite:label}%
+        \setunit{\printdelim{nonameyeardelim}}}%
+       {\renewcommand*{\finalnamedelim}{%
+  \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
+  \addspace and\space}%
+  \renewbibmacro*{name:andothers}{%
+  \ifboolexpr{%
+    test {\ifnumequal{\value{listcount}}{\value{liststop}}}
+    and
+    test \ifmorenames
+  }%
+    {\ifnumgreater{\value{liststop}}{1}%
+       {\finalandcomma}%
+       {}%
+     \andothersdelim\mkbibemph{\bibstring{andothers}}}%
+    {}}%
+\usebibmacro{cite:labelname}%\printnames{labelname}%
+}%
+\usebibmacro{cite:labelyear+extrayear}}%
+    {\usebibmacro{cite:shorthand}}}
+
+%\DeclareCiteCommand{\cite}[\mkbibparens]{⟨precode⟩}{⟨loopcode⟩}{⟨sepcode⟩}{⟨postcode⟩}
+%
+\DeclareCiteCommand{\cite}[\mkbibparens]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+\end{codetex}
+
+到此，我们完成了所有的开发。
+
+项目所有文档见:
+\href{run:./exampleandimage/egzazhi.tex}{egzazhi.tex}，
+\href{run:./exampleandimage/zazhi.bbx}{zazhi.bbx}，
+\href{run:./exampleandimage/zazhi.cbx}{zazhi.cbx}，
+\href{run:./exampleandimage/egbib.bib}{egbib.bib}。
+
+结果如图\ref{fig:proj:res}所示。
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.9\textwidth,page=1]{egzazhi.pdf}
+  \caption{样式定制结果}\label{fig:proj:res}
+\end{figure}
+
+
+\subsection{小结}
+通过上述实践，我们完成了一个定制项目，可以看到biblatex的强大，它提供的api相当全面和有效，利用它以及标准样式可以较为方便构建满足需要的定制格式。
 
 \section{结论}
-通过本文的工作给出了\LaTeX 文档中文参考文献相关问题的biblatex解决方案包括:基本参考文献生成、分章参考文献、指定格式的著录和标注样式等，基本能够满足日常的各类参考文献生成需求，能够为\LaTeX 文档写作提供帮助。
+通过本文的工作给出了\LaTeX 文档中文参考文献相关问题的biblatex解决方案，包括: 基本参考文献生成、分章参考文献、指定格式的著录和标注样式等，基本能够满足日常的各类参考文献生成需求，能够为\LaTeX 文档写作提供帮助。
 
 \section{后记}
 因水平有限，难免存在一些错误，欢迎各位朋友批评指正。如果使用biblatex生成参考文献过程中遇到什么问题，也可以邮件联系，我们可以互相交流。
@@ -1775,6 +2516,9 @@ align=left%
 \phantomsection
 \addcontentsline{toc}{section}{插图}
 \listoffigures
+\phantomsection
+\addcontentsline{toc}{section}{表格}
+\listoftables
 \phantomsection
 \addcontentsline{toc}{section}{示例}
 \listofegcode

@@ -4,12 +4,6 @@
 
 :: compile the tex file
 
-cd exampleandimage
-
-call compiler
-
-cd ..
-
 call makeclear
 
 xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
@@ -20,7 +14,7 @@ xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
 xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
-::call makeclear
+call makeclear
 
 
 
