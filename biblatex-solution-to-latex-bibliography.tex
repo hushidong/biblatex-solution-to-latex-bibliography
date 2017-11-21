@@ -1071,6 +1071,7 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 \begin{codetex}{参考文献表行溢出问题解决}{bib:biblist:outbox}
 {
 %\hyphenation{Proce-edings}
+\hyphenpenalty=5000 %断词阈值，值越大越不容易出现断词
 \tolerance=500 %丑度，10000为最大无溢出盒子，参考the texbook 第6章
  \hbadness=100  %如果丑度超过hbadness这一阀值，那么就会发出警告
 \printbibliography[heading=subbibintoc,title=【参考文献】]
