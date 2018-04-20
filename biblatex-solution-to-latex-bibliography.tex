@@ -47,9 +47,12 @@
 %% 2016-12-07 v1.0  完成基本内容
 %% 2017-01-05 v1.0a beamer类下的内容完善
 %% 2017-01-18 v1.0b 修正一些错别字，加了后记
+%% 2017-03-15 v1.0c 增加了关于参考文献表文本转换成bib文件的内容
+%% 2017-10-31 v1.0d 增加了一个参考文献样式定制项目的示例，见第3节
+%% 2018-04-21 v1.0e 增加了利用biblatex宏包选项调整著录表和标注的内容，见2.7.5节
 
-\def\versionnumber{v1.0d}    %版本和修改时间信息
-\def\versiondate{2017-10-31}
+\def\versionnumber{v1.0e}    %版本和修改时间信息
+\def\versiondate{2018-04-21}
 \diyizuozhe{The files have version number \versionnumber, last revised \versiondate.\\ 第一作者简介：}
                                           %introduction of corresponding author
 \zuozhejianjie{HU ZHENZHEN，A \LaTeX ~LOVER，Email: hzzmail@163.com。}
@@ -879,7 +882,7 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 
 \subsection{参考文献内容格式}\label{sec:bib:content:md}
 
-参考文献内容格式的格式可以重定义biblatex宏包提供的命令来实现。
+参考文献内容的格式可以重定义biblatex宏包提供的命令来实现。
 
 \subsubsection{一般设置方法}
 
@@ -1187,9 +1190,25 @@ texlive 2016 当然也可以用这种方式离线安装。
 源代码见\href{run:./exampleandimage/gbudf.bbx}{gbudf.bbx}，
 测试文件见\href{run:./exampleandimage/egstylecustomizegb.tex}{egstylecustomizegb.tex}。
 
+\subsubsection{通过宏包选项改变样式}\label{sec:opt:def}
+在给定样式基础上，可以使用宏包选项来定制一些需要的样式，比如作者输出数量、文献表排序、文献标注排序、文献数据项的输出等等，宏包选项的详细说明可以参见\href{https://github.com/hushidong/biblatex-zh-cn/blob/master/biblatex-zh-cn.pdf}{biblatex手册中文版}。
+
+\paragraph{作者输出数量} 文献表和标注中的作者的数量可以通过宏包选项maxnames和minnames控制。两者也可以分开进行控制，分别利用maxbibnames，minbibnames和maxcitenames，mincitenames 进行控制。
+
+\paragraph{文献表排序} 文献表排序可以使用sorting选项进行排序，有些样式中已经给出了sorting选项，如果用户想要另外的排序方式，那么可以自己选择合适sorting选项在biblatex宏包加载时给出。
+
+\paragraph{标注排序} 当一个引用命令中有多个参考文献引用关键字时，可以利用sortcites选项来控制是否自动排序。当sortcites=false时不进行排序，按给出的顺序排列。当sortcites=true时，则按文献表的顺序排列。如果希望标注排序排序与文献表的排序不同，可以利用新文境newrefcontext来实现。比如:希望文献表按nyt排，而标注用ynt排，可以采用如下方式:宏包加载时使用
+\lstinline!\usepackage[backend=biber,style=gb7714-2015ay,sortcite,sorting=ynt]{biblatex}!，然后在文献打印前加
+\lstinline!\newrefcontext[sorting=nyt]!
+
+\paragraph{文献数据项的输出} 如果要取消url，doi，isbn等信息项的输出，可以设置相应的选项为false。
+
+
 \subsection{多语言文献}
 
-不仅GB/T 7714-2015对于多语言文献提出了要求，某些期刊对于参考文献也有双语文献要求，这一问题可以通过条目集类型(set)进行设置，这对于专著和连续出版物的析出文献来说有可能是常用的。设置和使用条目集类型(set)时，有静态和动态两种方法。
+不仅GB/T 7714-2015对于多语言文献提出了要求，某些期刊对于参考文献也有双语文献要求，这一问题可以通过条目集类型(set)进行设置，这对于专著和连续出版物的析出文献来说有可能是常用的。设置和使用条目集类型(set)时，有静态和动态两种方法。关于多语言文献的更详细介绍参见
+\href{https://github.com/hushidong/biblatex-gb7714-2015/blob/master/biblatex-gb7714-2015.pdf}%
+{biblatex-gb7714-2015宏包手册}。
 
 \subsubsection{动态方法}
 动态方法的使用更方便，直接在写文档时候，将双语文献设置成set，然后引用set的bibtex键。比如:
