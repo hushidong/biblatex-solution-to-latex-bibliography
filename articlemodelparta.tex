@@ -458,7 +458,7 @@ language=[LaTeX]TeX,
 %backgroundcolor=\color{yellow}, %背景颜色
 %numbers=left,
 %numberstyle=\tiny\color{red},
-basicstyle=\scriptsize, % print whole listing small
+basicstyle=\footnotesize\ttfamily, % print whole listing small
 keywordstyle=\color{blue}\bfseries,%\underbar,
 % underlined bold black keywords
 identifierstyle=, % nothing happens
@@ -484,7 +484,7 @@ language=[08]Fortran,
 %backgroundcolor=\color{yellow}, %背景颜色
 %numbers=left,
 %numberstyle=\tiny\color{red},
-basicstyle=\scriptsize, % print whole listing small
+basicstyle=\footnotesize\ttfamily, % print whole listing small
 keywordstyle=\color{blue}\bfseries,%\underbar,
 % underlined bold black keywords
 identifierstyle=, % nothing happens
@@ -510,7 +510,7 @@ language=[5.2]Mathematica,
 %backgroundcolor=\color{yellow}, %背景颜色
 %numbers=left,
 %numberstyle=\tiny\color{red},
-basicstyle=\scriptsize, % print whole listing small
+basicstyle=\footnotesize\ttfamily, % print whole listing small
 keywordstyle=\color{blue}\bfseries,%\underbar,
 % underlined bold black keywords
 identifierstyle=, % nothing happens
@@ -544,7 +544,7 @@ fillcolor=\color{codebackground},
 rulecolor=\color{green!50!black},
 numbers=left,
 numberstyle=\tiny\color{red},
-basicstyle=\footnotesize, % print whole listing small，footnotesize
+basicstyle=\footnotesize\ttfamily, % print whole listing small，footnotesize
 keywordstyle=\color{blue}\bfseries,%\underbar,
 % underlined bold black keywords
 identifierstyle=, % nothing happens
@@ -576,6 +576,10 @@ itemsep=0pt,leftmargin=4em}%label=$\triangleright$
 itemsep=0pt,leftmargin=2cm,rightmargin=0cm,labelwidth=2cm}
 
 \newcommand{\qd}[1]{%定义qd为强调命令
+{\bfseries\color{violet}#1}}
+\newcommand{\bc}[1]{%定义qd为强调命令
+{\bfseries\color{violet}#1}}
+\newcommand{\zhongdian}[1]{%定义qd为强调命令
 {\bfseries\color{violet}#1}}
 %orange，brown，purple，teal，violet，olive，cyan
 

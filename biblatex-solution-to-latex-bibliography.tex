@@ -34,7 +34,7 @@
                                      %一位作者的多个所属单位用英文逗号隔开
 
                                                 %摘要,abstract
-\zhaiyao{针对\LaTeX 文档的中文参考文献问题，分析了参考文献生成的一般需求，基于biblatex宏包，从文献数据源文件准备，tex源文档的组成，tex/bib文件的编译，分章参考文献和书后文献表，文献表标题和内容格式，参考文献著录和标注样式，多语言文献，脚注题注小页环境中的引用，脚注旁注中的文献表，文献表分类筛选打印，beamer 类中的参考文献等方面，针对性地给出了全套解决方案，并提供所有示例代码，为\LaTeX 文档参考文献生成提供参考。同时也给出一个参考文献样式定制项目的示例，介绍了bbx和cbx文件开发的方法、步骤和过程，揭示了基于biblatex标准样式定制参考文献的一般原理，为定制参考文献样式提供完整示范。}
+\zhaiyao{针对\LaTeX 文档的参考文献相关问题，分析了参考文献生成的一般需求，给出基于biblatex宏包全套解决方案。从文献数据源文件准备，tex源文档的组成，tex/bib文件的编译，分章参考文献和书后文献表，文献表标题和内容格式，参考文献著录和标注样式，多语言文献，脚注题注小页环境中的引用，脚注旁注中的文献表，文献表分类筛选打印，beamer 类中的参考文献等方面详实地介绍了biblatex参考文献生成方法，并提供所有示例代码，为用户提供参考。介绍了biblatex-gb7714-2015样式包的设计思路和实现方法，给出了一个参考文献样式定制项目示例，介绍了bbx和cbx文件开发的方法、步骤和过程，揭示了基于biblatex标准样式定制参考文献的一般原理，为定制参考文献样式提供完整示范。}
 %old-bak-20171031:针对\LaTeX 文档的中文参考文献问题，对其需求展开分析，提出利用biblatex宏包的解决思路，并针对性地给出了各项需求的解决方案(包括示例代码)，为\LaTeX 文档参考文献生成提供便利。
 
                                                 %关键词,keywords
@@ -64,33 +64,44 @@
 %----------------------------------------------------------------------
 \section{引言}
 
-参考文献是科技文档写作中的重要组成部分。在写作中常碰到这样的问题，比如：怎么在文档合适位置插入满足格式要求的参考文献引用？怎么生成满足格式要求的参考文献表？怎么采用不同的宏包实现一些特殊的功能如分章文献？等等。这些问题尽管不会成为困扰，但的确会牵扯文档作者不少精力。为使\LaTeX 文档作者能够更方便地生成进行参考文献，有必要对各种参考文献问题进行梳理总结并给出解决方案，以便随时参考、移植和应用。
+参考文献是科技文档写作中的重要组成部分。在写作中常碰到这样的问题，比如：怎么在文档合适位置插入满足格式要求的参考文献标注？怎么生成满足格式要求的参考文献表？怎么实现分章文献等一些特殊的功能？等等。这些问题尽管不会成为困扰，但的确会牵扯文档作者不少精力。为使\LaTeX 文档作者能够更方便地生成参考文献，有必要对各种参考文献问题进行梳理总结，并给出解决方案，以便随时参考、移植和应用。
 
-简单需求的参考文献生成其实并不困难，采用传统的\LaTeX 的方法就可以满足，该方法的具体实践可以参考刘海洋\cite{刘海洋2013--}或者胡伟\cite{胡伟2011--}的专著。但是如果需要实现一些较复杂的功能，就可能需要应用一些其他宏包，比如chapterbib，natbib等，这样问题就变得复杂起来，而且因为bibtex/bibtex8程序的原因，无法使用中文的引用关键词(bibtex键)，甚至当参考文献量足够大时可能出现内存不足的情况。事实上随着biblatex宏包及其biber后端程序的完善，利用它可以满足对于参考文献的绝大多数功能需求。如果利用一个宏包就能完成以前多个宏包才能实现的功能，那么问题实际上就简化了，这正是用户所期待的。利用biblatex宏包“简单化、便利化”地满足\LaTeX 文档写作中的各种中文参考文献需求正是本文写作的初衷所在。
+对于一般的参考文献生成而言，利用传统的\LaTeX 参考文献生成方法\cite{Oetiker--,刘海洋2013--,胡伟2011--}配合相关的文献样式(bst文件)大体能够满足要求。但如果要实现一些扩展功能，就需要应用一些辅助宏包，
+比如chapterbib(用于分章文献表)\cite{Daly2010--}，natbib(用于标注并提供著录样式)\cite{Arseneau2010--}，mcitesplus(用于标注)\cite{Shell2013--}等。尽管这些提供了不少有用的工具，但仍然存在一些局限。此外，由于使用bibtex/bibtex8程序的原因，传统方法无法使用中文的引用关键字(bibtex键)，甚至当参考文献量足够大时可能出现内存不足的情况。
 
-关于biblatex宏包的详细介绍可以参考其手册\cite{Lehman2015}及其中译版\footnote{biblatex manual 中译版，地址:\url{https://github.com/hushidong/biblatex-zh-cn}}和biblatex-gb7714-2015样式包的说明文档\cite{胡振震2016}。需要注意的是本文所有的示例和测试都基于texlive平台，2015/2016/2017均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装可以参考texlive安装手册\cite{Berry2016--}以及ctex论坛或latex开源小屋分享的各种方法。
+而biblatex宏包\cite{Lehman2015}提供了一套完整的方案，它即能替代传统的\LaTeX 参考文献生成方法，也能覆盖如natbib等所有辅助宏包的功能，除此之外更提供了如动态数据修改等大量新功能，越使用越会觉得biblatex宏包的完善和强大，它是\LaTeX 参考文献生成的一个绝佳选择。由于基于传统方法的大量参考文献样式仍然在用，基于biblatex的参考文献生成还没有完全替代传统方法，但已经开始逐渐成为主流，目前CTAN 上面已经有包括science、ieee、nature、iso690、gb7714-2015等数十种样式可以选用，加上biblatex的强大定制功能，利用biblatex一个宏包完全可以简单且便利地满足使用需求。
 
-\section{需求分析}
-\LaTeX 中文写作对于参考文献一般会有哪些需求？最直接地，我们会想到文章投稿时的参考文献格式要求，比如: 参考文献标题的字体字号前后间距段落格式; 参考文献内容的字体字号; 各条目的间距; 条目的内容格式如文献标识符、标点等; 双语参考文献; 上标、带年份、带页码等标注要求等等。在书籍之类的文档排版中有时也会遇到比如: 分章参考文献表; 文后参考文献总表; 参考文献的目录链接; 脚注中引用参考文献; 脚注中直接显示参考文献; 在合适位置按需插入文献表等等。还有一些比如文献的排序;PDF文档中标注和文献条目的正反超链接等。总结起来可能包括如下11条需求(注意这里所列的问题可能并不全面，仅列出了本文作者所知道的一些问题，更多未遇问题只能以后完善，也希望大家帮助一起完善)，这里根据本文作者的理解，按照重要程度列出:
+然而正是由于biblatex的完整性，biblatex宏包相当的庞大，其说明文档(\href{https://github.com/hushidong/biblatex-zh-cn}{中译版})长达300页。对于初学者或者无深度需求的使用者来说，biblatex手册更像是一个技术说明书，尽管它详实的说明了宏包功能，但却没有提供一个像lshort这样的简单教程，显得过于复杂。类似biblatex-gb7714-2015这样的样式包\cite{胡振震2016}，虽然也介绍了一些biblatex的使用方法，但其重点主要还在样式包的设计、实现和使用上。总的来说，目前对于biblatex参考文献生成还没有较为系统的入门手册。本文正是出于这样的考虑，希望从不同层级用户的角度，面向应用，以示范的形式，形成一个简易的使用说明书，为用户提供帮助。
+
+%事实上随着biblatex宏包及其biber后端程序的完善，利用它可以满足对于参考文献的绝大多数功能需求。如果利用一个宏包就能完成以前多个宏包才能实现的功能，那么问题实际上就简化了，这正是用户所期待的。利用biblatex宏包“简单化、便利化”地满足\LaTeX 文档写作中的各种中文参考文献需求正是本文写作的初衷所在。
+
+需要提示的是: 本文所有的示例和测试都基于texlive平台，2014/2015/2016/2017/2018均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装和使用可以参考texlive安装手册\cite{Berry2016--}
+以及\href{http://bbs.ctex.org/forum.php}{ctex论坛ctex论坛}
+或\href{http://www.latexstudio.net/}{latex sudio}上分享的各种方法。
+
+\section{参考文献生成的常见需求}
+\LaTeX 中文写作对于参考文献一般会有哪些需求？最直接地，我们会想到文章投稿时的参考文献格式要求，比如: 参考文献标题的字体字号前后间距段落格式; 参考文献内容的字体字号; 各条目的间距; 条目的内容格式如文献标识符、标点等; 双语参考文献; 上标、带年份、带页码等标注要求等等。在书籍之类的文档排版中有时也会遇到比如: 分章参考文献表; 文后参考文献总表; 参考文献的目录链接; 脚注中引用参考文献; 脚注中直接显示参考文献; 在合适位置按需插入文献表等等。还有一些比如文献的排序;PDF文档中标注和文献条目的正反超链接等。总结起来可能包括如下常见需求:
+%，这里根据本文作者的理解，按照重要程度列出:
+%(注意这里所列的问题可能并不全面，仅列出了本文作者所知道的一些问题，更多未遇问题只能以后完善，也希望大家帮助一起完善)
 \begin{enumerate}
   \item 参考文献表基本生成方法-数据源文件准备(手动、利用winedt、利用texstudio 、Jabref、随\LaTeX 文档生成)
   \item 参考文献表基本生成方法-文档的组成(基本结构、宏包加载、样式包加载、文献引用、文献表打印)
   \item 参考文献表基本生成方法-文档的编译(手动、利用winedt、利用texstudio、脚本)
   \item 书后参考文献和分章参考文献
+  \item 分类筛选、缩略信息和索引打印
   \item 参考文献标题格式(重定义heading，利用titlesec)
   \item 参考文献内容格式(重定义内容命令)
-  \item 参考文献著录样式(顺序制、作者年制、域、位置、标点、排序)
-  \item 参考文献标注样式(页码、年份)
+  \item 参考文献著录样式(顺序编码制、作者年制、域、位置、标点、排序)
+  \item 参考文献标注样式(页码、年份、对应natbib/mcite等的标注命令)
   \item 多语言文献
   \item 脚注题注小页环境中的引用
   \item 脚注旁注中的文献表
-  \item 文献表的分类筛选打印
   \item beamer类中的参考文献
 \end{enumerate}
 
 \section{解决方案}
 本节直接针对上一节提出的需求，逐条进行处理。方案主要应用于一般文档类(book，report，article)，beamer类的问题放到最后一小节中专门介绍。
-\subsection{数据源文件准备}
+\subsection{参考文献数据文件准备}
 \LaTeX 文档中生成参考文献除了利用thebibliography环境手工输入参考文献条目信息这一简单方式外，其它方式都需要一个参考文献数据源文件即bib文件。在这一文件内保存各条参考文献的信息，每一条参考文献信息都是一个bibtex item(bibtex项)，其基本格式如下:
 \begin{codetex}{参考文献信息基本格式即bibtex格式}{fmt:bibtex}
 @ARTICLE{entrykey,
@@ -105,7 +116,124 @@
 }
 \end{codetex}
 
-其中\@后面紧跟着条目的类型比如article(期刊文章)，book(专著)等，编组符号\{后紧跟的是该条参考文献信息的bibtex key即引用关键词，在cite引用命令中用该词来表示对此文献的引用。逗号后面跟着的是参考文献的所有各个域的信息，比如作者域，题名域等等，参考文献信息放在各个域名等号后面的编组内，一些域的录入比如author域的英文名录入是有特殊格式要求的，具体可以参考文献\cite{胡振震2016}中关于域信息录入的说明。参考文献源文件只是一个文本文件，只是其内容需要遵守bibtex格式，所以其生成可以有多种方式。
+其中\@后面紧跟着条目的类型比如article(期刊文章)，book(专著)等，编组符号\{后紧跟的是该条参考文献信息的bibtex key即引用关键词，在cite引用命令中用该词来表示对此文献的引用。逗号后面跟着的是参考文献的所有各个域的信息，比如作者域，题名域等等，参考文献信息放在各个域名等号后面的编组内，一些域的录入比如author域的英文名录入是有特殊格式要求的，具体可以参考文献\cite{胡振震2016}中关于域信息录入的说明。
+
+尽管biblatex在传统bibtex格式基础上增加了很多新的条目类型和域，但它完全兼容传统的bibtex格式文件，处于兼容性考虑，我们在准备bib文件时，可以完全安装\href{https://en.wikipedia.org/wiki/BibTeX}{传统的bibtex格式规范}。bibtex格式中所使用的条目类型和域包括:
+
+\begin{codetex}{bibtex格式文件中的条目类型和域}{fmt:bibtex:entryfield}
+Entry types
+A BibTeX database can contain the following types of entries:
+
+article
+An article from a journal or magazine.
+Required fields: author, title, journal, year, volume
+Optional fields: number, pages, month, note, key
+book
+A book with an explicit publisher.
+Required fields: author/editor, title, publisher, year
+Optional fields: volume/number, series, address, edition, month, note, key, url
+booklet
+A work that is printed and bound, but without a named publisher or sponsoring institution.
+Required fields: title
+Optional fields: author, howpublished, address, month, year, note, key
+conference
+The same as inproceedings, included for Scribe compatibility.
+inbook
+A part of a book, usually untitled. May be a chapter (or section, etc.) and/or a range of pages.
+Required fields: author/editor, title, chapter/pages, publisher, year
+Optional fields: volume/number, series, type, address, edition, month, note, key
+incollection
+A part of a book having its own title.
+Required fields: author, title, booktitle, publisher, year
+Optional fields: editor, volume/number, series, type, chapter, pages, address, edition, month, note, key
+inproceedings
+An article in a conference proceedings.
+Required fields: author, title, booktitle, year
+Optional fields: editor, volume/number, series, pages, address, month, organization, publisher, note, key
+manual
+Technical documentation.
+Required fields: title
+Optional fields: author, organization, address, edition, month, year, note, key
+mastersthesis
+A Master's thesis.
+Required fields: author, title, school, year
+Optional fields: type, address, month, note, key
+misc
+For use when nothing else fits.
+Required fields: none
+Optional fields: author, title, howpublished, month, year, note, key
+phdthesis
+A Ph.D. thesis.
+Required fields: author, title, school, year
+Optional fields: type, address, month, note, key
+proceedings
+The proceedings of a conference.
+Required fields: title, year
+Optional fields: editor, volume/number, series, address, month, publisher, organization, note, key
+techreport
+A report published by a school or other institution, usually numbered within a series.
+Required fields: author, title, institution, year
+Optional fields: type, number, address, month, note, key
+unpublished
+A document having an author and title, but not formally published.
+Required fields: author, title, note
+Optional fields: month, year, key
+
+
+Field types
+A BibTeX entry can contain various types of fields. The following types are recognized by the default bibliography styles; some third-party styles may accept additional ones:
+
+address
+Publisher's address (usually just the city, but can be the full address for lesser-known publishers)
+annote
+An annotation for annotated bibliography styles (not typical)
+author
+The name(s) of the author(s) (in the case of more than one author, separated by and)
+booktitle
+The title of the book, if only part of it is being cited
+chapter
+The chapter number
+crossref
+The key of the cross-referenced entry
+edition
+The edition of a book, long form (such as "First" or "Second")
+editor
+The name(s) of the editor(s)
+howpublished
+How it was published, if the publishing method is nonstandard
+institution
+The institution that was involved in the publishing, but not necessarily the publisher
+journal
+The journal or magazine the work was published in
+key
+A hidden field used for specifying or overriding the alphabetical order of entries (when the "author" and "editor" fields are missing). Note that this is very different from the key (mentioned just after this list) that is used to cite or cross-reference the entry.
+month
+The month of publication (or, if unpublished, the month of creation)
+note
+Miscellaneous extra information
+number
+The "(issue) number" of a journal, magazine, or tech-report, if applicable. (Most publications have a "volume", but no "number" field.)
+organization
+The conference sponsor
+pages
+Page numbers, separated either by commas or double-hyphens.
+publisher
+The publisher's name
+school
+The school where the thesis was written
+series
+The series of books the book was published in (e.g. "The Hardy Boys" or "Lecture Notes in Computer Science")
+title
+The title of the work
+type
+The field overriding the default type of publication (e.g. "Research Note" for techreport, "{PhD} dissertation" for phdthesis, "Section" for inbook/incollection)
+volume
+The volume of a journal or multi-volume book
+year
+The year of publication (or, if unpublished, the year of creation)
+\end{codetex}
+
+参考文献源文件本质上只是一个文本文件，只是其内容需要遵守bibtex格式，所以其生成可以有多种方式:
 
 \subsubsection{手动文本文件生成}
 
@@ -367,6 +495,7 @@ xelatex.exe -synctex=1 -interaction=nonstopmode "test".tex
 xelatex.exe -synctex=1 -interaction=nonstopmode "test".tex
 \end{codetex}
 
+
 利用脚本编译原理是一样的，只是利用编译脚本文件进行自动编译，注意:linux下的脚本文件需要添加一下路径。比如:
 \begin{codetex}{window下的bat脚本文件}{bat:file:cmd}
 @echo off
@@ -397,6 +526,12 @@ xelatex --synctex=-1 "test".tex
 xelatex --synctex=-1 "test".tex
 #clear aux files
 rm -r *.aux *.bbl *.blg *.log *.out *.toc *.bcf *.xml *.synctex *.nlo *.nls *.bak *.ind *.idx *.ilg *.lof *.lot *.ent-x *.tmp *.ltx *.los *.lol *.loc *.listing *.gz
+\end{codetex}
+
+\subsubsection{利用latexmk宏包}
+利用latexmk宏包可以实现一键编译，即使用一条命令即可完成整个编译过程。
+\begin{codetex}{latexmk编译命令}{cmd:latexmk}
+latexmk -xelatex "test.tex"
 \end{codetex}
 
 \subsection{分章参考文献和书后参考文献}
@@ -551,9 +686,9 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 			分章节参考文献测试\cite{Lin2004--}。
 		\end{refsegment}
 	\end{refsection}
-    \printbibliography[section=2,segment=0,heading=subbibliography,title=文献D0]
-    \printbibliography[section=2,segment=1,heading=subbibliography,title=文献D1]
-    \printbibliography[section=2,segment=2,heading=subbibliography,title=文献D2]
+    \printbibliography[section=2,segment=0,heading=subbibliography,title= 文献D0]
+    \printbibliography[section=2,segment=1,heading=subbibliography,title= 文献D1]
+    \printbibliography[section=2,segment=2,heading=subbibliography,title= 文献D2]
 	\printbibliography[section=1,heading=subbibliography,title=文献C]
     \printbibliography[section=2,heading=subbibliography,title=文献D]
 	%遍历非refsection内的参考文献
@@ -571,6 +706,205 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 	\caption{全局参考文献综合示例}\label{fig:eg:global:complex}
 \end{figure}
 
+\subsection{筛选、缩略信息、索引}
+
+\subsubsection{文献表分类筛选的不同方法}
+除了前述的分章节打印外参考文献可以分类筛选打印，主要基于printbibliography命令的选项来实现。主要包括:
+\begin{itemize}
+  \item type
+  \item nottype
+  \item keyword
+  \item notkeyword
+  \item category
+  \item notcategory
+  \item filter
+  \item check
+\end{itemize}
+其中category，filter，check是需要人工定义的。
+
+type，nottype分别表示打印是和不是某种条目类型的文献，keyword，notkeyword分别表示打印keywords域中含有或不含有某一个关键词的文献，category，notcategory分别表示是或不是某一设定的category的文献，filter表示属于某一设定筛选器的文献。注意因为category必须要在导言区设置，其实使用并不方便。
+
+\subsubsection{筛选打印示例}
+
+例\ref{eg:bib:filter}给出了这些选项的测试，分别利用type和keyword区分了图书等文献，定义了collections和standard两个筛选器用于打印论文集会议录和标准文献，定义了名为reportandthesis的category用于打印学位论文和报告。结果如图\ref{fig:eg:bibfilter}所示。
+
+\begin{codetex}{分类筛选打印参考文献表}{eg:bib:filter}
+%file:egbibfilter
+\documentclass{article}
+\usepackage{ctex,hyperref}
+\usepackage{geometry}
+\geometry{paperwidth=21cm,paperheight=26cm,%
+left=1cm,right=1cm,top=1cm,bottom=1.5cm}
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource{example.bib}
+\renewcommand{\bibfont}{\zihao{6}}
+\usepackage{titlesec}
+%\titleformat{command}[shape]{format}{label}{sep}{before}[after]
+\titleformat{\section}{\centering\bfseries}{第\thesection 节}{1em}{}[]
+\titlespacing*{\section}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\titleformat{\subsection}{\flushleft\bfseries}{\S\,\thesubsection}{1em}{}[]
+\titlespacing*{\subsection}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\DeclareBibliographyCategory{reportandthesis}
+\addtocategory{reportandthesis}{汤万金2013-09-30--,Calkin2011-8-9,吴云芳2003--,CALMS1965--}
+\begin{document}
+文献\cite{张伯伟2002--}\cite{CRAWFPRD1995--}\cite{陈志勇2011--}\cite{Babu2014--}\cite{汤万金2013-09-30--}
+\cite{Calkin2011-8-9}\cite{吴云芳2003--}\cite{CALMS1965--}\cite{张凯军2012-04-05--}\cite{KOSEKI2002--}
+\cite{全国广播电视标准化技术委员会2007-1-1}\cite{国家环境保护局科技标准司1996-2-3}
+\cite{楼梦麟2011-11-12}\cite{BUSECK1980-117-211}\cite{陈建军2010-93-93}
+\cite{DESMARAIS1992-605-609}\cite{张田勤2000--}\cite{萧钰2001--}
+
+\printbibliography[type=book,notkeyword=standard,title=【普通图书】]
+\defbibfilter{collections}{%
+type=collection
+or type=proceedings
+or type=incollection
+or type=inproceedings
+}
+\printbibliography[filter=collections,title=【论文集、会议录】]
+\defbibfilter{standard}{%
+( type=book or type=inbook )
+and keyword=standard
+}
+\printbibliography[filter=standard,title=【标准文献】]
+\printbibliography[type=inbook,notkeyword=standard,title=【专著中析出的文献】]
+\printbibliography[type=article,notkeyword=news,title=【期刊中析出的文献】]
+\printbibliography[type=article,keyword=news,title=【报纸析出的文献】]
+\printbibliography[category=reportandthesis,title=【报告和学位论文】]
+\printbibliography[notcategory=reportandthesis,title=【非报告和学位论文】]
+\end{document}
+\end{codetex}
+
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[width=0.8\textwidth,page=1]{egbibfilter.pdf}}
+  \caption{脚注和旁注中参考文献表}\label{fig:eg:bibfilter}
+\end{figure}
+
+
+\subsubsection{文献缩略信息打印}
+
+缩略信息打印示例如例\ref{eg:print:biblist}所示。
+
+\begin{codetex}{论文集信息打印}{eg:print:biblist}
+\documentclass[twoside]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=21cm,paperheight=29cm,top=1.5cm, bottom=1.5cm, left=2.54cm,right=2.54cm}
+\usepackage{xcolor}
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
+%\usepackage[backend=biber,style=gb7714-2015,maxbibnames=5,minbibnames=5]{biblatex}
+\usepackage[backend=biber,style=gb7714-2015,gbpunctin=false]{biblatex}%align=gb7714-2015
+
+\DefineBibliographyStrings{english}{in={}}
+
+\DeclareBibliographyDriver{shortbooktitle}{%
+\printfield{booktitle}\par}
+
+\defbibcheck{shortbooktitle}{%
+\iffieldundef{booktitle}{\skipentry}
+{\ifcsdef{\strfield{shortbooktitle}=\strfield{booktitle}}{\skipentry}
+{\savefieldcs{booktitle}{\strfield{shortbooktitle}=\strfield{booktitle}}}}%
+}
+%注意这里savefieldcs给命令拷贝booktitle域的信息是无关紧要的，
+%如果有其他定义命令的序列比如savecs{\strfield{shortbooktitle}=\strfield{booktitle}}也是一样的，
+%因为前面的ifcsdef判断只是判断命令是否存在，但因为biblatex中提供了savefieldcs命令所以应用它
+
+
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+@Inproceedings{refa,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  Author                   = {AlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  editor={Name, B and Dome, C},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refb,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  editor={Name, B and Dome, C},
+  Author                   = {BlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refc,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  bookauthor={Name, B and Dome, C},
+  Author                   = {ClayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refd,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  bookauthor={Name, B and Dome, C},
+  Author                   = {MlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{FOURNEY1971-17-38,
+  Title                    = {Advances in holographic photoelasticity},
+  Author                   = {M E FOURNEY},
+  Booktitle                = {Symposium on Applications of Holography in Mechanics, August 23-25, 1971, University of Southern California, Los Angeles, California},
+  Date                     = {1971},
+  Pages                    = {17-38},
+  Publisher                = {ASME},
+  Location                 = {New York}
+}
+
+@Inproceedings{裴丽生1981-2-10,
+  Title                    = {在中国科协技术期刊编辑工作经验交流会上的讲话},
+  Author                   = {裴丽生},
+  Booktitle                = {中国科协学术期刊编辑工作经验交流会资料选},
+  Date                     = {1981},
+  Pages                    = {2-10},
+  Institution              = {中国科学技术协会学会工作部},
+  Location                 = {北京}
+}
+
+@Book{Simon2001--,
+  Title                    = {Spread Spectrum Communications Handbook},
+  Address                  = {New York City},
+  Author                   = {Simon, M. K. and Omura,J. K. and Scholtz,R. A. and Levitt,B. K.},
+  Publisher                = {McGraw-Hill, Inc.},
+  Year                     = {2001}
+}
+\end{filecontents}
+\addbibresource{\jobname.bib}
+
+
+\begin{document}
+编译信息:biblatex v\versionofbiblatex;gb7714-2015*.* version number \versionofgbtstyle.
+
+\section{文献表}
+文献
+\cite{refc}
+\cite{refa}
+\cite{refb}
+\cite{refd}
+\cite{FOURNEY1971-17-38}
+\cite{裴丽生1981-2-10}
+\cite{Simon2001--}
+
+\printbiblist[title={book Shorthands}]{shortbooktitle}
+
+\printbibliography%[heading=subbibintoc,title=【参考文献】]
+\end{document}
+\end{codetex}
+
+\subsubsection{文献信息索引}
+
+待完善
 
 \subsection{参考文献标题格式}
 期刊文章经常需要设置某种格式的参考文献标题，包括字号，大小，段落格式等。在书籍等写作中有时还需要将参考文献加入目录中，以便实现超链接。
@@ -1085,6 +1419,7 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 参考文献著录和标注样式是排版的主要内容之一，但对于普通用户来说只要学会选择使用即可，因为其格式已经由样式作者所设定。当然如果用户需要在某种样式的基础上有进一步的修改，那么完全可以开展这方面的工作。其中著录样式的在*.bbx文件中修改，而标注样式在*.cbx文件中修改。
 \subsubsection{标准样式}
 biblatex提供了一些标准的样式，比如numeric，authoryear，这两个样式是比较常用的，也是样式作者定制自定义样式的重要基础。biblatex还提供了更多著录样式，比如alphabetic，authortitle，verbose等，详见biblatex手册Bibliography Styles一节。标注样式也还有numeric-comp，numeric-verb，alphabetic，authortitle等，详见biblatex手册Citation Styles 一节。
+\emph{特别需要强调的是numeric-comp，authoryear-comp是针对顺序编码和作者年制的两个标签压缩样式，顺序编码制的压缩样式主要针对多篇文献传递给一个标注命令的情况，而作者年制的压缩样式除了给一个标注命令传递多篇文献外，还需要连续引用文献具有相同作者，而要使相同作者的文献连续，可以通过手动方式给出，也可以通过自动排序方式实现}。
 
 读者可以测试这些样式的效果，以便在需要的时候选择使用，而且著录和标注可以分别使用不同的样式，著录是一种，而标注则是另一种。需要注意: 还有一种情况是在同一种标注样式下有的标注需要是上标，有的则不需要，而且这种应用看来是比较常见的，网友海阔天空和xmtangjun都提出了这种需求，在标准样式下有supercite命令提供上标模式，而cite和parencite命令提供非上标模式。而在下一节的gb7714-2015样式中，xmtangjun朋友提出把已经修改成上标模式parencite恢复成非上标模式，那么可以由cite命令提供上标模式，而parencite命令提供非上标模式，这种方法是可取的。
 
@@ -1202,6 +1537,121 @@ texlive 2016 当然也可以用这种方式离线安装。
 \lstinline!\newrefcontext[sorting=nyt]!
 
 \paragraph{文献数据项的输出} 如果要取消url，doi，isbn等信息项的输出，可以设置相应的选项为false。
+
+\paragraph{标注后面的标点控制} 在英文有时因为习惯问题会有标点的问题，比如句尾出现脚注的标签，需要把它放到句点后面。有时可能也需要把标注标签放到句点后面。这时需要用autopunct选项来扫描标注后面的标点。下面的例子给出了在句尾的脚注文献与标点的处理。
+
+\begin{codetex}{autopunct选项与脚注之后句点处理}{eg:autopunct}
+\documentclass[twoside]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=21cm,paperheight=29cm,top=1.5cm, bottom=1.5cm, left=2.54cm,right=2.54cm}
+\usepackage{xcolor}
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
+%\usepackage[backend=biber,style=gb7714-2015,maxbibnames=5,minbibnames=5]{biblatex}
+\usepackage[backend=biber,style=numeric,autocite=footnote,autopunct=true]{biblatex}%align=gb7714-2015
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+
+@Inproceedings{refa,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  Author                   = {AlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  editor={Name, B and Dome, C},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refb,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  editor={Name, B and Dome, C},
+  Author                   = {BlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refc,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  bookauthor={Name, B and Dome, C},
+  Author                   = {ClayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refd,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  bookauthor={Name, B and Dome, C},
+  Author                   = {MlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Book{Simon2001--,
+  Title                    = {Spread Spectrum Communications Handbook},
+  Address                  = {New York City},
+  Author                   = {Simon, M. K. and Omura,J. K. and Scholtz,R. A. and Levitt,B. K.},
+  Publisher                = {McGraw-Hill, Inc.},
+  Year                     = {2001}
+}
+\end{filecontents}
+\addbibresource{\jobname.bib}
+
+
+\begin{document}
+%编译信息:biblatex v\versionofbiblatex;gb7714-2015*.* version number \versionofgbtstyle.
+
+\section{文献表}
+文献\cite{refc}.
+
+文献\autocite{refa}.
+
+文献\autocite{refb}。
+
+文献\cite{refd}.
+
+文献\cite{Simon2001--}.
+
+\printbibliography%[heading=subbibintoc,title=【参考文献】]
+\end{document}
+\end{codetex}
+
+\subsubsection{标注命令}
+
+传统方法中类似natbib，mcite这样的宏包提供了很多有特色的标注命令。比如:
+\begin{codetex}{natbib和mciteplus等宏包提供的标注名}{eg:cite:natbib}
+\citep{jon90} fora parenthetical citation(Jones et al.,1990),
+\citet{jon90} fora textual one, as Jones et al.(1990).
+\citealt{jon90} Jonesetal.1990
+\citealt*{jon90} Jones,Baker,andWilliams1990
+\citealp{jon90} Jones et al.,1990
+\citealp*{jon90} Jones,Baker,and Williams,1990
+\citealp{jon90,jam91}  Jones et al.,1990;James et al.,1991
+\citealp[pg.~32]{jon90}  Jones et al.,1990,pg.32
+\citenum{jon90}  11
+\citetext{priv.\comm.} (priv.comm.)
+
+\citeauthor{jon90} ) Jonesetal.
+\citeauthor*{jon90} ) Jones,Baker,andWilliams
+\citeyear{jon90} ) 1990
+\citeyearpar{jon90} ) (1990)
+
+\cite{Glashow,*Salam,*Weinberg,Smith,*Jones}%multiplegroupsOK
+\cite{Glashow,*Salam,*Weinberg}\cite{Glashow}%headcanberecitedanytime
+\cite{Glashow,*Salam,*Weinberg}\cite{Glashow,*Salam,*Weinberg}%restatepreviousdefinition
+\cite{Glashow,*Salam,*Weinberg}\cite{Glashow,*Weinberg}%restatepartofpreviousdefinition
+\cite[page580ofGlashow]{Glashow,*Salam}%optionalargumentissupported
+\nocite{*}%BibTeXwildcardOK,butusewithcaution
+\end{codetex}
+
+biblatex通过相应的处理模块，给出功能相同语法相同的命令。
+
+此外，biblatex还提供更多标注命令，以及强大的标注命令定制功能。
 
 
 \subsection{多语言文献}
@@ -1531,65 +1981,6 @@ text text text text text text text text text
   \caption{脚注和旁注中参考文献表}\label{fig:eg:bibinfootmargin}
 \end{figure}
 
-\subsection{文献表分类筛选打印}
-
-除了前述的分章节打印外参考文献可以分类筛选打印，主要基于printbibliography命令的type，nottype，keyword，notkeyword，category，notcategory，filter选项来实现，其中category和filter是需要人工定义的。
-type，nottype分别表示打印是和不是某种条目类型的文献，keyword，notkeyword分别表示打印keywords域中含有或不含有某一个关键词的文献，category，notcategory分别表示是或不是某一设定的category的文献，filter表示属于某一设定筛选器的文献。注意因为category必须要在导言区设置，其实使用并不方便。
-
-例\ref{eg:bib:filter}给出了这些选项的测试，分别利用type和keyword区分了图书等文献，定义了collections和standard两个筛选器用于打印论文集会议录和标准文献，定义了名为reportandthesis的category用于打印学位论文和报告。结果如图\ref{fig:eg:bibfilter}所示。
-
-\begin{codetex}{分类筛选打印参考文献表}{eg:bib:filter}
-%file:egbibfilter
-\documentclass{article}
-\usepackage{ctex,hyperref}
-\usepackage{geometry}
-\geometry{paperwidth=21cm,paperheight=26cm,%
-left=1cm,right=1cm,top=1cm,bottom=1.5cm}
-\usepackage[backend=biber,style=gb7714-2015]{biblatex}
-\addbibresource{example.bib}
-\renewcommand{\bibfont}{\zihao{6}}
-\usepackage{titlesec}
-%\titleformat{command}[shape]{format}{label}{sep}{before}[after]
-\titleformat{\section}{\centering\bfseries}{第\thesection 节}{1em}{}[]
-\titlespacing*{\section}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
-\titleformat{\subsection}{\flushleft\bfseries}{\S\,\thesubsection}{1em}{}[]
-\titlespacing*{\subsection}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
-\DeclareBibliographyCategory{reportandthesis}
-\addtocategory{reportandthesis}{汤万金2013-09-30--,Calkin2011-8-9,吴云芳2003--,CALMS1965--}
-\begin{document}
-文献\cite{张伯伟2002--}\cite{CRAWFPRD1995--}\cite{陈志勇2011--}\cite{Babu2014--}\cite{汤万金2013-09-30--}
-\cite{Calkin2011-8-9}\cite{吴云芳2003--}\cite{CALMS1965--}\cite{张凯军2012-04-05--}\cite{KOSEKI2002--}
-\cite{全国广播电视标准化技术委员会2007-1-1}\cite{国家环境保护局科技标准司1996-2-3}
-\cite{楼梦麟2011-11-12}\cite{BUSECK1980-117-211}\cite{陈建军2010-93-93}
-\cite{DESMARAIS1992-605-609}\cite{张田勤2000--}\cite{萧钰2001--}
-
-\printbibliography[type=book,notkeyword=standard,title=【普通图书】]
-\defbibfilter{collections}{%
-type=collection
-or type=proceedings
-or type=incollection
-or type=inproceedings
-}
-\printbibliography[filter=collections,title=【论文集、会议录】]
-\defbibfilter{standard}{%
-( type=book or type=inbook )
-and keyword=standard
-}
-\printbibliography[filter=standard,title=【标准文献】]
-\printbibliography[type=inbook,notkeyword=standard,title=【专著中析出的文献】]
-\printbibliography[type=article,notkeyword=news,title=【期刊中析出的文献】]
-\printbibliography[type=article,keyword=news,title=【报纸析出的文献】]
-\printbibliography[category=reportandthesis,title=【报告和学位论文】]
-\printbibliography[notcategory=reportandthesis,title=【非报告和学位论文】]
-\end{document}
-\end{codetex}
-
-\begin{figure}[!htb]
-  \centering
-  \fbox{\includegraphics[width=0.8\textwidth,page=1]{egbibfilter.pdf}}
-  \caption{脚注和旁注中参考文献表}\label{fig:eg:bibfilter}
-\end{figure}
-
 \subsection{beamer类中的参考文献}\label{sec:bib:inbeamer}
 在beamer类中使用biblatex生成参考文献与一般文档类中大体上一致，略有差别，主要是refsection环境无法使用。在实际应用中，beamer 类有两种文献表是主要的，一是文末的文献表，二是脚注中的文献表。
 
@@ -1767,9 +2158,1143 @@ align=left%
   \caption{beamer中biblatex利用颜色主题设置文献颜色}\label{fig:eg:bibinbeamer:color}
 \end{figure}
 
-\section{参考文献样式定制项目示例}
+\section{参考文献样式定制方法}
 
-\subsection{介绍}
+biblatex强大还体现在参考文献样式的定制功能上。本文作为biblatex的使用教程，除了在上一节介绍biblatex基本的功能和机制(包括:通过选项设置修改、通过简单语句操作修改)外，也将介绍更深层次的功能，主要放在本节中，通过介绍biblatex-gb7714-2015样式包等的设计与实现来阐述biblatex的高阶功能和强大机制。介绍的步骤，首先是根据样式设计的需求，提出可能要解决的问题，然后分析其原理性思路，接着介绍功能应用，最后则是代码的实现。
+
+%biblatex相当完善和强大，笔者开发样式文件过程中仅使用了biblatex提供的一小部分功能，更多功能其实都没有涉及到。可以说，biblatex作为参考文献问题的一个完整解决方案是名副其实的。笔者在设计样式文件时应用biblatex宏包功能的思路和实现总结如下:
+
+\subsection{gb7714-2015样式设计与实现}
+
+\subsubsection{动机}
+需求分析是设计的根本来源。之所以要开发biblatex-gb7714-2015样式包肯定存在一定的动机，包括填补空白，改进完善等等。具体到细节上，可能包括如下方面是biblatex-gb7714-2015样式设计的来源，也是要解决的问题:
+
+\begin{enumerate}
+  \item biblatex版本的兼容性(原来用的样式，在biblatex升级后不能用了，所以希望样式能够克服biblatex版本变化带来的问题)
+  \item 格式修改的可逆性(希望样式中做的修改时可以通过选项等方式调整的，以增加用户使用的灵活性，用于可以通过选项等完全复原回到标准样式。)
+  \item 多语言对照(希望实现标准提出的要求)
+  \item 文献表的整体格式(希望实现类似word中的标签形式，而不仅是latex中list的那种风格)
+  \item 新增加的条目类型(除了利用常见条目实现外，还可以针对国标的条目增加新的类型) 
+  \item 自定义的域(因为国标有一些文献类型载体标识等的要求，所以要使用自定义的域) 
+  \item 著录条目中的作者格式(除提供标准要求格式外，希望实现多种的格式)
+  \item 著录条目中中英文不同的缩略词(希望实现标准的要求)
+  \item 著录条目中的日期格式(希望实现标准的要求)
+  \item 著录条目中的标点格式 (希望实现标准的要求)
+  \item 著录条目中的域的解析(合期等)(希望实现标准的要求)
+  \item 标注的格式(希望实现标准的要求)
+\end{enumerate}
+
+上述这些其实是后期不断完善提出来的总结，其实在初期设计时，主要还是针对目标即GB/T 7714-2015标准来一条条的实现，缺什么增加什么，哪个有问题改什么。
+
+
+
+\subsubsection{基本思路}
+
+考虑到我国引用参考文献通常是中英文混合的情况，因此不考虑针对中文的本地化处理，而是在英文本地化的基础(英文的本地化字符串设置文档是english.lbx)上添加一些中文要求的本地化字符串来使用。需要注意:本地化字符串的定义在lbx文件和bbx文件中是不一样的，lbx文件中用的是DeclareBibliographyStrings，而bbx文件中用的是DefineBibliographyStrings，两者的参数是不一样的。
+
+而为了区分使用中英文的字符串，对参考文献条目中数据域内容进行中英文判断，若是中文则使用中文字符串，若是英文则使用英文字符串。
+
+这里的中英文判断主要是在tex中的判断，利用对域中的信息进行检测，当信息的第一个字符是CJK字符时，判断该域的信息是中文的，否则是英文的。
+
+在作者年制中不同语种文献分集时也有一个中英文判断，主要是利用动态数据修改的方法。利用perl正则表达式判断作者和标题域中是否有中文信息(可以用排除法即匹配不是英文数字标点的字符通常是中文字符，当然最直接的是用unicode的中文字符范围匹配)，有的话设置cn，否则为en。事实上这种判断可以进一步扩展，利用强大的perl正则表达式，对所有的关键域进行判断，并在一些域中设置标识，用于tex输出时进行判断，而避免直接使用上述CJK字符判断函数。
+
+\subsubsection{利用字符流解析或者xstring宏包的函数}\label{sec:cjkjudge}
+\begin{enumerate}
+\item cjk字符判断
+\begin{texlist}
+%定义判断中文字符的函数，用于判断作者等信息是否由中文字符构成
+%2E00-2E7F 追加标点
+%2E80-2EFF cjk部首补充
+%2FF0-2FFF 表意文字描述符
+%3000-303F cjk符号和标点
+%3300-33FF cjk兼容
+%3400-4DBF cjk统一表意符号扩展
+%4E00-9FBF cjk统一表意符号
+%中文范围4E00-9FA5
+\providetoggle{ifCJKforgbt}
+\def\testCJKfirstchar#1#2&{%
+\ifnumgreater{`#1}{"2E7F}{\toggletrue{ifCJKforgbt}}{\togglefalse{ifCJKforgbt}}%
+}%
+
+%利用edef展开或xstring抽取第一个字符判断
+%现在采用xstring方法，避免抽取的是编组符号
+\def\testCJKfirst#1{%
+%\edef\tempa{#1}%可以替换下面两句，但失去忽略多余编组功能
+\exploregroups%
+\StrChar{#1}{1}[\tempa]%
+\expandafter\testCJKfirstchar\tempa&}
+\end{texlist}
+
+\item 卷期范围解析
+\begin{texlist}
+%用于解析连续出版物，2个卷期的情况
+%\def\multivolumeparsetoparts#1/#2{\def\multivolumefirst{#1}\def\multivolumesecond{#2}}
+%\def\multinumberparsetoparts#1/#2{\def\multinumberfirst{#1}\def\multinumbersecond{#2}}
+%范围起止间隔符号还是用-，而不是与date相同的/，因为有合期期刊的问题，需要用到/符号
+\newcommand{\multivolparser}[1]{%
+    \IfSubStr{#1}{-}%
+        {\StrBefore{#1}{-}[\multivolfirst]\StrBehind{#1}{-}[\multivolsecond]}%
+        {\def\multivolfirst{#1}\def\multivolsecond{}}%
+}
+
+\newcommand{\multinumberparser}[1]{%
+    \IfSubStr{#1}{-}%
+        {\StrBefore{#1}{-}[\multinumberfirst]\StrBehind{#1}{-}[\multinumbersecond]}%
+        {\def\multinumberfirst{#1}\def\multinumbersecond{}}%
+}
+
+%这里利用李志奇的范围数据解析函数，修改后用来处理卷volume的范围。
+%他的这个函数是通用的，只能在使用数据前使用，如果多次使用前一次得到的数据就会被冲掉
+%这里的范围起止判断符号还是用-，而不是与date相同的/，因为有合期期刊的问题，需要用到/符号
+%\def\gbt@parse@range#1{%
+%    \edef\gbt@tmpa{#1}%
+%    \expandafter\gbt@parse@rangei\gbt@tmpa-\@empty}
+%\def\gbt@parse@rangei#1-#2\@empty{%
+%    \global\def\gbt@range@first{#1}%
+%    \def\gbt@tmpa{#2}%
+%    \ifx\gbt@tmpa\@empty%
+%        \global\def\gbt@range@second{}%
+%    \else%
+%        \gbt@parse@rangeii#2\@empty%
+%    \fi}
+%\def\gbt@parse@rangeii#1-#2\@empty{%
+%    \def\gbt@tmpa{#2}%
+%    \ifx\gbt@tmpa\@empty%
+%        \global\def\gbt@range@second{#1}%
+%    \else%
+%        \gbt@parse@rangeii#2\@empty%
+%    \fi}
+
+%这里写的number的解析函数，与上面的卷解析函数是类似的。
+%\def\multinumberparser#1{%
+%    \edef\gbnumbertmp{#1}%
+%    \expandafter\multinumberparsetoparts\gbnumbertmp-\@empty}
+%\def\multinumberparsetoparts#1-#2\@empty{%
+%    \def\multinumberfirst{#1}%
+%    \def\gbnumbertmp{#2}%
+%    \ifx\gbnumbertmp\@empty%
+%        \def\multinumbersecond{}%
+%    \else%
+%        \multinumberparsetopartsb#2\@empty%
+%    \fi}
+%\def\multinumberparsetopartsb#1-#2\@empty{%
+%    \def\gbnumbertmp{#2}%
+%    \ifx\gbnumbertmp\@empty%
+%        \def\multinumbersecond{#1}%
+%    \else%
+%        \multinumberparsetopartsb#2\@empty%
+%    \fi}
+\end{texlist}
+
+\end{enumerate}
+
+\subsubsection{标点和空格的特点和机制}
+  \begin{enumerate}
+    \item 标点符号设置比如:renewrobustcmd*\{\textbackslash bibinitperiod\}\{\} 和renewcommand*\{\textbackslash revsdnamepunct\}\{\}等用于全局修改标点。
+    \item 如isdot/adddot，adddot将原样(逐字，如实)句点转换为缩写点在有利用printtext输入原样字符的时候很重要比如[s.n.] 中，比如title末尾。
+    \item 利用newunit输出的标点，需要后面遇到printfield等命令有内容才输出标点，这是标点的异步处理机制。
+    \item setunit*的作用是前面printtext等没有输出时候就不输出，见4.11.7.3 节的应用以及出版项缺省时的代码处理。
+    \item 标点和空格的调试方法:有时引入多余的空格和标点后很难快速处理，那么需要调试，调试的第一步是注释掉多余的代码，实现无多余空格或标点情况(一种快速方法是直接在一个printtext输出各相关域)，然后一步步恢复原来的代码，直到找到多余空格或标点产生的原因，最后根据原因作出修改。
+    \item 多余空格的引入，可能来自于如下方面(下面是已经遇到的，可能还有更多)
+    \begin{itemize}
+    \item 行末空格引入，解决方法:把相关的代码行结尾用\%符号注释。
+    \item mkbibparens等命令引入，解决方法:利用printtext\{(\}，printtext\{)\}来代替
+    \item nopunct等命令引入，这种引入的空格使用unspace命令还消除不了，解决方法:避免使用nopunct命令，而在标点设置时多做判断，只有有内容时才设置标点，而不是过分依赖biblatex提供的标点异步处理机制。
+    \end{itemize}
+
+    \item 短横线相关的字符，参考: unicode 表
+
+        \begin{itemize}
+        \item 0x2d:hyphen :\char"2D，直接输入键盘短横线得到\verb|-|，即为连字符
+        \item 0x2010:hyphen :\char"2010
+        \item 0x2011:non breaking hyphen :\char"2011
+        \item 0x2012:figure dash :\char"2012
+        \item 0x2013:en dash :\char"2013，直接输入两个键盘短横线得到\verb|--|
+        \item 0x2014:em dash :\char"2014，中文全角的一段破折号线，可以用三个短横线得到\verb|---|
+        \item 0x2212:mathematical minus :\char"2212
+        \end{itemize}
+        biblatex中页码范围中的间隔符是\verb|\bibrangedash|，默认则是en dash。可以通过设置如下命令做修改:
+        \begin{texlist}
+        \DefineBibliographyExtras{english}{\renewcommand*{\bibrangedash}{-}}% 将页码间隔符替换为hypen连字符
+        \end{texlist}
+        而日期成分之间的间隔符则是\verb|\bibdatesep|，默认是hyphen，即连字符。
+
+    \item 使用printtext等命令确保异步处理机制不被破坏，典型的例子为，专利的公告日期(对于3.7以上版本)使用了biblatex的内容宏，但还需要将其用printtext包围起来，比如:
+        \begin{texlist}
+        %
+        %   专利的公告日期、或报纸的日期的输出宏
+        %   20160701，v1.0，新增加
+        %   20180405，为biblatexv3.10版本，出现多出点bug做处理，Hu Zhenzhen
+        %
+        %   原理方法:加上printtext避免破坏异步标点机制
+        %
+        \newbibmacro*{newsdate}{%%
+        \printtext{\blx@isodate{}{}}%%
+        }
+        \end{texlist}
+
+    \item beamer中标题后面的标点情况，beamer对bibmacro\{title\}做了patch以实现特殊的效果。比如:
+    \begin{texlist}
+    \pretocmd{\abx@macro@title}
+       {\ifcsundef{abx@name@labelname}{}{\let\bbx@tempa\labelnamepunct}%
+        \bbx@tempa\newblock\unspace\usebeamercolor[fg]{bibliography entry title}}{}{}
+    \apptocmd{\abx@macro@title}
+       {\ifcsundef{abx@field@title}{}{\ifpunct{}{\midsentence\newunitpunct}}
+        \newblock\unspace\usebeamercolor[fg]{bibliography entry note}}{}{}
+    \end{texlist}
+    该patch详见beamerbaselocalstructure.sty文件。需要注意\verb|abx@field@title|，在biblatex中是有newbibmacro\{title\}产生的。注意到在apptocmd做的patch中，midsentence命令隐藏了其前面的标点并重新做标点最终，因此其后的newunitpunct命令必将输出标点，因此无论如何标题后面必然会出现一个newunitpunct控制的标点，这个标点一般情况下是可以用的，但是对于有些文献类型比如inbook，析出文献标题后面没有标点只有//，因此需要将该标点去掉，所以需要反处理该patch。
+    通过测试表明，无论是在title前再做pretocmd或者在title后再做apptocmd 都会产生问题，多个的apptocmd的机制大体是前一个做完后，后一个在其基础上处理，而apptocmd主要做的是封装，因此前一个产生的效果无法消除。但通过思考发现，使用patchcmd 可以对前面的效果产生影响，它不是封装而是一种替换，所以可以将前面封装的效果去掉。比如:
+    \begin{texlist}
+    %
+    %   文献标题后的标点问题
+    %   20180405，v1.0k，为texlive2017以上版本中的beamer兼容性做的处理，Hu Zhenzhen
+    %
+    %   原理方法:如下代码处理texlive2017以上版本中，beamer中文献的标题后出现两个点的情况:
+    %   texlive2017以上的beamer中对macro{title}做了patch，正常情况下不会出现两个点的情况，但由于
+    %   之前为了处理texlive2015，2016下的title格式添加了adddot，导致出现两个点的情况，而且也影响
+    %   析出文献的//符号的输出，因此再次对macro{title}做patch消除beamer中做apptocmd时添加的\newunitpunct
+    \ifboolexpr{%
+        test{\iftoggle{iftlfive}}
+        or
+        test{\iftoggle{iftlsix}}
+      }{}%
+      {%texlive 2017对应iftlseven以上版本
+      \DeclareFieldFormat{title}{#1}%
+      \DeclareFieldFormat[article,patent,thesis,unpublished]{title}{#1}
+      \AtBeginDocument{%
+      \@ifclassloaded{beamer}
+        {\patchcmd{\abx@macro@title}{\newunitpunct}{}{}{}}{}}
+      }
+    \end{texlist}
+
+  \end{enumerate}
+
+
+\subsubsection{动态数据修改}
+利用biber在处理数据源时的动态处理，可以处理一些数据，比如设置一些域的值，用于进一步的判断和应用。
+
+\subsubsection{基本原理和方法}\label{sec:dynamic:modify}
+biber动态数据处理，详见biblatex说明文档Dynamic Modification of Data一节和bbx文件中DeclareSourcemap的内容。
+  \begin{enumerate}
+    \item map的作用，对条目逐条进行处理
+    \item final作用，当不成立map终止。
+    \item append的作用，给域添加信息
+    \item origfieldvalue来源
+    \item overwite选项有无的作用，无overwite时，只要域原有信息，那么就不再map，有overwite时，则进行覆盖。\bc{注意:使用append的时候也需要overwite选项}。
+    \item biblatex3.4以后的版本可以使用foreach选项，而3.0版只能一个域一个域的处理，意味着每一个域处理都要写一个map 步。
+    \item date域仅作为解析用，不出现在bbl文件中，所以在bbx内部进行日期判断的时候要注意，不使用date 域而要用由其解析出来的year 等域进行判断，而且当date域的内容不符合解析格式要求时，自动忽略掉，那么信息有可能丢失，因此当有不符合解析格式的日期信息时应放到year 域中。
+    \item 动态数据处理中利用正则表达式可以用来处理特殊字符，对于参考文献信息中一些特殊字符比如\&等，除了利用jabref软件的biblatex 可以自动转换外，利用动态数据修改也可以做一定的处理，比如对一些容易出现这种字符的域进行处理，使其内容符合tex源文件书写规则，即在特殊字符前加上斜杠。注意利用正则表达式处理\%，\#时直接在regexp中写字符没有问题，但是对于\&字符就存在问题，所以对于该字符使用十六进制表示方法\verb|\x26|。 比如:
+
+
+
+    \begin{texlist}
+    %for texlive >2016
+    \DeclareStyleSourcemap{
+        \maps[datatype=bibtex]{
+            \map[overwrite, foreach={title,booktitle,journaltitle,journal,publisher,address,location,institution,organization}]{
+                \step[fieldsource=\regexp{$MAPLOOP}, match=\regexp{([^\\])\#}, replace=\regexp{$1\\\#}]
+            }
+            \map[overwrite, foreach={title,booktitle,journaltitle,journal,publisher,address,location,institution,organization}]{
+                \step[fieldsource=\regexp{$MAPLOOP}, match=\regexp{([^\\])\%}, replace=\regexp{$1\\\%}]
+            }
+            \map[overwrite, foreach={title,booktitle,journaltitle,journal,publisher,%
+            address,location,institution,organization}]{
+                \step[fieldsource=\regexp{$MAPLOOP}, match=\regexp{([^\\])\x26}, replace=\regexp{$1\\\x26}]
+            }
+        }
+    }
+
+    %for texlive 2015
+    \DeclareStyleSourcemap{
+        \maps[datatype=bibtex]{
+            \map[overwrite]{%title,booktitle,journaltitle,journal,publisher,address,location,institution,organization
+            \step[fieldsource={title}, match=\regexp{([^\\])\x26}, replace=\regexp{$1\\\x26}]
+            }
+            \map[overwrite]{
+            \step[fieldsource={booktitle}, match=\regexp{([^\\])\x26}, replace=\regexp{$1\\\x26}]
+            }
+            \map[overwrite]{
+            \step[fieldsource={journaltitle}, match=\regexp{([^\\])\x26}, replace=\regexp{$1\\\x26}]
+            }
+            \map[overwrite]{
+            \step[fieldsource={journal}, match=\regexp{([^\\])\x26}, replace=\regexp{$1\\\x26}]
+            }
+            \map[overwrite]{
+            \step[fieldsource={publisher}, match=\regexp{([^\\])\x26}, replace=\regexp{$1\\\x26}]
+            }
+            \map[overwrite]{
+            \step[fieldsource={address}, match=\regexp{([^\\])\x26}, replace=\regexp{$1\\\x26}]
+            }
+            \map[overwrite]{
+            \step[fieldsource={location}, match=\regexp{([^\\])\x26}, replace=\regexp{$1\\\x26}]
+            }
+            \map[overwrite]{
+            \step[fieldsource={institution}, match=\regexp{([^\\])\x26}, replace=\regexp{$1\\\x26}]
+            }
+            \map[overwrite]{
+            \step[fieldsource={booktitle}, match=\regexp{([^\\])\#}, replace=\regexp{$1\\\#}]
+            }
+            \map[overwrite]{
+            \step[fieldsource={booktitle}, match=\regexp{([^\\])\%}, replace=\regexp{$1\\\%}]
+            }
+        }
+    }
+    \end{texlist}
+
+  \end{enumerate}
+
+\subsubsection{数据模型}
+  下面介绍biblatex数据模型与动态数据处理的关系。
+
+  biblatex提供了数据模型定义功能，这在真正需要定义一些新的条目类型和域时是用得到的。但实际上，从本样式实践的经验看，为了biblatex 的兼容性考虑，没有必要使用数据模型定义功能去费力地定义新的条目类型，反而直接利用动态数据处理来将bib 中的一些类型转换成biblatex 支持的类型会更方便，其中要做一定的区分可以利用一些域的信息进行判断，比如note域等于news 或standard。
+  \begin{enumerate}
+      \item biblatex默认做的别名处理其实是用DeclareDriverSourcemap做的，这是驱动层的映射。在本样式中，因为usera域是在用户层的映射中做的，所以biblatex做的默认别名处理还不够，还需要在用户层首先处理usera域。而因为DeclareDriverSourcemap 中会增加一些不需要的信息，比如thesis类型中的typer域在GB/T7714标准中是并不需要的，这可以利用DeclareSourcemap，DeclarestyleSourcemap(\bc{注意texlive2016 的biblatex3.4 仅支持1 个styleSourcemap，而biblatex3.7则已经支持多个styleSourcemap})先进行映射，这样就避开了DeclareDriverSourcemap。 或者在增加DeclareDriverSourcemap，将标准样式中的默认DeclareDriverSourcemap增加的信息去掉(详见gb7714-2015ay.bbx中的处理和说明)。
+      \item 数据模型在blx-dm.DEF中，可以看到standard有条目类型定义，但域和约束没有定义，而biblatex标准样式默认做的别名处理中的其它一些条目比如electronic等是有域和约束定义的。
+      \item 标准样式standard.BBX中的DeclareBibliographyAlias\{*\}\{misc\} 将一些数据模型中没有定义的条目直接用misc条目的驱动处理，这不是驱动层的数据源映射，只是利用其驱动进行输出。有一个问题是DeclareBibliographyAlias\{newspaper\}\{article\}是否可以实现？还是要定义数据模型？从实践结果看是不需要定义数据模型的，并且驱动的别名处理等价于驱动层映射。比如:
+          做了用户层映射后:
+          \begin{texlist}
+          \DeclareSourcemap{
+            \maps[datatype=bibtex]{%增加文献标识符如[M],[J]等，下面首先生成这一信息
+                \map{
+                    \pertype{newspaper}%增加一个新闻报纸的类型newspaper
+                    \step[fieldset=usera, fieldvalue={N}]%因为没有专门的驱动，这句的目的是定义一个usera域，方便映射为article 后判断
+                    \step[fieldset=note, fieldvalue=news]
+                    }
+                }
+            }
+            \end{texlist}
+
+            做别名处理:
+            \begin{texlist}
+            \DeclareBibliographyAlias{newspaper}{article}%定义驱动别名，以替代驱动层映射
+            \end{texlist}
+
+            能达到驱动层或样式层中条目类型转换所实现的效果。
+            \begin{texlist}
+            \DeclareStyleSourcemap{
+                \maps[datatype=bibtex]{
+                    \map{%尝试未定义数据模型的newspaper类型映射为article，newspaper完全是针对gb7714的新类型，在biblatex 中完全没有定义
+                         %但从实践看，并没有什么影响，映射过来就可以了。
+                    \step[typesource=newspaper, typetarget=article, final]
+                    }
+                }
+            }
+            \end{texlist}
+
+      \item 从实践看，数据模型中完全没有定义的条目类型newspaper也可以进行数据源映射。
+  \end{enumerate}
+
+\subsubsection{用于关联条目的动态修改的命令封装及关联条目格式}\label{sec:data:mdf:forrelated}
+
+实现动态的条目关联，可以利用动态数据修改的方法。要对多个条目实现关联，那么需要多次数据映射，biblatex3.7及以上版本可以存在多个DeclareStyleSourcemap，因此做关联的封装命令就是基于此:
+
+\begin{texlist}
+    \newcommand{\defdoublelangentry}[2]{%
+    \edef\entrykeya{#1}
+    \edef\entrykeyb{#2}
+        \DeclareStyleSourcemap{
+          \maps[datatype=bibtex]{
+            \map{
+              \step[fieldsource=entrykey, match=\entrykeya, final]
+              \step[fieldset=related, fieldvalue=\entrykeyb]
+            }
+          }
+       }
+    }
+\end{texlist}
+
+命令defdoublelangentry有两个输入参数，第一个是主条目，第二个是与主条目关联的条目的列表。多次使用该命令，即可实现多次数据映射，当然因为DeclareStyleSourcemap只能存在于导言区，因此defdoublelangentry也只能存在于导言区。
+
+关联条目之间用命令relateddelim分隔，但实际上因为related宏输出时，不知道是何原因考虑的是主条目的关联条目之间的分隔，这在双语文献中是有问题的，需要在主条目后也进行分隔，因此对该宏修改如下:
+
+\begin{texlist}
+\renewbibmacro*{related}{%
+  \ifboolexpr{ test {\iffieldundef{related}} or test {\ifrelatedloop} }
+    {}
+    {\usebibmacro{begrelated}%
+     \def\bbx@tempa{}%
+     \setcounter{bbx:relatedtotal}{0}%
+     \def\do##1{%
+       \entrydata{##1}{%
+         \ifrelatedloop
+           {}
+           {\stepcounter{bbx:relatedtotal}%
+            \gappto{\bbx@tempa}{##1,}}}}%
+     \docsvfield{related}%
+     \restorefield{related}{\bbx@tempa}%
+     \ifnumgreater{\value{bbx:relatedtotal}}{0}
+       {\listcsxadd{bbx:relatedloop}{\strfield{entrykey}}%
+        \iffieldundef{clonesourcekey}
+          {}
+          {\listcsxadd{bbx:relatedloop}{\strfield{clonesourcekey}}}%
+        \setcounter{bbx:relatedcount}{0}%
+        \def\do{%
+          \stepcounter{bbx:relatedcount}%
+          \ifnumgreater{\value{bbx:relatedcount}}{0}%为使主条目与关联条目做分隔，这里做修改，从1改为0
+            {\ifcsundef{relateddelim\strfield{relatedtype}}
+              {\printtext{\relateddelim}}
+              {\printtext{\csuse{relateddelim\strfield{relatedtype}}}}}
+            {}}%
+        \ifbibmacroundef{related:\strfield{relatedtype}}
+          {\appto{\do}{\usebibmacro{related:default}}}
+          {\appto{\do}{\usebibmacro*{related:\strfield{relatedtype}}}}%
+        \iffieldformatundef{related:\strfield{relatedtype}}
+          {\def\bbx@tempa{related}}
+          {\def\bbx@tempa{related:\strfield{relatedtype}}}%
+        \iffieldformatundef{relatedstring:\strfield{relatedtype}}
+          {\def\bbx@tempb{relatedstring:default}}
+          {\def\bbx@tempb{relatedstring:\strfield{relatedtype}}}%
+        \printtext[\bbx@tempa]{%
+          \usebibmacro{begrelatedloop}%
+          \iffieldundef{relatedstring}
+            {\ifboolexpr{
+               test {\ifnumgreater{\value{bbx:relatedtotal}}{1}}
+               and
+               test {\ifbibxstring{\thefield{relatedtype}s}}
+             }
+               {\printtext[\bbx@tempb]{%
+                  \bibstring[\mkrelatedstring]{\thefield{relatedtype}s}}}
+               {\iffieldbibstring{relatedtype}
+                  {\printtext[\bbx@tempb]{%
+                     \bibstring[\mkrelatedstring]{\thefield{relatedtype}}}}
+                  {}}}
+            {\iffieldbibstring{relatedstring}
+               {\printtext[\bbx@tempb]{%
+                  \bibstring[\mkrelatedstring]{\thefield{relatedstring}}}}
+               {\printfield[\bbx@tempb]{relatedstring}}}%
+          \docsvfield{related}%
+          \usebibmacro{endrelatedloop}}}%
+       {}%
+     \usebibmacro{endrelated}}}
+\end{texlist}
+
+\subsubsection{标注(引用)标签}
+引用标签的生成机制，即责任者截短时的歧义消除问题，见说明文档4.11.4 Name Disambiguation 节。
+  \begin{enumerate}
+    \item uniquename的作用，用于姓名间的歧义消除。
+    \item uniquelist的作用，用于姓名列表间的歧义消除。
+  \end{enumerate}
+
+
+关于这两个选项的参数设置，可以在样式中设置，也可以在宏包加载时设置，\bc{注意宏包加载时的设置会覆盖样式中的设置}。
+
+还要注意，说明文档中uniquelist的默认选项是false，这是错误的，从实践看是true，从biblatex.sty文件的代码看也是如此，比如:
+\begin{texlist}
+\DeclareBibliographyOption[boolean]{uniquelist}[true]{%
+  \ifcsdef{blx@opt@uniquelist@#1}
+    {\letcs\blx@uniquelist{blx@opt@uniquelist@#1}}
+    {\blx@err@invopt{uniquelist=#1}{}}}
+\DeclareTypeOption[boolean]{uniquelist}[true]{%
+  \ifcsdef{blx@opt@uniquelist@#1}
+    {\letcs\blx@uniquelist{blx@opt@uniquelist@#1}}
+    {\blx@err@invopt{uniquelist=#1}{}}}
+\DeclareEntryOption[boolean]{uniquelist}[true]{%
+  \ifcsdef{blx@opt@uniquelist@#1}
+    {\letcs\blx@uniquelist{blx@opt@uniquelist@#1}}
+    {\blx@err@invopt{uniquelist=#1}{}}}
+\def\blx@opt@uniquelist@false{0}
+\def\blx@opt@uniquelist@true{1}
+\def\blx@opt@uniquelist@minyear{2}
+\end{texlist}
+无论选项是否给出，上面定义选项中的代码都会自动执行，当选项不给出，则自动调用默认的参数(因为代码中直接使用了输入参数，当没有输入参数，自然就会使用默认参数)来进行处理，显然这里是true。
+
+\subsubsection{标签中的标点和间隔符号}\label{sec:label:fmt}
+文献表中的标签和正文中的标注标签都有标点和间隔符号问题，但两者可能存在一定的差异，不同版本的biblatex中也可能不同，但新的版本中通常是可以用一个相同的钩子来实现的，比如作者年制中作者和年份之间的标点:
+\begin{texlist}
+\renewcommand*{\nameyeardelim}{\addcomma\space}
+\end{texlist}
+
+\subsubsection{日期格式控制}\label{sec:date:fmt}
+随着biblatex的更新，日期格式控制更趋完善。加上biblatex3.8a中biber解析出日期中月份和天数都不带引导的0，比如6月直接解析为6，而不像以前那样解析为06，所以需要特别的注意。因此对于新版本，有些日期比如online的发布日期，访问日期等，采用专门的格式edtf控制，而老版本则仍然使用原来定义的输出宏。比如:
+
+\begin{texlist}
+\defversion{3.7}{date}{
+    \DeclareFieldFormat{urldate}{##1}
+    \renewbibmacro*{urldate}{%
+    \addspace\printtext{[}\printurldate\printtext{]}}%能用高层命令+选项尽量用命令(比如这里的\printurldate)，而不用\blx@edtfdate这种更底层的命令
+
+    \newbibmacro*{newsdate}{%%新增加一个新闻日期
+    \blx@edtfdate{}{}%
+    }
+
+    \newbibmacro*{modifydate}{%新增加一个带括号的日期，用于表示电子资源的更新和修改日期，而公告日期则按日期格式
+        \iffieldundef{year}{%
+                \iffieldundef{endyear}{\iffieldundef{eventyear}{}{\printtext{(}\printeventdate\printtext{)}}}%
+                {\printtext{(}\printenddate\printtext{)}}%
+        }{\iffieldequalstr{year}{}{%因为year存在，但为空
+            }{\printtext{(}\blx@edtfdate{}{}\printtext{)}}%
+         }%
+    }%
+}
+
+\defversion{3.4}{date}{
+    \renewbibmacro*{urldate}{%
+    \addspace\printtext{[}\printfield{urlyear}%
+    \iffieldundef{urlmonth}{}{\bibrangedash\printfield{urlmonth}}%
+    \iffieldundef{urlday}{}{\bibrangedash\printfield{urlday}}\printtext{]}}
+
+    \newbibmacro*{newsdate}{%%新增加一个新闻日期
+    \iffieldundef{year}{}{\printfield{year}%
+    \iffieldundef{month}{}{\bibrangedash\printtext{\thefield{month}}%
+    \iffieldundef{day}{}{\bibrangedash\printfield{day}}}}%
+    }
+
+    \newbibmacro*{modifydate}{%新增加一个带括号的日期，用于表示电子资源的更新和修改日期，而公告日期则按日期格式
+        \iffieldequalstr{year}{}{%替换\iffieldundef{year}，因为year总是存在，但为空
+            \iffieldundef{endyear}{%
+                \iffieldundef{eventyear}{}{\printtext{\mkbibparens{\printtext{\printfield{eventyear}}%
+                \iffieldundef{eventmonth}{}{\bibrangedash\thefield{eventmonth}}%
+                \iffieldundef{eventday}{}{\bibrangedash\printfield{eventday}}}}%
+                }%
+            }{%
+                \iffieldundef{endyear}{}{\printtext{\mkbibparens{\printtext{\printfield{endyear}}%
+                \iffieldundef{endmonth}{}{\bibrangedash\thefield{endmonth}}%
+                \iffieldundef{endday}{}{\bibrangedash\printfield{endday}}}}%
+                }%
+            }%
+        }%
+        {%
+            \iffieldundef{year}{}{\printtext{\mkbibparens{\printtext{\printfield{year}}%
+            \iffieldundef{month}{}{\bibrangedash\thefield{month}}%
+            \iffieldundef{day}{}{\bibrangedash\printfield{day}}}}%
+            }%
+        }%
+    }%
+}
+
+\iftoggle{iftlfive}%%根据texlive/biblatex版本选择
+    {\switchversion{3.4}{date}}%
+    {\iftoggle{iftlsix}%
+        {\switchversion{3.4}{date}}%
+        {\switchversion{3.7}{date}}%
+    }
+\end{texlist}
+
+\subsubsection{文献表条目标签中的日期格式}\label{sec:dateinlabel}
+主要用于authoryear样式，在authoryear样式中有一个mergedate选项，使用该选项可以进行更多的标签日期格式控制。其中主要是重定义了date+extradate(3.8版，以前的版本叫date+extrayear).
+
+其中有两点需要注意:
+
+1. printdateextra，printlabeldateextra，这样的命令在biblatex.sty中是找不到的，因为biblatex实际定义的如下的命令:
+\begin{texlist}
+{\protected\def\blx@imc@printlabeldate{\csuse{mkdaterange#1}{label}}
+        \protected\def\blx@imc@printlabeldateextra{\csuse{mkdaterange#1extra}{label}}}
+\end{texlist}
+
+然后由如下命令，解析为printdateextra，printlabeldateextra:
+\begin{texlist}
+\blx@regimcs{\printlabeldate \printlabeltime \printlabeldateextra \stripzeros \forcezerosy \forcezerosmdt \mkyearzeros \mkmonthzeros \mkdayzeros \mktimezeros}
+\end{texlist}
+
+biblatex很多命令都有类似的方式。
+
+2. 日期的数据来源由DeclareLabeldate定义选择。
+日期的的具体格式，则由宏包选项控制。比如labeldate=ymd来控制。(3.5版以上，以前的是datelabel选项)
+
+\subsubsection{作者格式控制}\label{sec:name:fmt}
+\zhongdian{【注意】：texlive2015中的biblatex版本是3.0，texlive2016中biblatex的版本是3.4，新版本对于名字域打印有了较大变化(即不同版本的biblatex对于DeclareNameFormat的输入参数处理有所不同，如例\ref{eg:name:variables}所示)，所以需做相应的修改，为此在biblatex中首先进行版本判断，然后根据版本不同分别进行设置。}
+
+    \begin{codetex}{texlive2016中biblatex3.4版Name域格式输入参数的修改}{eg:name:variables}
+    for biblatex version 3.0
+    #1 The last names.
+    #2 The last names, given as initials.
+    #3 The first names.
+    #4 The first names, given as initials.
+    #5 The name prefixes,
+    #6 The name prefixes, given as initials.
+    #7 The name affixes,
+    #8 The name affixes, given as initials.
+    for biblatex version 3.4
+    \namepartfamily
+    \namepartfamilyi
+    \namepartgiven
+    \namepartgiveni
+    \namepartprefix
+    \namepartprefixi
+    \namepartsuffix
+    \namepartsuffixi
+    \end{codetex}
+    样式文件中的处理见\ref{sec:name:fmt:out}节。
+
+\subsubsection{作者信息输出与格式控制}\label{sec:name:fmt:out}
+作者信息的输出最高一层是在驱动中:
+\begin{texlist}
+\usebibmacro{author/editor+others/translator+others}
+\end{texlist}
+
+其中当存在作者时，由如下宏输出:
+\begin{texlist}
+\renewbibmacro*{author}
+\end{texlist}
+
+其中作者列表又由如下命令输出:
+\begin{texlist}
+\printnames{author}
+\end{texlist}
+
+printnames这种命令的输出格式通常由相应输出域的域格式控制，这里则是author域控制:
+\begin{texlist}
+\DeclareNameAlias{author}{sortname}%for author year style
+
+\DeclareNameAlias{author}{default}%for numeric style
+\end{texlist}
+
+其中sortname，default域格式又是:
+\begin{texlist}
+\DeclareNameAlias{sortname}{family-given/given-family}
+
+\DeclareNameAlias{author}{default}
+\DeclareNameAlias{default}{given-family}
+\end{texlist}
+
+其中的关键是given-family和family-given两个域格式使用name:family-given和name:family-given宏进行输出。
+真实的作者姓名格式在这两个宏中，因此做一定的处理。注意其中的输入参数为：
+{namepartfamily}，{namepartgiveni}，{namepartprefix}，{namepartsuffix}（使用名的首字母缩写）或
+{namepartfamily}，{namepartgiven}，{namepartprefix}，{namepartsuffix}（不使用缩写）。
+
+\begin{texlist}
+    %biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
+    \renewbibmacro*{name:given-family}[4]{%利用family-given定义given-family
+      \ifuseprefix
+        {\usebibmacro{name:delim}{##3##1}%
+         \usebibmacro{name:hook}{##3##1}%
+         \ifdefvoid{##3}{}{%
+           \ifcapital
+             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
+             {\mkbibnameprefix{##3}\isdot}%
+           \ifprefchar{}{\bibnamedelimc}}%
+         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot
+         \ifdefvoid{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{\MakeUppercase{##2}}\isdot}%\MakeCapital
+         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}
+        {\usebibmacro{name:delim}{##1}%
+         \usebibmacro{name:hook}{##1}%
+         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot
+         %
+         \ifboolexpe{%
+           test {\ifdefvoid{##2}}
+           and
+           test {\ifdefvoid{##3}}}
+           {}
+           {\revsdnamepunct}%
+         \ifdefvoid{##2}{}{\bibnamedelimd\mkbibnamegiven{\MakeUppercase{##2}}\isdot}%\MakeCapital
+         \ifdefvoid{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}
+         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}
+     }
+     \renewbibmacro*{name:family-given}[4]{%
+     \usebibmacro{name:given-family}{##1}{##2}{##3}{##4}}
+
+        %biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
+    \renewbibmacro*{name:last-first}[4]{%
+      \ifuseprefix
+        {\usebibmacro{name:delim}{##3##1}%
+         \usebibmacro{name:hook}{##3##1}%
+         \ifblank{##3}{}{%
+           \ifcapital
+             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
+             {\mkbibnameprefix{##3}\isdot}%
+           \ifpunctmark{'}{}{\bibnamedelimc}}%
+         %\mkbibnamelast{#1}\isdot
+         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot%\MakeUppercase %\mkbibnamelast{\MakeUppercase{#1}} %\MakeSentenceCase
+         %注意上一句\MakeCapital后面如果再跟一个{}包含#1，则没有效果，可能是包在里面少了一层展开
+         %因为机构名通常包括在{}内，所以要多展开一次才行，所以这里去掉#1 外面的{}
+         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
+         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
+         \ifblank{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamefirst{\MakeUppercase{##2}}\isdot}%
+         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}}
+        {\usebibmacro{name:delim}{##1}%
+         \usebibmacro{name:hook}{##1}%
+         %\mkbibnamelast{#1}\isdot  %3.9.1 Generic Commands and Hooks，对姓重新处理，如下句: %\mkbibnamelast{\MakeUppercase{#1}}
+         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot  %大写，参考4.6.4 Miscellaneous Commands，\MakeUppercase %\MakeSentenceCase
+         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
+         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
+         \ifblank{##2##3}{}{\revsdnamepunct}%
+         \ifblank{##2}{}{\bibnamedelimd\mkbibnamefirst{\MakeUppercase{##2}}\isdot}%
+         \ifblank{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}%
+         \addcomma\addspace%
+         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}%
+         }
+     }
+
+     \renewbibmacro*{name:first-last}[4]{%
+     \usebibmacro{name:last-first}{##1}{##2}{##3}{##4}}
+\end{texlist}
+
+
+
+
+\subsubsection{样式文件设计途径}
+  biblatex的核心-参考文献样式文件的设计，更详细内容见
+  \href{https://github.com/hushidong/biblatex-solution-to-latex-bibliography}{LaTeX 文档中文参考文献的 biblatex 解决方案}。
+  \begin{enumerate}
+    \item driver的作用:条目驱动，修改一些顺序，略去一些输出和标点
+    \item micro的作用:输出宏，修改需要的输出内容
+    \item format的作用:域打印格式，修改一些斜体，强调样式等。
+    \item command的作用:一些设置和命令
+    \item biblatex.sty/def和各bbx/cbx文件中的代码
+  \end{enumerate}
+
+\subsubsection{文献表条目内容组织的原理以及问题查找的方法}
+biblatex是利用tex语句控制文献内容组织，因此我们可以坚定一点就是，对于文献内容组织一定不是神秘的，是可以分析清楚的，当出现问题的时候，通过一步步的分析是能解决好的。
+
+如前所述，根据宏包设置，使用biber解析完参考文献信息后，就需要利用样式中的各种定义来输出文献表。我们从某一条参考文献来看问题。某一类型的参考文献输出由该类型的driver控制，driver中控制各种bibmacro来组织内容输出，bibmacro利用各种fieldformat，command来控制域的格式和标点，当出现一些特殊的问题时，我们可以顺着这样的思路来查找。
+
+下面我们举例来说明本样式的作者年制中，当作者缺省时，利用title判断中英文出错的问题。这个问题本质上由于前面说过的，当作者缺省时，把title作为标签后，会把title域清除，因此再利用title域信息判断中英文，自然无法正常工作。我们来看看这是怎么一个过程:
+
+这是一个作者缺省的book条目，在gb7714-2015ay样式不使用佚名方式的情况下报错，主要是testCJKfirst函数报错。这个函数主要用在作者，出版项等这些信息输出时的中英文判断。因为作者缺省，因此作者输出时就没有判断，而出错只能是在出版项中。我们把book的driver中macro输出一项一项注释掉并测试发现，当作者输出相关的macro存在时存在错误，注释掉则没有问题。于是深入来分析:
+
+在book类的driver简化为如下三项输出:
+\begin{texlist}
+\DeclareBibliographyDriver{book}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/editor+others/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{maintitle+title}%
+  \newunit
+  \usebibmacro{publisher+location+date}%
+  \newunit\newblock
+  \usebibmacro{finentry}}
+\end{texlist}
+
+其中usebibmacro\{author/editor+others/translator+others\}导致出错，该macro的思路是当存在author时输出author，没有时判断是否存在editor，存在则输出，不存在则判断是否存在translator，并进一步判断输出:
+\begin{texlist}
+\newbibmacro*{author/editor+others/translator+others}{%
+  \ifboolexpr{
+    test \ifuseauthor
+    and
+    not test {\ifnameundef{author}}
+  }
+    {\usebibmacro{author}}
+    {\ifboolexpr{
+       test \ifuseeditor
+       and
+       not test {\ifnameundef{editor}}
+     }
+       {\usebibmacro{editor+others}}
+       {\usebibmacro{translator+others}}}}
+\end{texlist}
+
+显然这个例子中不存在author和editor，因此宏转到macro\{translator+others\}，我们来看这个宏:
+\begin{texlist}
+\newbibmacro*{translator+others}{%
+  \ifboolexpr{
+    test \ifusetranslator
+    and
+    not test {\ifnameundef{translator}}
+  }
+    {\printnames{translator}%
+     \setunit{\printdelim{translatortypedelim}}%
+     \usebibmacro{translator+othersstrg}%
+     \clearname{translator}}
+    {}}
+\end{texlist}
+
+这个宏来自biblatex.def，显然这个宏表明当translator不存在则不做任何事情，这种情况下是不会出错的，于是我们再找，发现这个宏在authoryear.bbx中重定义了。
+\begin{texlist}
+\renewbibmacro*{translator+others}{%
+  \usebibmacro{bbx:translator}{translator+othersstrg}}
+
+\newbibmacro*{bbx:translator}[1]{%
+  \ifboolexpr{
+    test \ifusetranslator
+    and
+    not test {\ifnameundef{translator}}
+  }
+    {...code for existed translator...}%
+    {\global\undef\bbx@lasthash
+     \usebibmacro{labeltitle}%
+     \setunit*{\printdelim{nonameyeardelim}}}%
+  \usebibmacro{date+extradate}}
+\end{texlist}
+
+显然当translator不存在时，使用了labeltitle宏，再来看这个宏:
+\begin{texlist}
+\newbibmacro*{labeltitle}{%
+  \iffieldundef{label}
+    {\iffieldundef{shorttitle}
+       {\printfield{title}%
+        \clearfield{title}}
+       {\printfield[title]{shorttitle}}}
+    {\printfield{label}}}
+\end{texlist}
+从中可以看到，该宏把title域作为标签进行输出，并在输出后清除了title域，自然，在完成了整个author/editor+others/translator+others宏后，title域就不存在了，因此在后面的publisher+location+date宏中使用title域来进行中英文判断是必然会出错的，找到了问题所在，那么就有相应的方法，比如在动态数据修改时，把title信息存储到userd域中，然后publisher+location+date宏利用该域的信息进行判断这样就不会出现问题了。
+
+\subsubsection{宏包选项增加}
+
+biblatex的宏包选项增加
+  \begin{enumerate}
+    \item 在gb7714-2015.bbx文件中有四种常见的判断方式包括:
+    版本的判断，
+    宏包选项的判断，
+    宏包选项控制的切换标记的判断，
+    一般的域的是否定义或与字符串比较是否相同的判断。
+
+        第一种判断，是直接根据已有的信息比如\verb|\abx@version|进行处理，该出的处理结果是直接展开的，可以用于后面的任意定义。
+
+        第二种判断，是根据给出的宏包选项值或者不给出选项进行处理，例如定义的宏包选项gbalign ，这一选项是string 类型。在选项的执行代码中直接给出每一个选项值对应要执行的命令。比如：
+        \begin{texlist}
+        \DeclareBibliographyOption[string]{gbalign}[right]{%
+            \ifstrequal{##1}{left}{\setalignleft}{}
+            \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
+        }
+        \end{texlist}
+        这种情况下，特别要注意DeclareBibliographyOption 选项定义命令中给出的默认值right是在加载该选项但不给出值时的默认值，而不是将选项设置为该默认值。因此当加载时不给出gbalign选项时，不执行任何的语句，即不执行setalignleft，也不执行setaligngbstyle(因为不使用这两个命令的情况下项标签是右对齐的，这样也就是gbalign选项默认是右对齐的，只有设置宏包选项为left或gb7714-2015时才会因为setalignleft和setaligngbstyle命令二改变)。
+        如果给出选项gbalign，相当于gbalign=默认值，如果给出选项gbalign=指定值，那么值就是指定值，然后并执行DeclareBibliographyOption 的定义代码，根据值进行处理。
+
+        第三种判断，根据宏包选项控制对切换标记进行设置，然后再代码中应用切换标记判断。比如gbpub 选项，这一选项类似于standard.bbx中定义的url 等选项。
+        \begin{texlist}
+        \newtoggle{bbx:gbpub}
+        \DeclareBibliographyOption[boolean]{gbpub}[true]{%
+            %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
+            \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
+        \end{texlist}
+        默认可以利用切换标记bbx:gbpub进行任何的定义。但如果展开的层次是与这里定义的宏包选项同一层次的，那么切换标记会根据默认值是false 而展开。如果是下一层的展开（就是不需要在加载时展开的），那么会根据展开时切换标记bbx:gbpub的值进行展开。
+
+        注意到在上述这一定义后面，使用了选项默认执行命令:
+        \begin{texlist}
+        \ExecuteBibliographyOptions{gbpub}
+        \end{texlist}
+        这是宏包选项定义中的代码会立刻被执行，即bbx:gbpub的值设置为true。ExecuteBibliographyOptions 命令是用来执行选项的，如果不给出这一命令，且宏包加载选择中没有给出选项设置，那么toggle只有新建toggle 时的默认定义。还要注意这里的切换标记设置是立刻进行的，如果这里的定义不是设置切换标记，而是直接调用命令，比如上面的gbalign的情况，那么就需要该被调用命令是有定义的，即定义至少与宏包选项定义在同一展开层次，甚至先于宏包选项定义。
+
+        还需要注意，如果给出了命令
+        \begin{texlist}
+        \ExecuteBibliographyOptions{gbpub}%等价于下一条命令
+        \ExecuteBibliographyOptions{gbpub=true}
+        \ExecuteBibliographyOptions{gbpub=false}
+        \end{texlist}
+        等价于在宏包加载时给出选项。但是宏包加载选项设置可以覆盖这个命令的设置。
+
+        如果在宏包加载时给出选项gbpub=false，那么bbx:gbpub的值设置为false。
+        如果在宏包加载时给出选项gbpub，gbpub=true，那么bbx:gbpub的值设置为true。
+
+        第四种判断，利用iffieldundef和iffieldequalstr进行判断即可。
+
+    \item 总结起来，宏包选项的问题需要注意宏包选项的展开顺序。宏包选项的定义如果不使用ExecuteBibliographyOptions命令或者不在加载时设置，那么定义的代码是不执行的。因此如果其他代码中需要使用该宏包选项定义代码中的信息是无法正确获取的。而当使用ExecuteBibliographyOptions命令或者加载选项时，那么宏包选项代码会立即展开，其中需要使用的宏则需要有定义，即先于或与宏包选项定义处于同一展开层。
+
+        \begin{texlist}
+    %\newtoggle{bbx:gbpub}
+    %\DeclareBibliographyOption[boolean]{gbpub}[true]{%
+    %  \settoggle{bbx:gbpub}{#1}}
+    %这种机制的标识判断，能用于usemacro使用，域格式定义中，但无法用来判断后定义macro
+    %定义宏和使用宏是两个不同的展开层级，而可以在定义macro中进行判断
+    %\ExecuteBibliographyOptions{gbpub}
+    %但是使用这句默认设置可以用来定义macro
+
+    %\DeclareBibliographyOption{gbpub}[true]{%应使用这种直接的机制
+    %\ifstrequal{#1}{false}{\pubaddmacronewdefine}{\pubaddmacroredefine}}
+
+    %特别注意DeclareBibliographyOption，而给出的默认值是在加载时没有选项没有给出值时的默认值。
+    %当加载时不给出gbpub选项时，不执行ifstrequal判断语句，无任何加载。
+    %如果给出选项gb，或者gb=true，那么ifstrequal判断仍然是假，执行的默认的加载\pubaddmacroredefine
+    %如果给出选项false，那么ifstrequal判断是真，执行的就是非默认的加载\pubaddmacronewdefine
+    %\ExecuteBibliographyOptions{gbpub}%这句报错是因为\pubaddmacroredefine没有定义，如果把定义放到前面那么应该是可以的。
+
+    %还是采用另一种方式可以较好的进行默认选项的处理
+    \newtoggle{bbx:gbpub}
+    \DeclareBibliographyOption[boolean]{gbpub}[true]{%
+    %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
+      \ifstrequal{#1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
+    \ExecuteBibliographyOptions{gbpub}
+
+    \end{texlist}
+
+  \end{enumerate}
+
+
+\subsubsection{文献表环境和打印输出}
+  biblatex宏包的参考文献表的打印
+  \begin{enumerate}
+  \item 根据biblatex.sty文件中的\verb|\blx@bibliography|命令可以知道，定义的参考文献表的环境的开始代码在命令中\verb|\blx@bibliography| 中，结束代码在\verb|\blx@endbibliography|中，循环项代码在\verb|\blx@bibitem| 中的\verb|blx@item@\blx@theenv}|命令中。参考文献循环打印依靠\verb|\blx@listloop| 命令实现。
+  \item 从\verb|\blx@listloop|可以知道，各条参考文献表的指引信息是混合在一起的并且以|字符为分隔。将混合的参考文献指引信息解析成单独的指引信息，并交给\verb|\blx@bibitem|命令处理。
+  \item \verb|\blx@bibitem|首先开始一个编组，然后根据单独一条参考文献的指引信息，获取数据，执行判断，利用参考文献表环境定义的循环项代码对参考文献内容设置段落格式，最后结束编组。在定义gbalign=gb7714-2015 样式的段落格式时，采用了parshape 或者hangindent命令来实现，所以其中增加了一个par 命令以使其生效。
+  \end{enumerate}
+
+
+\subsubsection{biblatex版本以及样式的兼容性}\label{sec:blx:compatibility}
+样式首先根据biblatex版本信息进行版本判断，然后做针对性的兼容处理。
+biblatex在texlive中的版本对应关系是:
+texlive2015对应biblatex3.0;
+texlive2016对应biblatex3.4，从3.2版开始修改了姓名机制(如\ref{sec:name:fmt}节所述);
+texlive2017对应biblatex3.7;
+2017年底又出了biblatex3.8a到3.10版。
+
+  \begin{enumerate}
+  \item biblatex版本判断
+
+  原来是使用一个简单的字符流处理来解析版本信息，但容易出现问题。于是换成利用xstring宏包的命令来提取版本中的数字进行判断:
+  \begin{texlist}
+    %版本判断
+    \providetoggle{iftexlivesix}%用于处理biblatex3.3开始改变的新的姓名机制
+    \providetoggle{iftexliveseven}%用于处理biblatex3.7的兼容性
+    \providetoggle{iftexliveeight}%用于处理biblatex3.8a的兼容性
+    %\def\numparserta#1.#2a\relax{#1}%注意relax的重要性
+    %\def\numparsertb#1.#2a\relax{#2}
+    %\def\numinteger{\expandafter\numparserta\abx@version\relax}
+    %\def\numdigital{\expandafter\numparsertb\abx@version\relax}
+    \StrChar{\abx@version}{3}[\numdigital]
+    %根据biblatex更新历史，当版本大于3.2开始，就用设置\toggletrue{iftexlivesix}
+    \ifnumcomp{\numdigital}{>}{2}{\toggletrue{iftexlivesix}}{\togglefalse{iftexlivesix}}
+    \ifnumcomp{\numdigital}{>}{6}{\toggletrue{iftexliveseven}}{\togglefalse{iftexliveseven}}
+    \ifnumcomp{\numdigital}{>}{7}{\toggletrue{iftexliveeight}}{\togglefalse{iftexliveseight}}
+  \end{texlist}
+
+
+  \item biblatex版本的一些兼容性处理
+
+  宏包选项:
+  \begin{texlist}
+  firstinits=true,%for texlive2014,2015;biblatex <=3.2
+  giveninits=true,%for texlive2016,2017;biblatex >=3.3
+  labeldate=true,%for texlive2014,2015,2016,2017;biblatex <3.8
+  labeldateparts=true,%for biblatex >=3.8a
+  \end{texlist}
+
+  命令:
+  \begin{texlist}
+  \printdateextralabel,%for texlive2014,2015,2016;biblatex <=3.4
+  \printlabeldateextra,%for texlive2017;biblatex >=3.7
+  \DeclareSortingScheme %for texlive2014,2015,2016,2017;biblatex <3.8
+  \DeclareSortingTemplate %for biblatex >=3.8a
+  \end{texlist}
+
+  \item 版本与兼容性的最终处理方法
+
+  经过最终设计，下面给出的另一版本兼容性处理方式取代前面给出的处理方式，便于以后的扩展。这种方式自然兼容最新的版本，但老的版本的代码处理必须要到位，即因为biblatex版本升级增加了新的老版本时，对应该老版本的选择必须要实现，否则可能漏掉这些版本的处理。
+  \begin{texlist}
+    %版本判断，当版本继续更新时，增加一个新的toggle用以处理新的旧版，最新版本永远用iftlatest
+    \providetoggle{iftlfive}%用于处理biblatex3.2之前的版本
+    \providetoggle{iftlsix}%用于处理biblatex3.3开始改变的新的姓名机制后版本
+    \providetoggle{iftlseven}%用于处理biblatex3.7的兼容性
+    \providetoggle{iftleight}%用于处理biblatex3.8到3.9的兼容性
+    \providetoggle{iftlatest}%用于最新版biblatex，目前是biblatex3.10，20180117
+    \StrBefore{\abx@version}{.}[\numinteger]%以点区分整数和小数
+    \StrBehind{\abx@version}{.}[\numdigital]%小数部分可能带字母所以需将其去掉，见下一行代码
+    \IfInteger{\numdigital}{}{\StrGobbleRight{\numdigital}{1}[\numdigital]}
+    \togglefalse{iftlfive}
+    \togglefalse{iftlsix}
+    \togglefalse{iftlseven}
+    \togglefalse{iftleight}
+    \toggletrue{iftlatest}
+    \ifnumcomp{\numinteger}{=}{3}{
+        \ifnumcomp{\numdigital}{<}{10}{\ifnumcomp{\numdigital}{>}{7}{\toggletrue{iftleight}\togglefalse{iftlatest}}{}}{}%>3.8 版本用iftleight=true表示
+        \ifnumcomp{\numdigital}{=}{7}{\toggletrue{iftlseven}\togglefalse{iftlatest}}{}%3.7 版本用iftlseven=true表示
+        \ifnumcomp{\numdigital}{<}{7}{\ifnumcomp{\numdigital}{>}{2}{\toggletrue{iftlsix}\togglefalse{iftlatest}}{}}{}%3.3-3.6 版本用iftlsix=true表示
+        \ifnumcomp{\numdigital}{<}{3}{\toggletrue{iftlfive}\togglefalse{iftlatest}}{}%3.0-3.2 版本用iftlfive=true表示
+    }{\ifnumcomp{\numinteger}{>}{3}{
+       \blx@warning@noline{%
+       biblatex version is >= 4.x.\MessageBreak
+       if errors raised，Please contact biblatex-gb7714-2015 pkg author.}%
+    }{ \toggletrue{iftlfive}\togglefalse{iftlatest}%2.x版本统一用iftlfive=true表示
+       \blx@warning@noline{%
+       biblatex version is <= 2.x.\MessageBreak
+       if errors raised，Please contact biblatex-gb7714-2015 pkg author.}%
+    }}
+    \newcommand\defversion[2]{\csdef{codeversion#1#2}}%定义不同版本的命令
+    \newcommand\switchversion[2]{\csuse{codeversion#1#2}}%使用不同版本的命令
+
+\defversion{3.0}{opt}{
+    %biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
+
+    %增加姓名大小写格式处理选项
+    \DeclareBibliographyOption{gbnamefmt}[uppercase]{%
+        %\ifstrequal{##1}{gbuppercase}{}{}%
+        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
+        \ifstrequal{##1}{none}{\execnamedefault}{}
+        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
+    }
+    %\ExecuteBibliographyOptions{gbnamefmt}
+
+    %增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015无效，仍然为右对齐模式，因为舍弃了list类环境后出错。
+    \DeclareBibliographyOption{gbalign}[right]{%texlive2015中的3.0版中的DeclareBibliographyOption选项没有类型说明
+        \ifstrequal{##1}{right}{}{}
+        \ifstrequal{##1}{left}{\setalignleft}{}
+        \ifstrequal{##1}{gb7714-2015}{}{}
+    }
+
+    %增加一个出版项自动处理控制选项，当true时使用出版者不详等信息补充缺失的出版信息。
+    \newtoggle{bbx:gbpub}
+    \DeclareBibliographyOption{gbpub}[true]{%
+        %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
+        \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
+    \ExecuteBibliographyOptions{gbpub}
+
+    %增加一个处理佚名或noauthor的控制选项
+    %因为在顺序编码制中，不需要使用，这里也增加，为了与作者年制的兼容性考虑。
+    \DeclareBibliographyOption{gbnoauthor}[true]{}%
+
+    \ExecuteBibliographyOptions{
+      sorting=none,
+      useprefix=true,  %名字的信息包括前缀
+      firstinits=true,    %名字有缩写，参考3.1.2.3 Internal
+      %giveninits=true,
+      date    = year,  %日期仅写到年
+      maxnames     = 3 ,    %设置名字最大数量
+      minnames     = 3       %设置缩减后的名字最小数量
+      %uniquename   = init
+    }
+}
+
+\defversion{3.4}{opt}{
+    % Alter settings that carry through from biblatex
+    %biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
+
+    %增加姓名大小写格式处理选项
+    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
+        %\ifstrequal{##1}{gbuppercase}{}{}%
+        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
+        \ifstrequal{##1}{none}{\execnamedefault}{}
+        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
+    }
+    %\ExecuteBibliographyOptions{gbnamefmt}
+
+    %增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
+    \DeclareBibliographyOption[string]{gbalign}[right]{%
+        \ifstrequal{##1}{left}{\setalignleft}{}
+        \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
+    }
+
+    %增加一个出版项自动处理控制选项，当true时使用出版者不详等信息补充缺失的出版信息。
+    \newtoggle{bbx:gbpub}
+    \DeclareBibliographyOption[boolean]{gbpub}[true]{%
+        %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
+        \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
+    \ExecuteBibliographyOptions{gbpub}
+
+    %增加一个处理佚名或noauthor的控制选项
+    %因为在顺序编码制中，不需要使用，这里也增加，为了与作者年制的兼容性考虑。
+    \DeclareBibliographyOption[boolean]{gbnoauthor}[true]{}%
+
+    \ExecuteBibliographyOptions{
+      sorting=none,
+      useprefix=true,  %名字的信息包括前缀
+      %firstinits=true,    %名字有缩写，参考3.1.2.3 Internal
+      giveninits=true,
+      date         = year,  %日期仅写到年
+      maxnames     = 3 ,    %设置名字最大数量
+      minnames     = 3       %设置缩减后的名字最小数量
+      %uniquename   = init
+    }
+}
+
+\defversion{3.7}{opt}{
+    %biblatex3.7版后(比如texlive2017中的3.7版)的使用方式
+
+    %增加姓名大小写格式处理选项
+    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
+        %\ifstrequal{##1}{gbuppercase}{}{}%
+        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
+        \ifstrequal{##1}{none}{\execnamedefault}{}
+        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
+    }
+    %\ExecuteBibliographyOptions{gbnamefmt}
+
+    %增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
+    \DeclareBibliographyOption[string]{gbalign}[right]{%
+        \ifstrequal{##1}{left}{\setalignleft}{}
+        \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
+    }
+
+    %增加一个出版项自动处理控制选项，当true时使用出版者不详等信息补充缺失的出版信息。
+    \newtoggle{bbx:gbpub}
+    \DeclareBibliographyOption[boolean]{gbpub}[true]{%
+        %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
+        \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
+    \ExecuteBibliographyOptions{gbpub}
+
+    %增加一个处理佚名或noauthor的控制选项
+    %因为在顺序编码制中，不需要使用，这里也增加，为了与作者年制的兼容性考虑。
+    \DeclareBibliographyOption[boolean]{gbnoauthor}[true]{}%
+
+    \ExecuteBibliographyOptions{
+      sorting=none,
+      useprefix=true,  %名字的信息包括前缀
+      %firstinits=true,    %名字有缩写，参考3.1.2.3 Internal
+      giveninits=true,
+      date         = year,  %日期仅写到年
+      urldate =edtf, %iso8601
+      eventdate =edtf,
+      maxnames     = 3 ,    %设置名字最大数量
+      minnames     = 3       %设置缩减后的名字最小数量
+      %uniquename   = init
+    }
+}
+
+\defversion{3.10}{opt}{
+    %biblatex3.10版后的使用方式
+
+    %增加姓名大小写格式处理选项
+    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
+        %\ifstrequal{##1}{gbuppercase}{}{}%
+        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
+        \ifstrequal{##1}{none}{\execnamedefault}{}
+        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
+    }
+    %\ExecuteBibliographyOptions{gbnamefmt}
+
+    %增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
+    \DeclareBibliographyOption[string]{gbalign}[right]{%
+        \ifstrequal{##1}{left}{\setalignleft}{}
+        \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
+    }
+
+    %增加一个出版项自动处理控制选项，当true时使用出版者不详等信息补充缺失的出版信息。
+    \newtoggle{bbx:gbpub}
+    \DeclareBibliographyOption[boolean]{gbpub}[true]{%
+        %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
+        \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
+    \ExecuteBibliographyOptions{gbpub}
+
+    %增加一个处理佚名或noauthor的控制选项
+    %因为在顺序编码制中，不需要使用，这里也增加，为了与作者年制的兼容性考虑。
+    \DeclareBibliographyOption[boolean]{gbnoauthor}[true]{}%
+
+    \ExecuteBibliographyOptions{
+      sorting=none,
+      useprefix=true,  %名字的信息包括前缀
+      %firstinits=true,    %名字有缩写，参考3.1.2.3 Internal
+      giveninits=true,
+      date         = year,  %日期仅写到年
+      urldate =iso, %iso8601，edtf
+      eventdate =iso,
+      maxnames     = 3 ,    %设置名字最大数量
+      minnames     = 3       %设置缩减后的名字最小数量
+      %uniquename   = init
+    }
+}
+
+\iftoggle{iftlfive}{\switchversion{3.0}{opt}}{}%biblatex<=3.2
+\iftoggle{iftlsix}{\switchversion{3.4}{opt}}{}%3.3<=biblatex<=3.6
+\iftoggle{iftlseven}{\switchversion{3.7}{opt}}{}%biblatex=3.7
+\iftoggle{iftleight}{\switchversion{3.7}{opt}}{}%3.8<=biblatex<=3.9
+\iftoggle{iftlatest}{\switchversion{3.10}{opt}}{}%biblatex最新3.10
+  \end{texlist}
+
+  \end{enumerate}
+
+
+
+\subsubsection{脚注或旁注文献}
+  标注命令自定义，在脚注中引用文献，或者把引文放在脚注中或者旁注中
+  \begin{enumerate}
+    \item 标注命令定义可以使用DeclareCiteCommand命令，设置上标，包围符号，标注前后内容等。针对GB/T7714-2015中关于引用标注的特殊要求，增加了一些方便实现要求的命令比如pagescite、yearpagescite等。
+    \item 在footnote的脚注文本中使用footcite命令
+    \item 在正文中使用footfullcite命令，见4.11.6 Mixing Programming Interfaces
+  \end{enumerate}
+
+\subsubsection{参考文献标题}
+  参考文献标题修改并将标题加入目录中
+  \begin{enumerate}
+    \item 利用defbibheading\{bibliography\}[\textbackslash bibname]\{\}重定义标题
+    \item 使用bibliography外的其它标题样式比如bibintoc等
+    \item 利用titlesec等宏包进行修改标题样式，利用其局部性可以调整生成多种样式。注意: 利用titlesec后，直接在defbibheading\{bibliography\}[\textbackslash bibname]\{\} 中放置居中命令centering无效。
+  \end{enumerate}
+
+
+
+
+
+\subsection{一个项目示例}
+\subsubsection{介绍}
 这是一个国内某期刊英文版的参考文献定制样式，项目不是很复杂，给出了两个示例，一是文献表示例(图\ref{fig:proj:bibl:ega})，二是引用标签示例(图\ref{fig:proj:cite:ega})。我们需要根据这两个示例来开发相应的样式，即bbx和cbx文件。
 
 \begin{figure}[!htb]
@@ -1788,12 +3313,12 @@ align=left%
 
 参考文献样式的定制前面已经有了初步介绍，详见\ref{sec:style:def}节，本项目开发也是类似的，关于定制的基本方法不再赘述，下面主要介绍定制需要的所有功能是如何实现的。
 
-\subsection{bbx文件开发}
+\subsubsection{bbx文件开发}
 如前所述，biblatex样式文件开发方法，有一个非常便捷的方式是基于标准样式进行。这种方式不仅相对简单，而且对biblatex的兼容性也更好。当biblatex升级时，除非有api改动，绝大多数情况下可以不用修改即可复用。
 
 在本项目开发中，可以看到参考文献表的样式与标准样式很像，因此完全可以在其基础上进行开发，同时还可以利用gb7714-2015ay样式，其中有不少符合中文规范的处理。本项目主要利用这两个样式的代码进行开发。
 
-\subsubsection{文献表环境}
+\paragraph{文献表环境}
 
 看文献表的第一眼可以观察到各条目的缩进格式，即第一行顶格，第二行开始缩进约3个字母宽度，这是由biblatex参考文献环境控制，通常是list环境构建，设置合适的参数就可以实现目标。
 
@@ -1814,7 +3339,7 @@ align=left%
   {\item}
 \end{codetex}
 
-\subsubsection{作者域处理}
+\paragraph{作者域处理}
 接着我们看示例中个条目类型相同的部分，主要是作者和页码。这里先处理作者域。显然，作者标签有点像中文风格，姓在前，名的缩写为大小首字母，且没有加点。firstname和givenname之间没有空格，姓的后面也没有标点，姓的首字母大写，其它小写。这种格式与gb7714-2015的风格有点像，可以复用其代码，略作大小写修改，同时使用几个钩子将标点和空格处理完毕。
 
 \begin{codetex}{作者域处理}{eg:proj:author}
@@ -1925,7 +3450,7 @@ february         = {Feb\adddot},
 }
 \end{codetex}
 
-\subsubsection{条目类型及其使用的域}
+\paragraph{条目类型及其使用的域}
 
 接下来我们首先来看一下示例中所给出的条目类型(表\ref{tab:proj:entrytypes})及其所使用的域。
 \begin{table}[!hbtp]
@@ -1978,7 +3503,7 @@ online/www:
 author,date or year.title.organization.url.urldate
 \end{codetex}
 
-\subsubsection{article类型处理}
+\paragraph{article类型处理}
 article条目中，标题为正常字体，期刊名为斜体，卷为粗体，期用圆括号包围，页码前面的符号为逗号，无引导词如pp.，而且doi需要换行。
 
 修改期刊名钩子，卷期定义一个新的域格式，调整页码的引导符，修改doi格式，可以处理完成。
@@ -2024,7 +3549,7 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
   %\setunit*{\adddot}%去掉点号
   %\printfield{number}%
   \iffieldundef{number}{}{\printfield[addnumflag]{number}}%
-  %\iffieldundef{number}{}{\printtext{\mkbibparens{\printfield{number}}}}%增加一个圆括号
+  %\iffieldundef{number}{}{\printtext{\mkbibparens{\printfield{number}}}}% 增加一个圆括号
   \iffieldundef{eid}{}{%
   \setunit{\addcomma\space}%
   \printfield{eid}}}
@@ -2082,7 +3607,7 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
   \usebibmacro{finentry}}
 \end{codetex}
 
-\subsubsection{inproceedings类型处理}
+\paragraph{inproceedings类型处理}
 
 标题为正常字体，文集名为斜体，需要出版项，同时观察book，report类型可以发现，出版项中，出版者在前，出版地在后，中间逗号连接，出版者缺省时不输出。
 
@@ -2155,7 +3680,7 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
   \usebibmacro{finentry}}
 \end{codetex}
 
-\subsubsection{book类型处理}
+\paragraph{book类型处理}
 书名为斜体，出版项使用与inproceedings一致的全局处理。驱动无需修改使用标准样式提供的即可。
 \begin{codetex}{book条目处理}{eg:proj:book}
 \DeclareFieldFormat%
@@ -2164,7 +3689,7 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
 \end{codetex}
 
 
-\subsubsection{inbook类型处理}
+\paragraph{inbook类型处理}
 章节名正常字体，全书名为斜体，同时全书还需要作者或编者，章节和书名之间用in:表示，出版项和页码使用前述的全局处理。
 设置书名钩子，处理in的本地化字符串格式后，最重要是是全书编者中跟着的提示信息(Eds.)。这种提示信息常是由本地化字符串提供，显然eds表示编者，通常全书的作者还可以用bookauthor域表示，但这里为了体现eds信息，使用editor域，于是我们需要对editor域输出格式做修改，得到符合要求的结果。其中byeditor本地化字符串处理，见例\ref{eg:proj:localbibstr}。
 \begin{codetex}{inbook条目处理}{eg:proj:inbook}
@@ -2239,7 +3764,7 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
   \usebibmacro{finentry}}
 \end{codetex}
 
-\subsubsection{report类型处理}
+\paragraph{report类型处理}
 在report类中，标题为斜体，后面是出版项，和报告类型及编号。修改驱动调整出版项和报告类型的顺序。也要注意两者之间示例给出的逗号分隔符，这里作者仍然使用了点号，原因如前所述，不同信息块的分隔用点号，当然如果要改成逗号也非常简单。唯一需要注意的是，通常报告的出版者用institution域表示，所以对其做域publisher类似的处理。
 \begin{codetex}{report条目处理}{eg:proj:report}
 \DeclareFieldFormat%
@@ -2297,13 +3822,13 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
   \usebibmacro{finentry}}
 \end{codetex}
 
-\subsubsection{thesis类型处理}
+\paragraph{thesis类型处理}
 标题是斜体，带论文类型，后面是出版项和页码。标题修改使用钩子，出版项和页码使用前述的全局设置。主要是论文类型。目前没有做任何的额外处理，因为biblatex自动会将phdthesis，masterthesis转换为thesis，并设置type。如果用户直接使用thesis，并且需要type信息，那么需要在type域中输入类型是phdthesis或masterthesis。
 
-\subsubsection{patent类型处理}
+\paragraph{patent类型处理}
 标题为正常字体，后面跟专利号。无需任何处理。
 
-\subsubsection{standard类型处理}
+\paragraph{standard类型处理}
 因为standard类型在biblatex中没有定义，因此需要增加一个standard类型的驱动，类似于book的驱动，只是标题改为正常字体。
 
 \begin{codetex}{standard条目处理}{eg:proj:standard}
@@ -2357,7 +3882,7 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
   \usebibmacro{finentry}}
 \end{codetex}
 
-\subsubsection{online类型处理}
+\paragraph{online类型处理}
 最后是online类型，标题后跟的是组织，后面跟的是网址及其访问日期。主要要修改的是url和urldate的域格式。因为urldate域需要提供所有的年月日信息，所以设置urldate宏包选项，注意区别于date域的选项。同时因为其特殊的形式，修改月份的本地化字符串，如例\ref{eg:proj:localbibstr}所示。
 
 \begin{codetex}{online条目处理}{eg:proj:online}
@@ -2377,7 +3902,7 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
 \DeclareFieldFormat{urldate}{\mkbibbrackets{\bibstring{urlseen}\space#1}}
 \end{codetex}
 
-\subsubsection{全局选项及texlive兼容性处理}
+\paragraph{全局选项及texlive兼容性处理}
 全局选项设置如例\ref{eg:proj:online}所示，使用类似于gb7714-2015的设置，使用姓名前缀和缩写，设置文献表中作者标签最大和最小姓名数为3。
 
 对于biblatex的兼容性，因为升级可能带来的变化，这里特别做了处理，主要是texlive2016和texlive2017，其中的biblatex版本分别为3.4和3.7。对于本项目，其中有一个命令存在差异，因此换个版本会报错，因此特别做出处理，处理方式类似于gb7714-2015样式。
@@ -2417,7 +3942,7 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
 
 如此完成了bbx文件的开发。
 
-\subsection{cbx文件开发}
+\subsubsection{cbx文件开发}
 下面进行cbx文件开发。cbx引用标签样式示例给出了3个。分别是1位作者、2位、3位或以上作者的情况。可以看到2位作者时全部给出，超过3位则只给出一位，这可以通过设置宏包选项实现，例\ref{eg:proj:cbxopt}中给出的其它选项，与gb7714-2015相同。单个姓名的标签采用默认的方式处理，作者和年份之间的分隔符，修改对应的钩子即可。
 
 \begin{codetex}{cbx设置宏包选项}{eg:proj:cbxopt}
@@ -2505,14 +4030,14 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
 \end{figure}
 
 
-\subsection{小结}
+\subsubsection{小结}
 通过上述实践，我们完成了一个定制项目，可以看到biblatex的强大，它提供的api相当全面和有效，利用它以及标准样式可以较为方便构建满足需要的定制格式。
 
 \section{结论}
 通过本文的工作给出了\LaTeX 文档中文参考文献相关问题的biblatex解决方案，包括: 基本参考文献生成、分章参考文献、指定格式的著录和标注样式等，基本能够满足日常的各类参考文献生成需求，能够为\LaTeX 文档写作提供帮助。
 
 \section{后记}
-因水平有限，难免存在一些错误，欢迎各位朋友批评指正。如果使用biblatex生成参考文献过程中遇到什么问题，也可以邮件联系，我们可以互相交流。
+因水平有限，难免存在一些错误，请各位朋友批评指正。如果遇到什么问题，也可以邮件联系，欢迎交流。
 
 %%----------------------------------------------------------------
 \input{articlemodelpartc.tex}
