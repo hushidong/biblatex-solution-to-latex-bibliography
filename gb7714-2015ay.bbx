@@ -1991,7 +1991,7 @@ test{\iftoggle{iftlnine}}
 \usebibmacro{in:}%
 %\printtext{\texttt{//}\addthinspace}%
   \usebibmacro{bybookauthor}%
-  \ifnameundef{bookauthor}{}{\newunit\newblock}%替换下一句
+  \ifnameundef{bookauthor}{}{\newunit}%替换下一句
   %\newunit\newblock
   \usebibmacro{maintitle+booktitle}%
   \newunit\newblock%
@@ -2099,7 +2099,7 @@ test{\iftoggle{iftlnine}}
   \usebibmacro{in:}%
   %\printtext{\texttt{//}\addthinspace}%
   \usebibmacro{bybookauthor}%
-  \ifnameundef{bookauthor}{}{\newunit\newblock}%替换下一句
+  \ifnameundef{bookauthor}{}{\newunit}%替换下一句
   %\newunit\newblock
   \usebibmacro{maintitle+booktitle}%
   \newunit\newblock
@@ -2193,7 +2193,7 @@ test{\iftoggle{iftlnine}}
   %\setunit{\labelnamepunct}\newblock
   \newunit\newblock %删除上面一行，添加这一行
   \usebibmacro{title+issuetitle}%
-  \newunit
+  \newunit\newblock
   \usebibmacro{location+institution+date}%添加这一行用于输出地址，单位和时间
   \newunit\newblock%添加这一行
   \printlist{language}%
@@ -2499,7 +2499,7 @@ test{\iftoggle{iftlnine}}
   \usebibmacro{in:}%
   %\printtext{\texttt{//}\addthinspace}%
   \usebibmacro{bybookauthor}%用类似inbook的方式处理
-  \ifnameundef{bookauthor}{}{\newunit\newblock}%替换下一句
+  \ifnameundef{bookauthor}{}{\newunit}%替换下一句
   %\newunit\newblock
   \usebibmacro{maintitle+booktitle}%
   \newunit\newblock

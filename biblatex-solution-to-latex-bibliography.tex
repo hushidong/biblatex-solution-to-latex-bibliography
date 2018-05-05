@@ -50,9 +50,10 @@
 %% 2017-03-15 v1.0c 增加了关于参考文献表文本转换成bib文件的内容
 %% 2017-10-31 v1.0d 增加了一个参考文献样式定制项目的示例，见第3节
 %% 2018-04-21 v1.0e 增加了利用biblatex宏包选项调整著录表和标注的内容，见2.7.5节
+%% 2018-05-04 v1.0f 增加了参考文献缩略信息打印，排序，索引等介绍，见2.5节
 
-\def\versionnumber{v1.0e}    %版本和修改时间信息
-\def\versiondate{2018-04-21}
+\def\versionnumber{v1.0f}    %版本和修改时间信息
+\def\versiondate{2018-05-04}
 \diyizuozhe{The files have version number \versionnumber, last revised \versiondate.\\ 第一作者简介：}
                                           %introduction of corresponding author
 \zuozhejianjie{HU ZHENZHEN，A \LaTeX ~LOVER，Email: hzzmail@163.com。}
@@ -67,11 +68,12 @@
 参考文献是科技文档写作中的重要组成部分。在写作中常碰到这样的问题，比如：怎么在文档合适位置插入满足格式要求的参考文献标注？怎么生成满足格式要求的参考文献表？怎么实现分章文献等一些特殊的功能？等等。这些问题尽管不会成为困扰，但的确会牵扯文档作者不少精力。为使\LaTeX 文档作者能够更方便地生成参考文献，有必要对各种参考文献问题进行梳理总结，并给出解决方案，以便随时参考、移植和应用。
 
 对于一般的参考文献生成而言，利用传统的\LaTeX 参考文献生成方法\cite{Oetiker--,刘海洋2013--,胡伟2011--}配合相关的文献样式(bst文件)大体能够满足要求。但如果要实现一些扩展功能，就需要应用一些辅助宏包，
-比如chapterbib(用于分章文献表)\cite{Daly2010--}，natbib(用于标注并提供著录样式)\cite{Arseneau2010--}，mcitesplus(用于标注)\cite{Shell2013--}等。尽管这些提供了不少有用的工具，但仍然存在一些局限。此外，由于使用bibtex/bibtex8程序的原因，传统方法无法使用中文的引用关键字(bibtex键)，甚至当参考文献量足够大时可能出现内存不足的情况。
+比如chapterbib(用于分章文献表)\cite{Daly2010--}，multibib(用于单文档内生成多文献表)\cite{Hansen2008--}，natbib(用于标注并提供著录样式)\cite{Arseneau2010--}，mcitesplus(用于标注)\cite{Shell2013--}，inlinebib(用于文献表置于脚注中)\cite{Seindal1994--}等。尽管这些工具提供了不少有用功能，但仍然存在一些局限。此外，由于使用bibtex/bibtex8程序的原因，非utf-8编码的bib文件无法使用中文的引用关键字，文献排序也存在局限，甚至当参考文献量足够大时可能出现内存不足的情况。
 
-而biblatex宏包\cite{Lehman2015}提供了一套完整的方案，它即能替代传统的\LaTeX 参考文献生成方法，也能覆盖如natbib等所有辅助宏包的功能，除此之外更提供了如动态数据修改等大量新功能，越使用越会觉得biblatex宏包的完善和强大，它是\LaTeX 参考文献生成的一个绝佳选择。由于基于传统方法的大量参考文献样式仍然在用，基于biblatex的参考文献生成还没有完全替代传统方法，但已经开始逐渐成为主流，目前CTAN 上面已经有包括science、ieee、nature、iso690、gb7714-2015等数十种样式可以选用，加上biblatex的强大定制功能，利用biblatex一个宏包完全可以简单且便利地满足使用需求。
+而biblatex宏包\cite{Lehman2015}提供了一套完整的方案，它即能替代传统的\LaTeX 参考文献生成方法，也能覆盖如natbib等所有辅助宏包的功能，除此之外更提供了如动态数据修改等大量新功能，越使用越会觉得biblatex宏包的完善和强大，它是\LaTeX 参考文献生成的一个绝佳选择。由于基于传统方法的大量参考文献样式仍然在用，基于biblatex的参考文献生成还没有完全替代传统方法，但已经开始逐渐成为主流，目前CTAN 上面已经有包括science、ieee、nature、iso690、gb7714-2015等数十种样式可以选用，加上biblatex的强大定制功能，利用biblatex一个宏包完全可以简单且便利地生成满足需求的参考文献。
 
-然而正是由于biblatex的完整性，biblatex宏包相当的庞大，其说明文档(\href{https://github.com/hushidong/biblatex-zh-cn}{中译版})长达300页。对于初学者或者无深度需求的使用者来说，biblatex手册更像是一个技术说明书，尽管它详实的说明了宏包功能，但却没有提供一个像lshort这样的简单教程，显得过于复杂。类似biblatex-gb7714-2015这样的样式包\cite{胡振震2016}，虽然也介绍了一些biblatex的使用方法，但其重点主要还在样式包的设计、实现和使用上。总的来说，目前对于biblatex参考文献生成还没有较为系统的入门手册。本文正是出于这样的考虑，希望从不同层级用户的角度，面向应用，以示范的形式，形成一个简易的使用说明书，为用户提供帮助。
+然而正是由于biblatex的完整性，biblatex宏包相当的庞大，其说明文档(\href{https://github.com/hushidong/biblatex-zh-cn}{中译版})长达300页。对于初学者或者无深度需求的使用者来说，biblatex手册更像是一个技术说明书，尽管它详实的说明了宏包功能，但却没有提供一个像lshort这样的简单教程，显得过于复杂。类似biblatex-gb7714-2015这样的样式包\cite{胡振震2016}，虽然也介绍了一些biblatex的使用方法，但其重点主要还在样式包的设计、实现和使用上。总的来说，目前对于biblatex参考文献生成还没有较为系统的入门手册（biblatex 3.12版以后，
+宏包作者提供了一个简单的\href{https://github.com/plk/biblatex/blob/dev/doc/latex/biblatex/biblatex-quickstart.tex}{入门教程}）。本文正是出于这样的考虑，希望从不同层级用户的角度，面向应用，以示范的形式，形成一个简易但全面的使用说明书，为用户提供帮助。
 
 %事实上随着biblatex宏包及其biber后端程序的完善，利用它可以满足对于参考文献的绝大多数功能需求。如果利用一个宏包就能完成以前多个宏包才能实现的功能，那么问题实际上就简化了，这正是用户所期待的。利用biblatex宏包“简单化、便利化”地满足\LaTeX 文档写作中的各种中文参考文献需求正是本文写作的初衷所在。
 
@@ -100,25 +102,25 @@
 \end{enumerate}
 
 \section{解决方案}
-本节直接针对上一节提出的需求，逐条进行处理。方案主要应用于一般文档类(book，report，article)，beamer类的问题放到最后一小节中专门介绍。
+本节针对上一节提出的需求，一一进行解答。解决方案主要应用于一般文档类(book，report，article)，beamer类的问题放到最后一小节中专门介绍。
+
 \subsection{参考文献数据文件准备}
-\LaTeX 文档中生成参考文献除了利用thebibliography环境手工输入参考文献条目信息这一简单方式外，其它方式都需要一个参考文献数据源文件即bib文件。在这一文件内保存各条参考文献的信息，每一条参考文献信息都是一个bibtex item(bibtex项)，其基本格式如下:
+\LaTeX 文档中生成参考文献除了利用 thebibliography 环境手工输入参考文献条目信息这一简单方式外，其它方式都需要一个参考文献数据源文件即bib文件。在这一文件内保存有各条参考文献的信息，每一条参考文献记录都是一个bibtex item(bibtex项)，一条参考文献记录基本格式如下:
 \begin{codetex}{参考文献信息基本格式即bibtex格式}{fmt:bibtex}
 @ARTICLE{entrykey,
-  author =       {},
-  title =        {},
-  journal =      {},
-  year =         {},
-  volume =       {},
-  number =       {},
-  pages =        {},
-  month =        {},
+  author =       {Author A and Author B and Author C and others},
+  title =        {A title of a paper},
+  journal =      {A title of a jounal},
+  year =         {2005},
+  volume =       {31},
+  number =       {6},
+  pages =        {75-81},
 }
 \end{codetex}
 
-其中\@后面紧跟着条目的类型比如article(期刊文章)，book(专著)等，编组符号\{后紧跟的是该条参考文献信息的bibtex key即引用关键词，在cite引用命令中用该词来表示对此文献的引用。逗号后面跟着的是参考文献的所有各个域的信息，比如作者域，题名域等等，参考文献信息放在各个域名等号后面的编组内，一些域的录入比如author域的英文名录入是有特殊格式要求的，具体可以参考文献\cite{胡振震2016}中关于域信息录入的说明。
+其中\verb|@|符号后面紧跟着条目的类型比如article(期刊文章)，book(专著)等，编组符号\{后紧跟的是该条参考文献信息的bibtex key即引用关键字，在cite标注（引用）命令中用该关键字来表示对此文献的引用。逗号后面跟着的是构成参考文献记录的各个域的信息，比如作者域，题名域等等，参考文献信息放在各个域名等号后面的编组内，一些域的录入比如author域的英文名录入是有特殊格式要求的，具体可以参考biblatex宏包手册和biblatex-gb7714-2015样式包手册\cite{胡振震2016}中关于域信息录入的说明。
 
-尽管biblatex在传统bibtex格式基础上增加了很多新的条目类型和域，但它完全兼容传统的bibtex格式文件，处于兼容性考虑，我们在准备bib文件时，可以完全安装\href{https://en.wikipedia.org/wiki/BibTeX}{传统的bibtex格式规范}。bibtex格式中所使用的条目类型和域包括:
+尽管biblatex在传统bibtex格式基础上增加了很多新的条目类型和域，但它完全兼容传统的bibtex格式文件，出于兼容性考虑，我们在准备bib文件时，可以完全按照\href{https://en.wikipedia.org/wiki/BibTeX}{传统的bibtex格式规范}来进行。bibtex格式中所使用的条目类型和域包括:
 
 \begin{codetex}{bibtex格式文件中的条目类型和域}{fmt:bibtex:entryfield}
 Entry types
@@ -128,52 +130,65 @@ article
 An article from a journal or magazine.
 Required fields: author, title, journal, year, volume
 Optional fields: number, pages, month, note, key
+
 book
 A book with an explicit publisher.
 Required fields: author/editor, title, publisher, year
 Optional fields: volume/number, series, address, edition, month, note, key, url
+
 booklet
 A work that is printed and bound, but without a named publisher or sponsoring institution.
 Required fields: title
 Optional fields: author, howpublished, address, month, year, note, key
+
 conference
 The same as inproceedings, included for Scribe compatibility.
+
 inbook
 A part of a book, usually untitled. May be a chapter (or section, etc.) and/or a range of pages.
 Required fields: author/editor, title, chapter/pages, publisher, year
 Optional fields: volume/number, series, type, address, edition, month, note, key
+
 incollection
 A part of a book having its own title.
 Required fields: author, title, booktitle, publisher, year
 Optional fields: editor, volume/number, series, type, chapter, pages, address, edition, month, note, key
+
 inproceedings
 An article in a conference proceedings.
 Required fields: author, title, booktitle, year
 Optional fields: editor, volume/number, series, pages, address, month, organization, publisher, note, key
+
 manual
 Technical documentation.
 Required fields: title
 Optional fields: author, organization, address, edition, month, year, note, key
+
 mastersthesis
 A Master's thesis.
 Required fields: author, title, school, year
 Optional fields: type, address, month, note, key
+
 misc
 For use when nothing else fits.
 Required fields: none
 Optional fields: author, title, howpublished, month, year, note, key
+
 phdthesis
 A Ph.D. thesis.
 Required fields: author, title, school, year
 Optional fields: type, address, month, note, key
+
 proceedings
 The proceedings of a conference.
 Required fields: title, year
 Optional fields: editor, volume/number, series, address, month, publisher, organization, note, key
+
 techreport
 A report published by a school or other institution, usually numbered within a series.
 Required fields: author, title, institution, year
 Optional fields: type, number, address, month, note, key
+
 unpublished
 A document having an author and title, but not formally published.
 Required fields: author, title, note
@@ -185,50 +200,73 @@ A BibTeX entry can contain various types of fields. The following types are reco
 
 address
 Publisher's address (usually just the city, but can be the full address for lesser-known publishers)
+
 annote
 An annotation for annotated bibliography styles (not typical)
+
 author
 The name(s) of the author(s) (in the case of more than one author, separated by and)
+
 booktitle
 The title of the book, if only part of it is being cited
+
 chapter
 The chapter number
+
 crossref
 The key of the cross-referenced entry
+
 edition
 The edition of a book, long form (such as "First" or "Second")
+
 editor
 The name(s) of the editor(s)
+
 howpublished
 How it was published, if the publishing method is nonstandard
+
 institution
 The institution that was involved in the publishing, but not necessarily the publisher
+
 journal
 The journal or magazine the work was published in
+
 key
 A hidden field used for specifying or overriding the alphabetical order of entries (when the "author" and "editor" fields are missing). Note that this is very different from the key (mentioned just after this list) that is used to cite or cross-reference the entry.
+
 month
 The month of publication (or, if unpublished, the month of creation)
+
 note
 Miscellaneous extra information
+
 number
 The "(issue) number" of a journal, magazine, or tech-report, if applicable. (Most publications have a "volume", but no "number" field.)
+
 organization
 The conference sponsor
+
 pages
 Page numbers, separated either by commas or double-hyphens.
+
 publisher
 The publisher's name
+
 school
 The school where the thesis was written
+
 series
 The series of books the book was published in (e.g. "The Hardy Boys" or "Lecture Notes in Computer Science")
+
 title
 The title of the work
+
 type
 The field overriding the default type of publication (e.g. "Research Note" for techreport, "{PhD} dissertation" for phdthesis, "Section" for inbook/incollection)
+
 volume
 The volume of a journal or multi-volume book
+
 year
 The year of publication (or, if unpublished, the year of creation)
 \end{codetex}
@@ -315,7 +353,7 @@ texstudio软件可以在多平台使用，linux下因为没有winedt所以比较
 \begin{enumerate}
   \item Google 学术: 检索文献 >> Cite（引用） >> BibTeX >> 复制粘贴到 mybibtex.bib 文件
   \item CNKI，（以 firefox 为例）: (确保安装 Zotero 的 firefox 扩展 >>) CNKI 检索文献 >> 点击一下 url 输入框末尾的文件夹图标 >> 选中要导出的文献 >> 导出为 BibTeX 引用格式 >> 复制粘贴导出的 BibTeX 文献到 mybibtex.bib 文件。
-  \item 必应学术（必应 学术 – 学无止境，术有乾坤）、百度学术（百度学术 – 保持学习的态度）类似于google学术。
+  \item 必应学术（必应学术 – 学无止境，术有乾坤）、百度学术（百度学术 – 保持学习的态度）类似于google学术。
   \item 从一些学术期刊官网直接获取bib文件，比如IEEE，Springer，Elsevier等
   \item 使用文献助手工具，地址:\url{http://cite.latexstudio.net}
 \end{enumerate}
@@ -324,8 +362,7 @@ texstudio软件可以在多平台使用，linux下因为没有winedt所以比较
 
 
 \subsubsection{从pdf或文本文件转换bib文件}
-批量生成参考文献数据构成bib文件，还有一种方式是从参考文献表文本转换。比如从一个包含gb7714-2015格式的参考文献表的pdf文件中拷贝文献表到一个文本文件中，比如textfilename文件，其中每一条文献信息构成一个行。
-然后利用biblatex-gb7714-2015样式宏包附带的perl脚本gb7714texttobib.pl将其转换为bib文件比如bibfilename。该脚本的使用命令为:
+批量生成参考文献数据以构成bib文件，还有一种方式是从参考文献表文本转换。比如从一个包含GB/T 7714-2015格式的参考文献表的pdf文件中，讲文献表拷贝到一个文本文件中，比如 textfilename 文件，其中每一条文献信息构成一个行。然后利用biblatex-gb7714-2015样式宏包附带的perl脚本gb7714texttobib.pl将其转换为bib文件比如bibfilename。该脚本的使用命令为:
 
 \begin{codetex}{利用gb7714texttobib.pl将参考文献文本转换为bib文件}{code:trans2bib}
 perl gb7714texttobib.pl in=textfilename out=bibfilename
@@ -333,7 +370,7 @@ perl gb7714texttobib.pl in=textfilename out=bibfilename
 
 其中in=后面是输入的参考文献文本文件，out=后面是输出的bib文件。
 
-\subsection{文档的组成}
+\subsection{\LaTeX 文档的组成}
 \LaTeX 文档源文件是由具有某种结构和模式的代码所构成，参考文献自然也遵守这样的结构和模式。
 
 \subsubsection{文档源文件基本结构}
@@ -355,11 +392,53 @@ perl gb7714texttobib.pl in=textfilename out=bibfilename
 \end{codetex}
 
 \subsubsection{biblatex宏包、参考文献数据源和样式的加载}
-biblatex宏包和参考文献数据源都在导言区加载(例\ref{code:pkg:load})，宏包加载命令为usepackage，数据源加载命令为addbibresource。参考文献样式作为biblatex宏包的可选参数加载，即用bibstyle选项加载著录样式，用citestyle选项加载标注样式，当两者使用同名样式时，可以用一个选项style表示，例\ref{code:pkg:load}中bibstyle和citestyle都选择使用gb7714-2015样式。实际上，标注样式和著录样式分开加载有时是很有用的，有朋友问说想用gb7714-2015的参考文献著录样式，但引用标注又不想要用上标怎么办？最简单的方式是著录样式使用gb7714-2015样式，而标注样式使用其他样式比如numeric-comp。当然修改gb7714-2015的标注样式文件中cite等命令也可以实现。参考文献样式还有许多，具体参见\label{sec:bib:style}节，用户可以根据需要选择使用。
+利用 biblatex 宏包生成参考文献可以说非常简单，只要在上述\LaTeX 基本文档基础上载入biblatex宏包和bib数据源，选择需要的参考文献样式，然后在正文需要的地方引用bib文件中准备的参考文献，然后在文档合适位置比如文档末尾打印参考文献表即可，例\ref{code:doc:structrue}和图\ref{fig:eg:ref}给出了示例代码及其结果。
 
-为利用biblatex实现复杂功能，后端backend采用biber而不用bibtex(如果backend为bibtex8，则biblatex宏包利用bibtex8和aux文件进行编译(\LaTeX 传统方法)，而backend为biber则是利用biber和bcf文件进行编译)。参考文献样式还可以使用biblatex宏包提供的标准样式(标准样式详见biblatex手册Standard Styles一节)，或者使用其它作者提供的定制样式，比如nature，science等。
+\begin{codetex}{biblatex参考文献生成最小工作示例}{code:doc:structrue}
+\documentclass{article}%文档类
+%导言区开始:
+%加载ctex宏包，中文支持
+\usepackage{ctex}
+%加载geometry宏包，定义版面
+\usepackage[left=20mm,right=20mm,top=25mm, bottom=15mm]{geometry}
+%加载hyperref宏包，使用超链接
+\usepackage[colorlinks=true,pdfstartview=FitH,linkcolor=blue,anchorcolor=violet,citecolor=magenta]{hyperref}
+%加载biblatex宏包，使用参考文献
+%其中后端backend使用biber
+%标注(引用)样式citestyle，著录样式bibstyle都采用gb7714-2015样式
+\usepackage[backend=biber,bibstyle=gb7714-2015,%nature,%
+citestyle=gb7714-2015%,backref=true%
+]{biblatex}
+%biblatex宏包的参考文献数据源加载方式
+\addbibresource[location=local]{example.bib}
 
-biblatex宏包还提供一系列宏包选项，用于控制文献著录表，标注的标签等内容，详细内容参考biblatex手册宏包选项一节。
+%正文区开始:
+\begin{document}
+%正文内容，引用参考文献
+详见文献\cite{Peebles2001-100-100}\parencite{Miroslav2004--}
+参考文献\cite[见][49页]{蔡敏2006--}\parencite[见][49页]{Miroslav2004--}
+
+%打印参考文献表
+\printbibliography[heading=bibliography,title=参考文献]
+\end{document}
+\end{codetex}
+
+\begin{refsection}
+\begin{figure}[!htb]
+\centering
+\fbox{
+\parbox{15cm}{%\raggedright
+详见文献\cite{Peebles2001-100-100}\parencite{Miroslav2004--}
+参考文献\cite[见][49页]{蔡敏2006--}\parencite[见][49页]{Miroslav2004--}
+\printbibliography[heading=subbibliography,title=参考文献]
+}
+}
+\caption{最小工作示例的结果}\label{fig:eg:ref}
+\end{figure}
+\end{refsection}
+
+其中，biblatex宏包和参考文献数据源都在导言区加载(例\ref{code:pkg:load})，宏包加载命令为usepackage，数据源加载命令为addbibresource。
+
 \begin{codetex}{biblatex宏包、数据源和样式的加载}{code:pkg:load}
 %biblatex宏包加载
 %其中后端backend使用biber
@@ -372,7 +451,13 @@ citestyle=gb7714-2015%,backref=true%
 \addbibresource[location=local]{example.bib}
 \end{codetex}
 
-值得注意的是:参考文献数据库源文件即bib文件可以是本地的，也可以是网络上的(具体参考biblatex手册Bibliography Commands一节中关于addbibresource命令的说明)。本地的数据源可以指定绝对路径或者相对路径，注意其中目录层级之间的间隔符用/而不是\textbackslash ，windows下默认复制的间隔符是\textbackslash ，需要将其改为/。添加数据源的例子参考例\ref{ref:addresource}。
+其中，参考文献样式作为biblatex宏包的可选参数加载，即用bibstyle选项加载著录样式，用citestyle选项加载标注样式，当两者使用同名样式时，可以用一个选项style表示，例\ref{code:pkg:load}中bibstyle和citestyle都选择使用gb7714-2015样式。实际上，标注样式和著录样式分开加载有时是很有用的，有朋友可能想用gb7714-2015的参考文献著录样式，但引用标注又不想要用上标？最简单的方式是著录样式使用gb7714-2015样式，而标注样式使用其他样式比如numeric-comp。当然修改gb7714-2015的标注样式文件中cite等命令也可以实现。参考文献样式还有许多，可以使用biblatex宏包提供的标准样式(标准样式详见biblatex手册Standard Styles一节)，或者使用其它作者提供的定制样式，比如nature，science等，具体参见\label{sec:bib:style}节，用户可以根据需要选择使用。
+
+为利用 biblatex 的高级功能，后端 backend 应尽量采用 biber 而不用 bibtex (如果backend为bibtex8，则biblatex宏包利用bibtex8和aux文件进行编译(\LaTeX 传统方法)，而backend为biber则是利用biber和bcf文件进行编译)。
+
+另外，biblatex宏包还提供一系列宏包选项，用于控制文献著录表，标注的标签等内容，详细内容参考biblatex手册宏包选项一节。
+
+值得注意的是: 参考文献数据库源文件即bib文件可以是本地的，也可以是网络上的(具体参考biblatex手册Bibliography Commands一节中关于addbibresource命令的说明)。本地的数据源可以指定绝对路径或者相对路径，注意其中目录层级之间的间隔符用/而不是\textbackslash ，windows下默认复制的间隔符是\textbackslash ，需要将其改为/。数据源添加示例见例\ref{ref:addresource}。
 
 \begin{codetex}{添加参考文献数据源的两种方式}{ref:addresource}
 \addbibresource{bibfile1.bib} %本地数据源
@@ -382,8 +467,8 @@ citestyle=gb7714-2015%,backref=true%
 \addbibresource[location=remote,label=lan]{ftp://192.168.1.57/~user/file.bib}
 \end{codetex}
 
-\subsubsection{文献的引用命令}
-文献的引用命令可以采用\LaTeX 提供的cite命令(注意biblatex对其进行了重定义)，也可以使用biblatex提供的其它命令比如parencite等，也可以采用参考文献样式包提供的定制命令比如gb7714-2015样式提供的pagescite，yearpagescite等。在文档种引用文献仅需要在合适的位置插入引用命令，命令的参数是所引用参考文献的bibtex键(引用关键词)。比如:
+\subsubsection{文献的标注（引用）}
+文献的标注（引用）可以采用\LaTeX 提供的cite命令(注意biblatex对其进行了重定义)，也可以使用biblatex提供的其它命令比如parencite等，也可以采用参考文献样式包提供的定制命令比如gb7714-2015样式提供的pagescite，yearpagescite等。在文档中引用文献仅需要在合适的位置插入标注（引用）命令，命令的必选参数是所引用参考文献的bibtex键(引用关键字)。比如:
 
 \begin{codetex}{参考文献的引用命令}{ref:cite:cmd}
 详见文献\cite{Peebles2001-100-100}\parencite{Miroslav2004--}
@@ -399,16 +484,22 @@ citestyle=gb7714-2015%,backref=true%
 参考文献表中打印不标注的文献引入，引入bib文件中中全部文献\nocite{*}。
 \end{codetex}
 
-\subsubsection{文献表打印命令}
+另外，在biblatex中使用动态文献集也能产生类似nocite命令的效果，即打印文献表时也会自动输出定义在动态文献集中的文献。
 
-基于biblatex宏包的参考文献表的打印与\LaTeX 传统方式不同，采用的命令是printbibliography。如果全文仅需一个参考文献，那么只要在合适的地方插入如下命令即可。
+\subsubsection{文献表的打印（输出）}
+
+基于 biblatex 宏包的参考文献表打印（输出）与\LaTeX 传统方式不同，采用的命令是printbibliography。如果全文仅需一个参考文献，那么只要在合适的地方插入如下命令即可：
 
 \begin{codetex}{参考文献表打印命令}{ref:bibprint:cmd}
 \printbibliography[heading=bibliography,title=参考文献]
 \end{codetex}
 
+注意：printbibliography可以有很多可选参数，用于复杂的文献表控制，具体见biblatex宏包手册。
+
 \subsubsection{参考文献正反超链接}
-当加载hyperref宏包后，biblatex宏包除了提供正向超链接外还能提供功能强大的反向超链接。使用方式也很简单，就是使用backref选项。例\ref{ref:hyperlink:back}给出了代码:
+
+当加载hyperref宏包后，biblatex宏包除了提供正向超链接外还能提供功能强大的反向超链接。使用方式也很简单，就是使用backref选项。
+例\ref{ref:hyperlink:back}给出了代码:
 \begin{codetex}{参考文献反向超链接选项}{ref:hyperlink:back}
 \usepackage[backend=biber,bibstyle=gb7714-2015,citestyle=gb7714-2015,%
 backref=true%
@@ -416,10 +507,10 @@ backref=true%
 \end{codetex}
 
 
-\subsection{文档的编译}
-文档的编译与\LaTeX 传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，准备参考文献数据用的命令是biber filename。编译命令可以利用软件调用，也可以自行在命令行输入，下面给出利用winedt、texstudio、命令行、和脚本等不同方式的具体操作过程。
+\subsection{\LaTeX 文档的编译}
+文档的编译与\LaTeX 传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，准备参考文献数据用的命令为biber filename。编译命令可以利用软件调用，也可以自行在命令行输入，下面给出利用winedt、texstudio、命令行、和脚本等不同方式的具体操作过程。
 
-需要注意，无论采用哪种方式编译，如果参考文献数据中存在一些特殊符号比如\&等，编译时会报错。对于这个问题除了手动修改bib文件中参考文献信息这一种方法外，还有两种自动处理方式，一是利用jabref，jabref有bibtex和biblatex两种模式，在biblatex模式下，对于一些特殊字符的输入，比如\&，jabref会自动将其转换为\textbackslash\&。二是使用gb7714-2015样式，在bib数据源不经任何处理的情况下，gb7714-2015样式也能自动处理特殊字符。
+需要注意，无论采用哪种方式编译，如果参考文献数据中存在一些特殊符号比如\&等，编译时会报错。对于这个问题除了手动修改bib文件中参考文献信息这一种方法外，还有两种自动处理方式，一是利用jabref，jabref有bibtex和biblatex两种模式，在biblatex模式下，对于一些特殊字符的输入，比如\&，jabref会自动将其转换为\textbackslash\&。二是使用gb7714-2015样式，在bib数据源不经任何处理的情况下，gb7714-2015样式也能自动处理一些特殊字符。
 
 \subsubsection{利用winedt}
 当文档准备好之后，第一步点击winedt工具栏的xelatex按钮(\parbox{1.2cm}{\includegraphics[width=1.2cm]{button-compiler-winedt}}图中红框内的按钮)完成第一遍\LaTeX 编译；
@@ -534,11 +625,16 @@ rm -r *.aux *.bbl *.blg *.log *.out *.toc *.bcf *.xml *.synctex *.nlo *.nls *.ba
 latexmk -xelatex "test.tex"
 \end{codetex}
 
+利用latexmk进行编译的方式也可以在winedt中实现，即定制winedt的工具按钮以实现一键编译功能。具体参见：
+\href{https://blog.csdn.net/xenonhu/article/details/80010659}{Winedt 一键编译 LaTeX 文档}
+
 \subsection{分章参考文献和书后参考文献}
-分章参考文献在书籍写作中是一种比较常见的需求。在latex传统方法中,利用thebibliography 环境可是实现,但其格式只能在bibitem内输入,对于文献量较大时是不适合的。而利用bibliographystyle 和 bibliography 命令生成的参考文献可以与thebibliography 环境同时存在，生成多个不同的文献表，可以插入多个文献表但却是相同的，这是因为编译文档时，所有的信息都是写入一个 aux 文件中的。所以要实现分章参考文献表,需要使用 chapterbib宏包,并且要把需要生成文献表的章放到单独的tex文件中,然后用include命令包含进主文件,这样可以生成多个aux文件以便生成分章参考文献表。而使用biblatex宏包可以很方便的在一个\LaTeX 文档中实现多种形式的参考文献划分，其中分章参考文献可以利用refsection环境或者宏包选项来实现。
+分章参考文献在书籍写作中是一种比较常见的需求。在latex传统方法中，利用thebibliography 环境可是实现，但其格式只能在bibitem内输入，对于文献量较大时是不适合的。而利用bibliographystyle 和 bibliography 命令生成的参考文献可以与thebibliography 环境同时存在，生成多个不同的文献表，可以插入多个文献表但却是相同的，这是因为编译文档时，所有的信息都是写入一个 aux 文件中的。所以要实现分章参考文献表，需要使用 chapterbib 或 multibib 宏包，使用chapterbib时要把需要生成文献表的章放到单独的tex文件中，然后用include命令包含进主文件，这样可以生成多个aux文件以便生成分章参考文献表。而使用biblatex宏包可以很方便的在一个\LaTeX 文档中实现多种形式的参考文献划分，其中分章参考文献可以利用refsection环境或者宏包选项来实现。
+
 \subsubsection{利用refsection环境分章}
 
-利用refsection环境可以显式的设置需要打印参考文献的文档结构部分，比如把chapter的所有内容放在refsection环境内，那么在该refsection中使用参考文献打印命令printbibliography就会得到该环境内的参考文献信息，例\ref{bib:refsection}给出的代码，其结果如图\ref{bib:refsection:resa}，\ref{bib:refsection:resb}所示。
+利用refsection环境可以显式的设置需要打印参考文献的文档结构部分，比如把chapter的所有内容放在refsection环境内，那么在该refsection中使用参考文献打印命令printbibliography就会得到该环境内的参考文献信息，
+例\ref{bib:refsection}给出的代码，结果如图\ref{bib:refsection:resa}，\ref{bib:refsection:resb}所示。
 
 \begin{codetex}{分章参考文献}{bib:refsection}
 \documentclass{report}%%file:egrefsection.tex
@@ -586,7 +682,9 @@ latexmk -xelatex "test.tex"
 \end{figure}
 
 \subsubsection{利用宏包refsection选项分章}
-除了利用refsection环境显式方法外，还可以利用宏包选项refsection=chapter等来设置需要区分打印参考文献的文档结构，这里设置refsection=chapter表示以章为单位区分打印参考文献，也可以设置成section，那么就是以节为单位进行区分打印。例\ref{bib:opt:refsection}给出的代码，其结果如图\ref{bib:refsection:resc}所示，可以看到与图\ref{bib:refsection:resa}完全一致。
+除了利用refsection环境显式方法外，还可以利用宏包选项refsection=chapter等来设置需要区分打印参考文献的文档结构，这里设置refsection=chapter表示以章为单位区分打印参考文献，也可以设置成section，那么就是以节为单位进行区分打印。
+例\ref{bib:opt:refsection}给出的代码，结果如图\ref{bib:refsection:resc}所示，可以看到其结果与图\ref{bib:refsection:resa}完全一致。
+
 \begin{codetex}{利用宏包选项实现分章参考文献}{bib:opt:refsection}
 \documentclass{report}%%file:egrefsectionb.tex
 \usepackage{ctex}
@@ -622,7 +720,7 @@ latexmk -xelatex "test.tex"
 
 \subsubsection{统一的全局参考文献}
 
-biblatex参考文献利用refsection很容易生成分章节的参考文献，但如果要生成一个全局的参考文献，那么可以不使用任何的refsection或者使用一个refsection包含全部的文档(注意:两种方法对于一般情况下都是可以的，但第二种方法对于beamer类则不能使用，这在第\ref{sec:bib:inbeamer}节还要详说)。
+biblatex参考文献利用refsection很容易生成分章节的参考文献，但如果要生成一个全局的参考文献，那么可以不使用任何的refsection或者使用一个refsection包含全部的文档(注意:两种方法对于一般情况下都是可以的，但第二种方法对于beamer类则不能使用，这在第\ref{sec:bib:inbeamer}节还会详细说明)。
 
 但还有一种情况是既要生成分章参考文献又要有一个全局的参考文献。那么最简单的方式在文末利用printbibliography的section选项对所有的refsection同时打印一遍，代码如例\ref{bib:global:refsection}所示，但这样的方式更像是文献表堆积，不像一个统一的文献表，且其中的各章的文献引用标注序号不是全局的，只是各refsection内部的序号。
 
@@ -637,7 +735,8 @@ biblatex参考文献利用refsection很容易生成分章节的参考文献，�
 
 (注意:refsection内部不可以有refsection，即refsection不可嵌套，但其内部可以使用refsegment。printbibliography命令也可以对refsection内的所有refsegment遍历打印，也可以指定refsection内的某一个refsegment中的文献，只要给出segment参数，当printbibliography在refsection外打印其内refsegment中的文献，则还需指定section参数。
 
-例\ref{eg:global:complex}给出一个测试代码，其结果如图\ref{fig:eg:global:complex}所示。其中“文献全局”命令遍历打印了所有不在refsection内的文献，包括refSegment A，refSegment B，以及不在其内的Gradshteyn和附录的Section E中的Parsons文献。
+例\ref{eg:global:complex}给出一个测试代码，其结果如图\ref{fig:eg:global:complex}所示。其中“文献全局”命令遍历打印了所有不在refsection内的文献，包括refSegment A，refSegment B，以及不在其内的Gradshteyn文献和附录的Section E中的Parsons文献。
+
 \begin{codetex}{全局参考文献综合示例}{eg:global:complex}
 %file:egbibdiv.tex
 \documentclass{article}
@@ -706,7 +805,7 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 	\caption{全局参考文献综合示例}\label{fig:eg:global:complex}
 \end{figure}
 
-\subsection{筛选、缩略信息、索引}
+\subsection{筛选、缩略信息、排序、索引}
 
 \subsubsection{文献表分类筛选的不同方法}
 除了前述的分章节打印外参考文献可以分类筛选打印，主要基于printbibliography命令的选项来实现。主要包括:
@@ -720,7 +819,7 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
   \item filter
   \item check
 \end{itemize}
-其中category，filter，check是需要人工定义的。
+其中category，filter，check是需要手动定义的。
 
 type，nottype分别表示打印是和不是某种条目类型的文献，keyword，notkeyword分别表示打印keywords域中含有或不含有某一个关键词的文献，category，notcategory分别表示是或不是某一设定的category的文献，filter表示属于某一设定筛选器的文献。注意因为category必须要在导言区设置，其实使用并不方便。
 
@@ -783,7 +882,7 @@ and keyword=standard
 
 \subsubsection{文献缩略信息打印}
 
-缩略信息打印示例如例\ref{eg:print:biblist}所示。
+缩略信息打印示例，如例\ref{eg:print:biblist}所示。
 
 \begin{codetex}{论文集信息打印}{eg:print:biblist}
 \documentclass[twoside]{article}
@@ -902,11 +1001,105 @@ and keyword=standard
 \end{document}
 \end{codetex}
 
+\subsubsection{文献表和标注的排序}
+
+排序涉及到两个方面的内容，一是文献表中的排序，二是标注的排序。其中标注的排序通常是在同一位置标注多个标签时，这种情况往往是多个引用关键字（词）传递给一个标注（引用）命令。一般情况下标注是不进行排序的，而是以引用时给出的顺序进行排序，当需要进行标签排序时需要启用sortcites选项，这时biblatex会按照当前文献表中的顺序对标注标签进行排序。
+
+而文献表中的文献排序由sorting选项控制，常见的值包括：
+
+\begin{description}
+\item[nty] %Sort by name, title, year.
+按照姓名、标题、年份排序。
+\item[nyt] %Sort by name, year, title.
+按照姓名、年份、标题排序。
+\item[nyvt] %Sort by name, year, volume, title.
+按照姓名、年份、卷数、标题排序。
+\item[anyt] %Sort by alphabetic label, name, year, title.
+按照字母标签、姓名、年份、标题排序。
+\item[anyvt] %Sort by alphabetic label, name, year, volume, title.
+按照字母标签、姓名、年份、卷数、标题排序。
+\item[ynt] %Sort by year, name, title.
+按照年份、姓名、标题排序。
+\item[ydnt] %Sort by year (descending), name, title.
+按照年份（降序）、姓名、标题排序。
+\item[none] %Do not sort at all. All entries are processed in citation order.
+不进行排序。所有的条目按照引用顺序处理。
+\item[debug] %Sort by entry key. This is intended for debugging only.
+按照条目键值排列。该选项只用于程序调试。
+\item[name] %Use \prm{name}, as defined with \cmd{DeclareSortingTemplate} (\secref{aut:ctm:srt})
+使用由 \verb|DeclareSortingTemplate|定义的排序模板名 name。
+\end{description}
+注意：除非另加说明，文献条目总是按升序排列。
+
+通常情况下，在选择使用某种样式时，文献表的排序方式就已经设定。当需要调整排序时，就需要在加载biblatex宏包时显式地给出sorting选项，并可根据需要选择上述给出的选项值。
+
+对于中文作者名，默认的排序规则是按照作者姓名的unicode编码进行排序，当需要按拼音或字顺进行排序时，需要在biber编译时设置相应的选项，比如：
+
+\begin{codetex}{中文文献排序时的biber选项}{eg:sort:bibercmd}
+%按拼音排序，biber命令
+biber -l zh__pinyin jobname
+%按笔画排序，biber命令
+biber -l zh__stroke jobname
+\end{codetex}
+
+一个简单的中文作者排序示例见\href{https://github.com/hushidong/biblatex-gb7714-2015/wiki}{(八)如何对文献表中的参考文献进行排序？}
+
+有的时候，可能希望标注标签的排序和文献表中的顺序不同，操作方法，可以参考
+\href{https://github.com/hushidong/biblatex-gb7714-2015/issues/30}{citation的顺序和bibliography的顺序如何不关联}。其中使用了biblatex宏包提供参考文献文境的概念，即不同的文境下可以使用不同的排序方式。
+
+
 \subsubsection{文献信息索引}
 
-待完善
+当需要对参考文献的信息进行索引时，可以使用indexing选项。启用indexing后，biblatex的标准样式默认会将作者和题名加入到索引中去，如果需要增加一些信息的索引则需要对样式文件做修改。另外，要生成索引还需要使用索引相关的宏包，如makeidx。宏包加载如例\ref{eg:print:index}所示：
+
+\begin{codetex}{文献信息索引}{eg:print:index}
+\documentclass[twoside]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=21cm,paperheight=29cm,top=1.5cm, bottom=1.5cm, left=2.54cm,right=2.54cm}
+\usepackage{xcolor}
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
+\usepackage[backend=biber,style=gb7714-2015,gbtype=true,block=none,indexing=true]{biblatex}%align=gb7714-2015
+\addbibresource[location=local]{example.bib}
+\usepackage{makeidx}
+\makeindex
+
+\begin{document}
+
+\section{文献表}
+文献
+\cite{张伯伟2002--}
+\cite{白书农1998-146-163}
+\cite{杨洪升2013-56-75}
+\cite{中华医学会湖北分会1984--}
+\cite{雷光春2012--}
+\cite{贾东琴2011-45-52}
+\cite{汤万金2013-09-30--}
+\cite{韩吉人1985-90-99}
+\cite{马欢2011-27-27}
+\cite{张凯军2012-04-05--}
+\cite{国家环境保护局科技标准司1996-2-3}
+\cite{中国职工教育研究会1985--}
+\cite{丁文祥2000--}
+\cite{李强2012-05-03--}
+
+\cite{OBRIEN1994--}
+\cite{FOURNEY1971-17-38}
+\cite{Park2010-696-715}
+\cite{Babu2014--}
+\cite{Calkin2011-8-9}
+\cite{CALMS1965--}
+\cite{KOSEKI2002--}
+\cite{standardinfoiso158}
+\cite{Dublin2012-06-14--}
+
+\printbibliography
+\printindex
+\end{document} 
+\end{codetex}
 
 \subsection{参考文献标题格式}
+
 期刊文章经常需要设置某种格式的参考文献标题，包括字号，大小，段落格式等。在书籍等写作中有时还需要将参考文献加入目录中，以便实现超链接。
 \subsubsection{加入目录链接}
 
@@ -1232,8 +1425,25 @@ and keyword=standard
 %\setlength{\bibinitsep}{2ex}
 \end{codetex}
 
+如果还对文献表中的文献信息有更多字体、颜色、字号方面的格式设置需求，可以进一步利用域格式进行设置，如例\ref{bib:font:setmore}所示。
+
+\begin{codetex}{参考文献表内容的字体颜色格式}{bib:font:setmore}
+详见：egfontinbiblio.tex
+\end{codetex}
+
+见\href{run:./exampleandimage/egfontinbiblio.tex}{egfontinbiblio.tex}
+
+另外，biblatex-gb7714-2015样式包还增加了字体控制命令bibauthorfont，bibtitlefont，bibpubfont，用于控制文献表中作者、标题、出版项的字体和颜色。主要注意在beamer类中，因为beamer对biblatex做了patch，因此可以使用beamer的方法进行字体和颜色控制，当然使用这三个命令也没有问题。
+
+
+
 \subsubsection{自定义环境和局部修改}
-参考文献表是由biblatex或者样式包提供的参考文献表环境打印和控制的，通常是由list环境自定义而来，所以要设置参考文献表内容的段落格式，需要从修改参考文献表环境defbibenvironment\{bibliography\}入手，通常情况这是不需要去做的，由所选的样式包设置即可。如果有特殊的需求可以自定义一个参考文献表环境来控制其格式。如果使用list通用环境作为基础环境来定义的话，其段落格式的参数设置可以参考文献\pagescite[][74-80]{Kopka2004--}\pagescite[][265-268]{Braams2015--}。(注意到其实latex中的很多环境比如center，quote等都是由通用list环境所定义的。)
+
+参考文献表是由biblatex或者样式包提供的参考文献表环境打印和控制的，通常是由list环境自定义而来，所以要设置参考文献表内容的段落格式，需要从修改参考文献表环境defbibenvironment\{bibliography\}入手，通常情况这是不需要去做的，由所选的样式包设置即可。
+
+如果有特殊的需求可以自定义一个参考文献表环境来控制其格式。
+如果使用list通用环境作为基础环境来定义的话，
+其段落格式的参数设置可以参考文献\pagescite[][74-80]{Kopka2004--}\pagescite[][265-268]{Braams2015--}。(注意到其实latex中的很多环境比如center，quote等都是由通用list环境所定义的。)
 
 同时，因为bibfont等命令的使用具有局部性，所以可以在文档中多次定义，用于打印不同效果的文献表。例\ref{bib:fontset:eg}给出一个完成的测试代码，其中打印了4个参考文献表，分别用了不同的字体。同时设置了bibitemsep、bibnamesep、bibinitsep三个尺寸控制各条文献的垂直间距。并且自定义了一个参考文献表环境marginref，并没有使用list环境，而是简单的编组后打印环境，可以看到其中各条文献的缩进效果。
 
@@ -1316,7 +1526,11 @@ and keyword=standard
 \end{figure}
 
 \subsubsection{自定义环境举例}
-如上一小节所述，可以利用defbibenvironment命令来自定义参考文献环境，其代码格式为如例\ref{bib:bibenvironment:eg}所示。其中还给出了顺序制样式的基本环境。对list的水平参数进行设置，以达到参考文献内容缩进对齐的效果。其中默认情况下，标签是右对齐的。如果要修改对齐方式为左对齐，可以有两种方式，一是设置域格式labelnumberwidth，二是进一步重设makelabel命令，如例\ref{bib:alignleft:eg}所示，两种方式选其一即可。事实上，我们看GB/T 7714 2015标准可以发现，其中顺序制的参考文献表中标签样式不是全部文献内容对齐，而是以当前参考文献项自身为基准进行对齐，这种方式如果通过list环境来实现修改起来会比较麻烦，因为其leftmargin需要根据每一项重设，熟悉list环境源码的朋友可以尝试一下。当然如果不使用list环境，我们可以利用hangindent或parshape来实现段落的格式。例\ref{bib:aligngbt:eg}给出了本文作者的一种实现方式，其中需要重定义\verb|\blx@bibitem|命令。详细的内容可以参考:\href{run:./exampleandimage/egbibenv.tex}{tex源文件}，其结果如图\ref{bib:env:gb}所示，注意其中参考文献条目的顺序编码序号是用一个新的计数器处理的，事实上biblatex有提供相应的信息，利用该信息的一种实现可以参考biblatex-gb7714-2015样式包的gb7714-2015.bbx文件。
+
+如上一小节所述，可以利用defbibenvironment命令来自定义参考文献环境，其代码格式为如例\ref{bib:bibenvironment:eg}所示。其中还给出了顺序制样式的基本环境。对list的水平参数进行设置，以达到参考文献内容缩进对齐的效果。其中默认情况下，标签是右对齐的。如果要修改对齐方式为左对齐，可以有两种方式，一是设置域格式labelnumberwidth，二是进一步重设makelabel命令，如例\ref{bib:alignleft:eg}所示，两种方式选其一即可。
+
+然而我们看GB/T 7714 2015 标准可以发现，其中顺序制的参考文献表中标签样式不是全部文献内容对齐，而是以当前参考文献项自身为基准进行对齐，这种方式如果通过list环境来实现修改起来会比较麻烦，因为其leftmargin需要根据每一项重设，熟悉list环境源码的朋友可以尝试一下。当然如果不使用list环境，我们可以利用hangindent或parshape来实现段落的格式。例\ref{bib:aligngbt:eg}给出了本文作者的一种实现方式，其中需要重定义\verb|\blx@bibitem|命令。详细的内容可以参考:\href{run:./exampleandimage/egbibenv.tex}{tex源文件}，其结果如图\ref{bib:env:gb}所示，注意其中参考文献条目的顺序编码序号是用一个新的计数器处理的，事实上biblatex有提供相应的信息，利用该信息的一种实现可以参考biblatex-gb7714-2015样式包的gb7714-2015.bbx文件。
+
 \begin{codetex}{自定义参考文献表环境举例}{bib:bibenvironment:eg}
 %defbibenvironment命令格式为:
 \defbibenvironment{环境名}{环境开始代码}{环境结束代码}{各项的代码}
@@ -1403,7 +1617,7 @@ and keyword=standard
 
 \subsubsection{参考文献表中的行溢出问题}
 
-参考文献表中各条参考文献由可能长度大于文本宽度，因此会涉及到断行的问题。一般情况下，断行不会出现问题。但有的时候，特别是在biblatex-gb7714-2015 1.0g版以前，诸如inbook等类型标题标识符后的//后没有空格导致其后紧跟的单词无法断行，进而导致行的溢出。这种情况下，可以采用设置更大的tolerance值来解决，或者可以hyphenation利用命令指定断行点。这些设置可以与文献表打印命令放在一个编组内，如例所示。
+参考文献表中各条参考文献有可能长度大于文本宽度，因此会涉及到断行的问题。一般情况下，断行不会出现问题。但有的时候，特别是在biblatex-gb7714-2015 1.0g版以前，诸如inbook等类型标题标识符后的//后没有空格导致其后紧跟的单词无法断行，进而导致行的溢出。这种情况下，可以采用设置更大的tolerance值来解决，或者可以hyphenation利用命令指定断行点。这些设置可以与文献表打印命令放在一个编组内，如例\ref{bib:biblist:outbox}所示。
 
 \begin{codetex}{参考文献表行溢出问题解决}{bib:biblist:outbox}
 {
@@ -1416,12 +1630,17 @@ and keyword=standard
 \end{codetex}
 
 \subsection{参考文献著录和标注样式}\label{sec:bib:style}
+
 参考文献著录和标注样式是排版的主要内容之一，但对于普通用户来说只要学会选择使用即可，因为其格式已经由样式作者所设定。当然如果用户需要在某种样式的基础上有进一步的修改，那么完全可以开展这方面的工作。其中著录样式的在*.bbx文件中修改，而标注样式在*.cbx文件中修改。
+
 \subsubsection{标准样式}
 biblatex提供了一些标准的样式，比如numeric，authoryear，这两个样式是比较常用的，也是样式作者定制自定义样式的重要基础。biblatex还提供了更多著录样式，比如alphabetic，authortitle，verbose等，详见biblatex手册Bibliography Styles一节。标注样式也还有numeric-comp，numeric-verb，alphabetic，authortitle等，详见biblatex手册Citation Styles 一节。
+
 \emph{特别需要强调的是numeric-comp，authoryear-comp是针对顺序编码和作者年制的两个标签压缩样式，顺序编码制的压缩样式主要针对多篇文献传递给一个标注命令的情况，而作者年制的压缩样式除了给一个标注命令传递多篇文献外，还需要连续引用文献具有相同作者，而要使相同作者的文献连续，可以通过手动方式给出，也可以通过自动排序方式实现}。
 
-读者可以测试这些样式的效果，以便在需要的时候选择使用，而且著录和标注可以分别使用不同的样式，著录是一种，而标注则是另一种。需要注意: 还有一种情况是在同一种标注样式下有的标注需要是上标，有的则不需要，而且这种应用看来是比较常见的，网友海阔天空和xmtangjun都提出了这种需求，在标准样式下有supercite命令提供上标模式，而cite和parencite命令提供非上标模式。而在下一节的gb7714-2015样式中，xmtangjun朋友提出把已经修改成上标模式parencite恢复成非上标模式，那么可以由cite命令提供上标模式，而parencite命令提供非上标模式，这种方法是可取的。
+读者可以测试这些样式的效果，以便在需要的时候选择使用，而且著录和标注可以分别使用不同的样式，著录是一种，而标注则是另一种，实际使用的例子可以参考\href{https://github.com/sjtug/SJTUThesis/issues/300}{参考文献的顺序}。
+
+需要注意: 还有一种情况是在同一种标注样式下有的标注需要是上标，有的则不需要，而且这种应用看来是比较常见的，网友海阔天空和xmtangjun都提出了这种需求，在标准样式下有supercite命令提供上标模式，而cite和parencite命令提供非上标模式。而在下一节的gb7714-2015样式中，xmtangjun提出把已经修改成上标模式parencite恢复成非上标模式，那么可以由cite命令提供上标模式，而parencite命令提供非上标模式，这种方法是可取的。
 
 \subsubsection{gb7714-2015样式}
 本文的作者在学习GB/T 7714-2015标准的基础上，定制了符合该标准的gb7714-2015样式包，分顺序制和作者年制两类。其加载方式见例\ref{code:pkg:load}。
@@ -1436,8 +1655,8 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
 
 关于参考文献数据录入准备、条目类型的域构成、样式包使用说明等更多的内容详见\cite{胡振震2016}。
 
-biblatex-gb7714-2015样式宏包安装可以使用tlmgr或离线方式。
-在texlive 2016下，使用tlmgr比较方便，步骤如下:
+biblatex-gb7714-2015样式宏包可以使用tlmgr或离线方式安装。
+在texlive 2016及以上版本下，使用tlmgr比较方便，步骤如下:
 
 (a) 打开tlmgr-gui，在选项通用里面设置国内的ctan镜像源，比如\url{http://mirrors.ustc.edu.cn/CTAN/systems/texlive/tlnet}
 
@@ -1455,7 +1674,7 @@ biblatex-gb7714-2015样式宏包安装可以使用tlmgr或离线方式。
 
 (c) 运行texhash或者mktexlsr命令，刷新文件名数据库。
 
-texlive 2016 当然也可以用这种方式离线安装。
+texlive 2016及以上版本当然也可以用这种方式离线安装。
 
 \subsubsection{其他定制样式}
 在texlive安装包中或者ctan上面可以找到更多的定制样式，有针对某些期刊的文献样式比如nature，science，nejm等等，有些是作者自己兴趣所做比如:biblatex-caspervector样式包，该包作者本来是根据GB/T 7714-2005做的样式，后进一步形成了自己喜欢的风格。用户可以测试各样式包，并按需使用，进一步也可以参考其代码，修改自己需要的样式。
@@ -1463,7 +1682,8 @@ texlive 2016 当然也可以用这种方式离线安装。
 总的来说，因为biblatex提供了参考文献数据的完全访问能力，所以定义任何需要的样式都是可能的。因此用户一定可以选择合适的样式或者定制合适的样式来满足自身需要。
 
 \subsubsection{快速定制/临时定制}\label{sec:style:def}
-有的时候对于参考文献格式会有一些特殊的需求，而且往往这些格式并没有一个对应能够满足其要求的参考文献样式包,这种情况下就需要进行定制,比如\parencite{olqa2016--}提出的问题。在latex传统方法中，当文献量较小时，这种临时定制采用thebibliography环境是比较方便的，因为thebibliography 环境显式的将其中的内容插入，因此需要什么样的格式，那么就在bibitem中输入指定格式的条目内容即可。但该环境存在一个问题即: 无论引用与否环境中的参考文献都会全部打印。该环境也可以用来生成多个参考文献表，当然文献量较大时采用这种手动输入方式毕竟是繁琐的。
+
+有的时候对于参考文献格式会有一些特殊的需求，而且往往这些格式并没有一个对应能够满足其要求的参考文献样式包，这种情况下就需要进行定制，比如\parencite{olqa2016--}提出的问题。在latex传统方法中，当文献量较小时，这种临时定制采用thebibliography环境是比较方便的，因为thebibliography 环境显式的将其中的内容插入，因此需要什么样的格式，那么就在bibitem中输入指定格式的条目内容即可。但该环境存在一个问题即: 无论引用与否环境中的参考文献都会全部打印。该环境也可以用来生成多个参考文献表，当然文献量较大时采用这种手动输入方式毕竟是繁琐的。
 
 事实上利用biblatex可以实现快速的定制，biblatex宏包使用手册的Bibliography Style Files给出了样式文件定义的一般模式和方法。依据该模式是容易实现样式快速定制的，因为在一般情况下定制样式文件，其实并不需要处理太多的内容。总结起来，定制简单的参考文献格式需要处理的主要内容包括:
 \begin{enumerate}
@@ -1490,7 +1710,7 @@ texlive 2016 当然也可以用这种方式离线安装。
   \item 定义或重定义引用命令；
 \end{enumerate}
 
-在上述ctex论坛上的提问中,参考文献著录格式主要需要修改的内容是分块、分块的标点、分块内容的格式。其中: 作者是一个块作为一行，标题是一个块作为一行，其它是一个块作为一行，那么把块标点设置为换行，就可以实现多行。同时各块的内容的字体不同，作者是粗体，标题是等宽，其它是斜体，那么把对应的块所构成域的格式改成需要的格式即可。这里给出该问题的一个简单解答，如图\ref{bib:style}所示。采用的样式文件代码如例\ref{bib:style:customize}所示，其中为了简化修改，把一些条目设置成了相同的格式。
+在上述ctex论坛上的提问中，参考文献著录格式主要需要修改的内容是分块、分块的标点、分块内容的格式。其中: 作者是一个块作为一行，标题是一个块作为一行，其它是一个块作为一行，那么把块标点设置为换行，就可以实现多行。同时各块的内容的字体不同，作者是粗体，标题是等宽，其它是斜体，那么把对应的块所构成域的格式改成需要的格式即可。这里给出该问题的一个简单解答，如图\ref{bib:style}所示。采用的样式文件代码如例\ref{bib:style:customize}所示，其中为了简化修改，把一些条目设置成了相同的格式。
 
 \begin{figure}[!htb]
   \centering
@@ -1505,7 +1725,8 @@ texlive 2016 当然也可以用这种方式离线安装。
 源代码见\href{run:./exampleandimage/studf.bbx}{studf.bbx}，
 测试文件见\href{run:./exampleandimage/egstylecustomize.tex}{egstylecustomize.tex}。
 
-如果对于中文参考文献需要一些特殊的处置,那么可以基于gb7714-2015进行修改,如例\ref{style:customize:gb}给出的代码。其结果如图\ref{bib:style:gba}，\ref{bib:style:gbb}所示。
+如果对于中文参考文献需要一些特殊的处置，那么可以基于gb7714-2015进行修改，如例\ref{style:customize:gb}给出的代码。
+其结果如图\ref{bib:style:gba}，\ref{bib:style:gbb}所示。
 \begin{figure}[!htb]
   \centering
   \fbox{\includegraphics[viewport=0cm 1.5cm 12cm 20.5cm,clip=true,scale=0.8,page=1]{egstylecustomizegb.pdf}}
@@ -1651,12 +1872,39 @@ texlive 2016 当然也可以用这种方式离线安装。
 
 biblatex通过相应的处理模块，给出功能相同语法相同的命令。
 
-此外，biblatex还提供更多标注命令，以及强大的标注命令定制功能。
+此外，biblatex还提供更多标注命令，以及强大的标注命令定制功能，biblatex-gb7714-2015中的标注命令如例\ref{eg:cite:cmds}所示：
 
+\begin{codetex}{常见的标注命令}{eg:cite:cmds}
+1. 不带页码的引用(上标，方括号包围):
+\cite{Peebles2001-100-100}
+
+2. 不带页码的引用(非上标，方括号包围):
+\parencite{Miroslav2004--}
+
+3. 带页码的引用:
+\cite[见][49页]{蔡敏2006--}  \parencite[见][49页]{Miroslav2004--}
+\pagescite{Peebles2001-100-100}  \pagescite[][201-301]{Peebles2001-100-100}
+
+4. 顺序编码制中同时输出作者和顺序编码标签，比如：
+（一）直接的方法：见\citeauthor{refb}\cite{refb},\citeauthor{refc}\cite{refc}
+（二）定义新的标注命令：见\authornumcite{refb,refc}
+（三）用textcite但没有上标：见\textcite{refb,refc}
+
+5. 作者年制文中已有作者还需要年份和页码的情况，使用命令yearpagescite，比如:
+见赵耀东\yearpagescite[][205]{赵耀东1998--}和Simon\yearpagescite[][15]{Simon2001--}
+
+6. 作者年制文中已有作者只需要年份的情况，使用命令yearcite和手动方式，比如:
+见赵耀东\yearcite{赵耀东1998--}
+见赵耀东(\cite*{赵耀东1998--})
+见赵耀东(\citeyear{赵耀东1998--})
+
+7. 在页脚中引用和打印文献表:
+\footnote{在脚注中引用\footcite{赵学功2001--}}  \footfullcite{赵学功2001--}
+\end{codetex}
 
 \subsection{多语言文献}
 
-不仅GB/T 7714-2015对于多语言文献提出了要求，某些期刊对于参考文献也有双语文献要求，这一问题可以通过条目集类型(set)进行设置，这对于专著和连续出版物的析出文献来说有可能是常用的。设置和使用条目集类型(set)时，有静态和动态两种方法。关于多语言文献的更详细介绍参见
+不仅GB/T 7714-2015对于多语言文献提出了要求，某些期刊对于参考文献也有双语文献要求。这一问题可以通过两种方式解决，一是条目集类型(set)方式，二是关联文献（related）方式。两种方式都有静态和动态两种方法，这里只介绍利用条目集的方法。关于多语言文献的更详细介绍参见
 \href{https://github.com/hushidong/biblatex-gb7714-2015/blob/master/biblatex-gb7714-2015.pdf}%
 {biblatex-gb7714-2015宏包手册}。
 
@@ -2174,8 +2422,8 @@ biblatex强大还体现在参考文献样式的定制功能上。本文作为bib
   \item 格式修改的可逆性(希望样式中做的修改时可以通过选项等方式调整的，以增加用户使用的灵活性，用于可以通过选项等完全复原回到标准样式。)
   \item 多语言对照(希望实现标准提出的要求)
   \item 文献表的整体格式(希望实现类似word中的标签形式，而不仅是latex中list的那种风格)
-  \item 新增加的条目类型(除了利用常见条目实现外，还可以针对国标的条目增加新的类型) 
-  \item 自定义的域(因为国标有一些文献类型载体标识等的要求，所以要使用自定义的域) 
+  \item 新增加的条目类型(除了利用常见条目实现外，还可以针对国标的条目增加新的类型)
+  \item 自定义的域(因为国标有一些文献类型载体标识等的要求，所以要使用自定义的域)
   \item 著录条目中的作者格式(除提供标准要求格式外，希望实现多种的格式)
   \item 著录条目中中英文不同的缩略词(希望实现标准的要求)
   \item 著录条目中的日期格式(希望实现标准的要求)
@@ -2290,7 +2538,7 @@ biblatex强大还体现在参考文献样式的定制功能上。本文作为bib
 
 \subsubsection{标点和空格的特点和机制}
   \begin{enumerate}
-    \item 标点符号设置比如:renewrobustcmd*\{\textbackslash bibinitperiod\}\{\} 和renewcommand*\{\textbackslash revsdnamepunct\}\{\}等用于全局修改标点。
+    \item 标点符号设置比如:renewrobustcmd*\{\textbackslash bibinitperiod\}\{\} 和renewcommand*\{\textbackslash revsdnamepunct\}\{\} 等用于全局修改标点。
     \item 如isdot/adddot，adddot将原样(逐字，如实)句点转换为缩写点在有利用printtext输入原样字符的时候很重要比如[s.n.] 中，比如title末尾。
     \item 利用newunit输出的标点，需要后面遇到printfield等命令有内容才输出标点，这是标点的异步处理机制。
     \item setunit*的作用是前面printtext等没有输出时候就不输出，见4.11.7.3 节的应用以及出版项缺省时的代码处理。

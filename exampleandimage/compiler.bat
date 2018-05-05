@@ -23,7 +23,9 @@ setlocal DISABLEDELAYEDEXPANSION
 
 call makeclear
 
-del *.bbx /Q
-del *.cbx /Q
+del gb7714-2015.bbx /Q
+del gb7714-2015.cbx /Q
+del gb7714-2015ay.bbx /Q
+del gb7714-2015ay.cbx /Q
 
 ::pause
