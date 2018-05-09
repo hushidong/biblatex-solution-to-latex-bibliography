@@ -1,0 +1,38 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{etoolbox}
+\newif\ifCJK
+\def\testCJK#1{%
+  \begingroup
+  \global\CJKfalse
+  \def\CJKsymbol##1{\global\CJKtrue}
+  \setbox0=\hbox{#1}%
+  \endgroup}
+
+\providetoggle{ifCJKforgbt}
+\def\testCJKfirstchar#1{%
+  \begingroup
+  \global\togglefalse{ifCJKforgbt}
+  \def\CJKsymbol##1{\global\toggletrue{ifCJKforgbt}}
+  \setbox0=\hbox{#1}%
+  \endgroup
+}%
+
+\begin{document}
+
+%\testCJK{Eng}
+%\ifCJK CJK\else Eng\fi
+%
+%\testCJK{eng汉字}
+%\ifCJK CJK\else Eng\fi
+%
+%\testCJKfirstchar{汉字eng}
+%\iftoggle{ifCJKforgbt}{cjk}{eng}
+%\testCJKfirstchar{eng汉字}
+%\iftoggle{ifCJKforgbt}{cjk}{eng}
+
+\def\hztmp{汉}
+\expandafter\testCJKfirstchar\hztmp
+
+\iftoggle{ifCJKforgbt}{cjk}{eng}
+
+\end{document} 

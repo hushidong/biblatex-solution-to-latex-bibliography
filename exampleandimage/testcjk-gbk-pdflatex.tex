@@ -1,0 +1,33 @@
+\documentclass[GBK]{ctexart}
+\usepackage{etoolbox}
+\newif\ifCJK
+\def\testCJK#1{%
+  \begingroup
+  \global\CJKfalse
+  \def\CJKsymbol##1{\global\CJKtrue}
+  \setbox0=\hbox{#1}%
+  \endgroup}
+  
+\providetoggle{ifCJKforgbt}
+\def\testCJKfirstchar#1{%
+  \begingroup
+  \global\togglefalse{ifCJKforgbt}
+  \def\CJKsymbol##1{\global\toggletrue{ifCJKforgbt}}
+  \setbox0=\hbox{#1}%
+  \endgroup
+}%
+
+\begin{document}
+
+\testCJK{Eng}
+\ifCJK CJK\else Eng\fi
+
+\testCJK{engºº×Ö}
+\ifCJK CJK\else Eng\fi
+
+\testCJKfirstchar{ºº×Öeng}
+\iftoggle{ifCJKforgbt}{cjk}{eng}
+\testCJKfirstchar{engºº×Ö}
+\iftoggle{ifCJKforgbt}{cjk}{eng}
+
+\end{document} 

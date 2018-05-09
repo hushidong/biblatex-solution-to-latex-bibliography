@@ -1,0 +1,43 @@
+\documentclass[twoside]{article}
+    \usepackage[GBK]{ctex}
+    \usepackage{xcolor}
+    \usepackage{hyperref}
+    \usepackage{lipsum}
+    %\usepackage[backend=biber,style=caspervector,gbk]{biblatex}
+    \usepackage[backend=biber,style=gb7714-2015,gbcodegbk=true]{biblatex}
+    \usepackage{filecontents}
+    \begin{filecontents}{\jobname.bib}
+    @Book{Yi2014--,
+      Title                    = {Test},
+      Address                  = {Address},
+      Author                   = {Yi and B and C},
+      Publisher                = {Publisher},
+      Year                     = {2014}
+    }
+    @Book{Yi2013--,
+      Title                    = {Supersonic and hypersonic nozzle design},
+      Address                  = {BeiJing},
+      Author                   = {Yi, S H and Zhao, Y X and He, L and Zhang, M L},
+      Publisher                = {National Defense Industry Press},
+      Year                     = {2013}
+    }
+	
+    @Article{abx2007-500-503,
+      Title                    = {超声速短化喷管的设计和试验研究},
+      Author                   = {张敏莉 and 易仕和 and 赵玉新 and 李明},
+      Journal                  = {空气动力学报},
+      Year                     = {2007},
+      Number                   = {4},
+      Pages                    = {500-503},
+      Volume                   = {25}
+    }
+    \end{filecontents}
+    \addbibresource{\jobname.bib}
+
+    \begin{document}
+    \section{set title}
+
+	文献\cite{Yi2014--,Yi2013--,abx2007-500-503}
+    \printbibliography
+
+    \end{document} 

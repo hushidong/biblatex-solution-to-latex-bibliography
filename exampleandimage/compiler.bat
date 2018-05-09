@@ -5,6 +5,7 @@ copy ..\gb7714-2015.bbx . /y
 copy ..\gb7714-2015.cbx . /y
 copy ..\gb7714-2015ay.bbx . /y
 copy ..\gb7714-2015ay.cbx . /y
+copy ..\gb7714-2015-gbk.def . /y
 )
 
 setlocal enabledelayedexpansion
@@ -27,5 +28,6 @@ del gb7714-2015.bbx /Q
 del gb7714-2015.cbx /Q
 del gb7714-2015ay.bbx /Q
 del gb7714-2015ay.cbx /Q
+del gb7714-2015-gbk.def /Q
 
 ::pause

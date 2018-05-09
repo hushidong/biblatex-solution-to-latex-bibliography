@@ -1,0 +1,38 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{etoolbox}
+\usepackage{xstring}
+
+    %
+    %   判断CJK字符的函数，用于判断作者等信息是否由中文字符构成
+    %
+    %   原理方法:
+    %    2E00-2E7F 追加标点
+    %    2E80-2EFF cjk部首补充
+    %    2FF0-2FFF 表意文字描述符
+    %    3000-303F cjk符号和标点
+    %    3300-33FF cjk兼容
+    %    3400-4DBF cjk统一表意符号扩展
+    %    4E00-9FBF cjk统一表意符号
+    %    中文范围4E00-9FA5
+    \providetoggle{ifCJKforgbt}
+    \def\testCJKfirstchar#1#2&{%#1#2&
+        \ifnumgreater{`#1}{"2E7F}{\toggletrue{ifCJKforgbt}}{\togglefalse{ifCJKforgbt}}%
+    }%
+    %   利用edef展开或xstring抽取第一个字符判断
+    %   现在采用xstring方法，避免抽取的是编组符号
+    \def\testCJKfirst#1{%
+        %\edef\tempa{#1}%
+        %\expandarg%\noexpandarg
+        \exploregroups%
+        \StrChar{#1}{1}[\tempa]%
+        \expandafter\testCJKfirstchar\tempa&}
+
+\begin{document}
+
+
+\testCJKfirst{汉字eng}
+\iftoggle{ifCJKforgbt}{cjk}{eng}
+\testCJKfirst{eng汉字}
+\iftoggle{ifCJKforgbt}{cjk}{eng}
+
+\end{document} 

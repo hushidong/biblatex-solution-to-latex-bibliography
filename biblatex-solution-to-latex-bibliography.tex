@@ -535,8 +535,8 @@ INFO - Processing section 1
 INFO - Looking for bibtex format file 'example.bib' for section 1
 INFO - Decoding LaTeX character macros into UTF-8
 INFO - Found BibTeX data source 'example.bib'
-WARN - Overwriting field 'year' with year value from field 'date' for entry '鍒樻捣娲013--'
-WARN - Overwriting field 'year' with year value from field 'date' for entry '鑳′紵2011--'
+WARN - Overwriting field 'year' with year value from field 'date' for entry ' 鍒樻捣娲013--'
+WARN - Overwriting field 'year' with year value from field 'date' for entry ' 鑳′紵2011--'
 WARN - BibTeX subsystem: C:\Users\ADMINI~1\AppData\Local\Temp\pru9Tr4B7_\example.bib_6592.utf8, line 1198, warning: possible runaway string started at line 1197
 INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
 INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
@@ -1747,7 +1747,7 @@ texlive 2016及以上版本当然也可以用这种方式离线安装。
 测试文件见\href{run:./exampleandimage/egstylecustomizegb.tex}{egstylecustomizegb.tex}。
 
 \subsubsection{通过宏包选项改变样式}\label{sec:opt:def}
-在给定样式基础上，可以使用宏包选项来定制一些需要的样式，比如作者输出数量、文献表排序、文献标注排序、文献数据项的输出等等，宏包选项的详细说明可以参见\href{https://github.com/hushidong/biblatex-zh-cn/blob/master/biblatex-zh-cn.pdf}{biblatex手册中文版}。
+在给定样式基础上，可以使用宏包选项来定制一些需要的样式，比如作者输出数量、文献表排序、文献标注排序、文献数据项的输出等等，宏包选项的详细说明可以参见\href{https://github.com/hushidong/biblatex-zh-cn/blob/master/biblatex-zh-cn.pdf}{biblatex 手册中文版}。
 
 \paragraph{作者输出数量} 文献表和标注中的作者的数量可以通过宏包选项maxnames和minnames控制。两者也可以分开进行控制，分别利用maxbibnames，minbibnames和maxcitenames，mincitenames 进行控制。
 
@@ -2443,10 +2443,10 @@ biblatex强大还体现在参考文献样式的定制功能上。本文作为bib
     \item command的作用:一些设置和命令
     \item biblatex.sty/def和各bbx/cbx文件中的代码
   \end{enumerate}
-  
+
   可以从上述这些方面进行设计。下面通过一个问题查找过程来进一步说明文献著录表的内容组织原理：
-  
-  
+
+
 \paragraph{文献著录表的内容组织原理}
 
 biblatex是利用tex语句控制文献内容组织，因此我们可以坚定一点就是，对于文献内容的组织一定不是神秘的，是可以分析清楚的，当出现问题的时候，通过一步步的分析是能解决好的。
@@ -2808,6 +2808,15 @@ texlive2017对应biblatex3.7;
 
 \paragraph{利用字符流解析或者xstring宏包的函数}\label{sec:cjkjudge} 以实现中英文的判断
 
+latex判断字符属于哪个区间的方法，最直接的思路就是利用\verb|`|获取字符的编码，然后利用编码进行判断。这里testCJKfirstchar函数就是这样的思路。
+
+字符编码获取的简单方法如下：
+\begin{texlist}
+    \newcounter{charcode}
+    \setcounter{charcode}{`文}
+    编码为：\thecharcode
+\end{texlist}
+
 cjk字符判断函数如下：
 \begin{texlist}
 %定义判断中文字符的函数，用于判断作者等信息是否由中文字符构成
@@ -2832,6 +2841,164 @@ cjk字符判断函数如下：
 \StrChar{#1}{1}[\tempa]%
 \expandafter\testCJKfirstchar\tempa&}
 \end{texlist}
+
+测试文件见：
+\href{run:exampleandimage/testcharcode-utf8-xelatex.tex}{testcharcode-utf8-xelatex.tex}，
+\href{run:exampleandimage/testcharcode-gbk-xelatex.tex}{testcharcode-gbk-xelatex.tex}。
+\href{run:exampleandimage/testcjk-utf.tex}{egtestcjk-utf.tex}。
+
+
+然而利用\verb|`|获取编码的方法只对原始支持unicode编码的引擎有效，比如xelatex。当使用GBK编码时，如果加xetex原语
+\footnote{\url{http://blog.chinaunix.net/uid-23755487-id-2976433.html}}
+后使用xelatex编译也能够获得字符编码，但当使用pdflatex或latex编译时，就不能获取，因为\verb|`|的意义变了。因此继续使用上述方法就会出现问题，因此考虑刘海洋提供的利用CJKsymbol进行判断的思路
+\footnote{\url{http://bbs.ctex.org/forum.php?mod=viewthread&tid=152663}}，方法如下：
+
+\paragraph{利用CJKsymbol进行的cjk判断}\label{sec:cjkjudgea} 以实现中英文的判断
+
+函数如下：
+\begin{texlist}
+%
+%   判断CJK字符的函数，用于判断作者等信息是否由中文字符构成
+%   v1.0k,20180509,hzz
+%
+% 原理方法:因为考虑使用gbk编码的问题，将原来基于`加字符获取字符编码的cjk判断
+% 函数更换成为利用\CJKsymbol的方法。解决方案由刘海洋提供。因为在gbk编码的文件
+% 中使用pdflatex编译时`不再是xelatex中的意义。当然这里利用tex的判断方法也可以
+% 用biber中的perl方法代替。当前使用这一函数能解决问题情况下，暂不做修改。
+%
+%   原理是：CJK 输出汉字最终会使用 \CJKsymbol。
+%   因此重定义 \CJKsymbol，以在这个宏中设置\ifCJK为真。
+%   注意这时整个字符串内只要有cjk字符那么就会判断为cjk。
+    \providetoggle{ifCJKforgbt}
+    \def\testCJKfirst#1{%
+      \begingroup%
+      \global\togglefalse{ifCJKforgbt}%
+      \def\CJKsymbol##1{\global\toggletrue{ifCJKforgbt}}%
+      \setbox0=\hbox{#1}%
+      \endgroup}%
+\end{texlist}
+
+测试文件见：
+\href{run:exampleandimage/testcjk-utf-xelatex.tex}{egtestcjk-utf-xelatex.tex}，
+\href{run:exampleandimage/testcjk-gbk-pdflatex.tex}{egtestcjk-gbk-pdflatex.tex}。
+
+然而，该方法解决了gbk编码的问题，但又会导致utf编码时xelatex编译产生问题。当直接对字符进行判断时没有问题，但当字符时定义在一个宏中时，就会出现缺少\}的问题。比如：
+
+\begin{texlist}
+\documentclass[UTF8]{ctexart}
+\usepackage{etoolbox}
+\usepackage{xstring}
+
+\newif\ifCJK
+\def\testCJK#1{%
+  \begingroup
+  \global\CJKfalse
+  \def\CJKsymbol##1{\global\CJKtrue}
+  \setbox0=\hbox{#1}%
+  \endgroup}
+
+\def\hztmp{汉}
+
+\edef\hztmpb{汉}
+
+\begin{document}
+
+\testCJK{Eng}
+\ifCJK CJK\else Eng\fi
+
+\testCJK{eng汉字}
+\ifCJK CJK\else Eng\fi
+
+%\testCJK{\hztmp}
+%\ifCJK CJK\else Eng\fi
+%
+%\testCJK{\hztmpb}
+%\ifCJK CJK\else Eng\fi
+
+%\expandafter\testCJK\hztmp
+%\ifCJK CJK\else Eng\fi
+%
+%\expandafter\testCJK\hztmpb
+%\ifCJK CJK\else Eng\fi
+
+\testCJK\hztmp
+\ifCJK CJK\else Eng\fi
+
+\testCJK\hztmpb
+\ifCJK CJK\else Eng\fi
+\end{document}
+\end{texlist}
+
+因此，只能利用最终的办法，就是利用动态数据修改中perl进行直接标识。
+
+
+
+
+\subsubsection{考虑兼容GBK编码文件的解决思路}
+
+在使用纯英文的文档中，不涉及到文件的编码问题。但在中文文档中可能涉及到文件编码的问题，因为默认情况下windows下创建的文件是cp 936编码即GBK编码，如果不将其转换为utf-8编码，那么就会涉及到该问题。
+
+我们知道gbk编码的tex文档，利用pdflatex/latex能正确编译，利用xelatex能编译，但中文会显示乱码，在源文档前面增加 XeTeX 原语：\verb|\XeTeXinputencoding "GBK"|  后，显示正常。而 utf-8编码的tex文档，利用xelatex能正确编译，而pdflatex/latex则不能编译。总的来说，使用GBK编码的情况现在已经大为减少，而遇到时通常是使用pdflatex/latex编译的。因此在参考文献样式中也将面临这一问题。
+
+在biblatex中提供了texencoding和bibencoding选项，它是通过将输入的选项值传递给biber，然后biber利用perl的encode模块实现编码转换的。因此只要是perl的encode模块支持的编码转换，biblatex都是支持的。perl的encode模块的信息见
+\href{http://perldoc.perl.org/Encode.html}{encode}，中文的编码信息见
+\href{http://perldoc.perl.org/Encode/CN.html}{encode::cn}。用法可以参见：
+\href{http://www.xuebuyuan.com/1128675.html}{perl文件编码处理问题}。
+
+当使用GBK编码时，我们可以在biblatex中使用选项：
+\begin{texlist}
+texencoding=GBK
+bibencoding=GBK
+\end{texlist}
+
+然而当biblatex的样式文件中含有一些中文字符串时，仍然会出现问题，因为这些字符与样式文件一样是utf-8编码的。因此要把这些字符串替换掉。这是可以使用命令来替换字符，然后用GBK编码的文件中的字符串来重定义这些命令。这一解决思路来自于
+\href{https://github.com/CasperVector/biblatex-caspervector}{biblatex-caspervector}
+。而且需要注意的是，当这一替换在样式文件内部进行时，仍然会出现，问题因此还需要在宏包结尾来进行替换。
+
+处理代码如下：
+\begin{texlist}
+%
+%   增加一个源文件编码选择选项，当true时可以使用GBK编码。
+%   v1.0k, 2018.05.08, by hzz
+%
+% 原理方法：将需要输出的中文字符串用命令形式表示存储，采用utf8编码时采用bbx文
+% 档内的定义即是utf8编码的中文字符串，但tex源文件是gbk编码时，利用gb7714-2015-gbk.def
+% 文档内的gbk编码的字符串覆盖。这种覆盖只能在宏包末尾加载时成功实现，所以使用
+% AtEndOfPackage。该解决思路学自biblatex-caspervector宏包。
+% 另外注意：
+% gbk编码的tex文档，利用pdflatex/latex能正确编译，利用xelatex能编译，但中文显示乱码
+% 在源文档前面增加 XeTeX 原语：\XeTeXinputencoding "GBK" 后，显示正常
+% utf-8编码的tex文档，利用xelatex能正确编译，而pdflatex/latex不能编译。
+    \newtoggle{bbx:codegbk}
+    \DeclareBibliographyOption{gbcodegbk}[false]{%
+        \settoggle{bbx:codegbk}{#1}}
+    \ExecuteBibliographyOptions{gbcodegbk}
+
+    \def\str@bibliography{参考文献}
+    \def\str@references{参考文献}
+    \def\str@bytranslator{译}
+    \def\str@andotherscn{等}
+    \def\str@backrefpage{引用页}
+    \def\str@backrefpages{引用页}
+    \def\str@noaddress{出版地不详}
+    \def\str@nopublisher{出版者不详}
+    \def\str@edition{版}
+
+    \AtEndOfPackage{%
+	\iftoggle{bbx:codegbk}{%
+		\ExecuteBibliographyOptions{texencoding = GBK}
+        \input{gb7714-2015-gbk.def}
+	}{}}
+\end{texlist}
+
+测试文件见：
+\href{run:exampleandimage/testeggbk.tex}{eggbk.tex}，
+\href{run:exampleandimage/testeggbkay.tex}{eggbkay.tex}。注意编译时请使用pdflatex或latex。
+
+同时也注意到，bbx文件处理“佚名”和“等”这些本地化字符串之间的差别，因为处理“佚名”的动态数据修改始终是在perl中进行的，所以直接给出中文字符没有问题。而“等”这些本地化字符串必须要用GBK编码的文件中的重定义进行覆盖。
+
+另外还要注意的是，GBK编码的文件不能使用中文的bibtex键即中文的引用关键字。
+
 
 \subsubsection{GB样式还原到标准样式的解决思路}
 
@@ -3515,7 +3682,7 @@ biber动态数据处理，详见biblatex说明文档Dynamic Modification of Data
   针对GB/T 7714-2015标注，设定相应的选项，其中考虑不同biblatex版本带来的变化。同时也修改或增加用于实现标准要求的标注命令。
 
   标注命令定义使用DeclareCiteCommand命令，设置上标，包围符号，标注前后内容等。针对GB/T7714-2015中关于引用标注的特殊要求，增加了一些方便实现要求的命令比如pagescite、yearpagescite等。具体的实现见gb*.cbx文件。
-  
+
 \paragraph{标签中的标点和间隔符号}
 文献表中的标签和正文中的标注标签都有标点和间隔符号问题，但两者可能存在一定的差异，不同版本的biblatex中也可能不同，但新的版本中通常是可以用一个相同的钩子来实现的，比如作者年制中作者和年份之间的标点:
 \begin{texlist}
