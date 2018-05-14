@@ -1033,7 +1033,22 @@ and keyword=standard
 
 通常情况下，在选择使用某种样式时，文献表的排序方式就已经设定。当需要调整排序时，就需要在加载biblatex宏包时显式地给出sorting选项，并可根据需要选择上述给出的选项值。
 
-对于中文作者名，默认的排序规则是按照作者姓名的unicode编码进行排序，当需要按拼音或字顺进行排序时，需要在biber编译时设置相应的选项，比如：
+另外，因为biber能充分利用perl的一些模块的功能，所以biblatex还能根据Unicode::Collation::locale模块提供不同语言的排序的本地化调整方案。对于中文，默认的排序规则是按照中文字符的unicode编码进行排序，但可以通过设置选项来进行调整，对于中文有如下调整方案：zh，zh\_\_pinyin，zh\_\_big5han，zh\_\_gb2312han，zh\_\_stroke，zh\_\_zhuyin。
+
+一般的，biblatex利用sortlocale选项将调整方案名传递给biber，biber利用 Unicode::Collation::locale 模块提供对应的排序。因此biblatex可以设置选项为：
+  \begin{itemize}
+    \item \verb|sortlocale=auto| 或者不设置该选项，为默认的unicode编码顺序
+    \item \verb|sortlocale=zh|，为unicode编码顺序
+    \item \verb|sortlocale=zh__pinyin|，为拼音顺序
+    \item \verb|sortlocale=zh__big5han|，为big5 编码顺序
+    \item \verb|sortlocale=zh__gb2312han|，为GB-2312 顺序
+    \item \verb|sortlocale=zh__stroke|，为笔划数顺序
+    \item \verb|sortlocale=zh__zhuyin|，为注音顺序
+  \end{itemize}
+中文排序本地化调整的测试文档见
+\href{run:exampleandimage/testlocale.tex}{testlocale.tex}
+
+当然这种调整可以直接利用在biber编译时设置相应的选项来实现，比如需要按拼音或字顺进行排序时，可使用biber选项，此时biblatex不需要设置sortlocale选项。
 
 \begin{codetex}{中文文献排序时的biber选项}{eg:sort:bibercmd}
 %按拼音排序，biber命令
@@ -2951,9 +2966,9 @@ texencoding=GBK
 bibencoding=GBK
 \end{texlist}
 
-然而当biblatex的样式文件中含有一些中文字符串时，仍然会出现问题，因为这些字符与样式文件一样是utf-8编码的。因此要把这些字符串替换掉。这是可以使用命令来替换字符，然后用GBK编码的文件中的字符串来重定义这些命令。这一解决思路来自于
+然而当biblatex的样式文件中含有一些中文字符串时，仍然会出现问题，因为这些字符与样式文件一样是utf-8编码的。因此要把这些字符串替换掉。这时可以使用命令来替换字符，然后用GBK编码的文件中的字符串来重定义这些命令。这一解决思路来自于
 \href{https://github.com/CasperVector/biblatex-caspervector}{biblatex-caspervector}
-。而且需要注意的是，当这一替换在样式文件内部进行时，仍然会出现，问题因此还需要在宏包结尾来进行替换。
+。而且需要注意的是，当这一替换在样式文件内部进行时，仍然会出现问题，因此还需要在宏包结尾来进行替换。
 
 处理代码如下：
 \begin{texlist}
