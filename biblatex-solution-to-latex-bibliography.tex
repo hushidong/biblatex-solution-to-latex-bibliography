@@ -49,8 +49,9 @@
 %% 2017-01-18 v1.0b 修正一些错别字，加了后记
 %% 2017-03-15 v1.0c 增加了关于参考文献表文本转换成bib文件的内容
 %% 2017-10-31 v1.0d 增加了一个参考文献样式定制项目的示例，见第3节
-%% 2018-04-21 v1.0e 增加了利用biblatex宏包选项调整著录表和标注的内容，见2.7.5节
+%% 2018-04-21 v1.0e 增加了利用biblatex宏包选项调整著录表和标注的内容，见2.8节
 %% 2018-05-04 v1.0f 增加了参考文献缩略信息打印，排序，索引等介绍，见2.5节
+%% 2018-05-18 v1.0g 进一步完善了文档、gb7714-2015的一些设计方法
 
 \def\versionnumber{v1.0f}    %版本和修改时间信息
 \def\versiondate{2018-05-04}
@@ -72,8 +73,14 @@
 
 而biblatex宏包\cite{Lehman2015}提供了一套完整的方案，它即能替代传统的\LaTeX 参考文献生成方法，也能覆盖如natbib等所有辅助宏包的功能，除此之外更提供了如动态数据修改等大量新功能，越使用越会觉得biblatex宏包的完善和强大，它是\LaTeX 参考文献生成的一个绝佳选择。由于基于传统方法的大量参考文献样式仍然在用，基于biblatex的参考文献生成还没有完全替代传统方法，但已经开始逐渐成为主流，目前CTAN 上面已经有包括science、ieee、nature、iso690、gb7714-2015等数十种样式可以选用，加上biblatex的强大定制功能，利用biblatex一个宏包完全可以简单且便利地生成满足需求的参考文献。
 
-然而正是由于biblatex的完整性，biblatex宏包相当的庞大，其说明文档(\href{https://github.com/hushidong/biblatex-zh-cn}{中译版})长达300页。对于初学者或者无深度需求的使用者来说，biblatex手册更像是一个技术说明书，尽管它详实的说明了宏包功能，但却没有提供一个像lshort这样的简单教程，显得过于复杂。类似biblatex-gb7714-2015这样的样式包\cite{胡振震2016}，虽然也介绍了一些biblatex的使用方法，但其重点主要还在样式包的设计、实现和使用上。总的来说，目前对于biblatex参考文献生成还没有较为系统的入门手册（biblatex 3.12版以后，
-宏包作者提供了一个简单的\href{https://github.com/plk/biblatex/blob/dev/doc/latex/biblatex/biblatex-quickstart.tex}{入门教程}）。本文正是出于这样的考虑，希望从不同层级用户的角度，面向应用，以示范的形式，形成一个简易但全面的使用说明书，为用户提供帮助。
+然而正是由于biblatex的完整性，biblatex宏包相当的庞大，其说明文档(\href{https://github.com/hushidong/biblatex-zh-cn}{中译版})长达300页。对于初学者或者无深度需求的使用者来说，biblatex手册更像是一个技术说明书，尽管它详实的说明了宏包功能，但却没有提供一个像lshort这样的简单教程，显得过于复杂。类似biblatex-gb7714-2015这样的样式包\cite{胡振震2016}，虽然也介绍了一些biblatex的使用方法，但其重点主要还在样式包的设计、实现和使用上。总的来说，目前对于biblatex参考文献生成还没有较为系统的入门手册
+\footnote{准确的说是中文入门手册，因为：\par
+biblatex 3.12版以后，宏包作者提供了一个简单的
+\href{https://github.com/plk/biblatex/blob/dev/doc/latex/biblatex/biblatex-quickstart.tex}{入门教程}\href{run:exampleandimage/biblatex-quickstart.pdf}{（见pdf文档）}\par
+另外Paul Stanley也提供了一个
+\href{https://github.com/PaulStanley/biblatex-tutorial}{入门教程}
+\href{https://github.com/hushidong/biblatex-tutorial-cn}{（见pdf文档）}，该教程对基本概念介绍相当清晰，感兴趣的读者可以细看。}。
+本文正是出于这样的考虑，希望从不同层级用户的角度，面向应用，以示范的形式，形成一个简易但全面的使用说明书，为用户提供帮助。
 
 %事实上随着biblatex宏包及其biber后端程序的完善，利用它可以满足对于参考文献的绝大多数功能需求。如果利用一个宏包就能完成以前多个宏包才能实现的功能，那么问题实际上就简化了，这正是用户所期待的。利用biblatex宏包“简单化、便利化”地满足\LaTeX 文档写作中的各种中文参考文献需求正是本文写作的初衷所在。
 
@@ -2430,27 +2437,27 @@ biblatex强大还体现在参考文献样式的定制功能上。本文作为bib
 \subsection{gb7714-2015样式设计与实现}
 
 \subsubsection{动机}
-需求分析是设计的根本来源。之所以要开发biblatex-gb7714-2015样式包肯定存在一定的动机，包括填补空白，改进完善等等。具体到细节上，可能包括如下方面是biblatex-gb7714-2015样式设计的来源，也是要解决的问题:
+需求分析是设计的根本来源。之所以要开发biblatex-gb7714-2015样式包肯定存在一定的动机，包括填补空白，改进完善等等。具体到细节上，可能包括如下方面，这既是biblatex-gb7714-2015样式设计的来源，也是要解决的问题:
 
 \begin{enumerate}
-  \item biblatex版本的兼容性(原来用的样式，在biblatex升级后不能用了，所以希望样式能够克服biblatex版本变化带来的问题)
-  \item 格式修改的可逆性(希望样式中做的修改时可以通过选项等方式调整的，以增加用户使用的灵活性，用于可以通过选项等完全复原回到标准样式。)
+  \item biblatex版本的兼容性(原来用李志奇分享的样式，但在biblatex升级后不能用了，所以希望样式能够克服biblatex版本变化带来的问题)
+  \item 格式修改的可逆性(希望样式中做的修改时可以通过选项等方式调整的，以增加用户使用的灵活性，甚至可以通过选项等完全回复到标准样式。)
   \item 多语言对照(希望实现标准提出的要求)
   \item 文献表的整体格式(希望实现类似word中的标签形式，而不仅是latex中list的那种风格)
   \item 新增加的条目类型(除了利用常见条目实现外，还可以针对国标的条目增加新的类型)
   \item 自定义的域(因为国标有一些文献类型载体标识等的要求，所以要使用自定义的域)
-  \item 著录条目中的作者格式(除提供标准要求格式外，希望实现多种的格式)
+  \item 著录条目中的作者格式(除提供标准要求格式外，希望提供多种格式选择)
   \item 著录条目中中英文不同的缩略词(希望实现标准的要求)
   \item 著录条目中的日期格式(希望实现标准的要求)
   \item 著录条目中的标点格式 (希望实现标准的要求)
-  \item 著录条目中的域的解析(合期等)(希望实现标准的要求)
+  \item 著录条目中的域的解析(起止卷期等)(希望实现标准的要求)
   \item 标注的格式(希望实现标准的要求)
 \end{enumerate}
 
-上述这些其实是后期不断完善提出来的总结，其实在初期设计时，主要还是针对目标即GB/T 7714-2015标准来一条条的实现，缺什么增加什么，哪个有问题改什么。
+上述这些是后期不断完善提出来的总结，其实在初期设计时，主要还是针对目标即GB/T 7714-2015标准来一条条的实现，缺什么增加什么，哪个有问题改什么。
 
 \subsubsection{著录样式的设计途径}
-  biblatex的核心-参考文献样式文件的设计遵循一定的规则：
+  biblatex的核心之一——参考文献样式文件的设计遵循一定的规则：
   \begin{enumerate}
     \item driver的作用:条目驱动，修改一些顺序，略去一些输出和标点
     \item micro的作用:输出宏，修改需要的输出内容
@@ -2459,7 +2466,9 @@ biblatex强大还体现在参考文献样式的定制功能上。本文作为bib
     \item biblatex.sty/def和各bbx/cbx文件中的代码
   \end{enumerate}
 
-  可以从上述这些方面进行设计。下面通过一个问题查找过程来进一步说明文献著录表的内容组织原理：
+  可以从上述这些方面来设计实现需要的格式要求。
+
+  下面通过一个问题查找过程来进一步说明文献著录表的内容组织原理：
 
 
 \paragraph{文献著录表的内容组织原理}
@@ -2470,7 +2479,7 @@ biblatex是利用tex语句控制文献内容组织，因此我们可以坚定一
 
 下面我们举例来说明本样式的作者年制中，当作者缺省时，利用title判断中英文出错的问题。这个问题本质上由于前面说过的，当作者缺省时，把title作为标签后，会把title域清除，因此再利用title域信息判断中英文，自然无法正常工作。我们来看看这是怎么一个过程:
 
-这是一个作者缺省的book条目，在gb7714-2015ay样式不使用佚名方式的情况下报错，主要是testCJKfirst函数报错。这个函数主要用在作者，出版项等这些信息输出时的中英文判断。因为作者缺省，因此作者输出时就没有判断，而出错只能是在出版项中。我们把book的driver中macro输出一项一项注释掉并测试发现，当作者输出相关的macro存在时存在错误，注释掉则没有问题。于是深入来分析:
+这是一个作者缺省的book条目，在gb7714-2015ay样式不使用佚名方式的情况下报错，主要是testCJKfirst函数（见\ref{sec:cjkjudge}中的代码）报错。这个函数主要用在作者，出版项等这些信息输出时的中英文判断。因为作者缺省，因此作者输出时就没有判断，而出错只能是在出版项中。我们把book的driver中macro输出一项一项注释掉并测试发现，当作者输出相关的macro存在时存在错误，注释掉则没有问题。于是深入来分析:
 
 在book类的driver简化为如下三项输出:
 \begin{texlist}
@@ -2547,101 +2556,95 @@ biblatex是利用tex语句控制文献内容组织，因此我们可以坚定一
        {\printfield[title]{shorttitle}}}
     {\printfield{label}}}
 \end{texlist}
-从中可以看到，该宏把title域作为标签进行输出，并在输出后清除了title域，自然，在完成了整个author/editor+others/translator+others宏后，title域就不存在了，因此在后面的publisher+location+date宏中使用title域来进行中英文判断是必然会出错的，找到了问题所在，那么就有相应的方法，比如在动态数据修改时，把title信息存储到userd域中，然后publisher+location+date宏利用该域的信息进行判断这样就不会出现问题了。
 
-\subsubsection{biblatex版本兼容性的解决思路}\label{sec:blx:compatibility}
-样式首先根据biblatex版本信息进行版本判断，然后做针对性的兼容处理。
+从中可以看到，该宏把title域作为标签进行输出，并在输出后清除了title域，自然，在完成了整个author/editor+others/translator+others宏后，title域就不存在了，因此在后面的publisher+location+date宏中使用title域来进行中英文判断是必然会出错的，找到了问题所在，那么就有相应的方法，比如在动态数据修改时，把title信息存储到userd域中，然后在publisher+location+date宏中利用该域的信息进行判断，就不会出现问题了。
+
+从这样一个查找问题的例子，我们看到文献著录内容组织的基本原理，也克服了对biblatex复杂代码的恐惧，接下来就可以按部就班的解决想要解决的问题了。
+
+\subsubsection{兼容性问题的解决思路}\label{sec:blx:compatibility}
+
+\paragraph{biblatex版本的兼容性}
+由于biblatex始终在更新，因此一些新版本的改动可能导致原来可用的样式失效，因此需要根据biblatex的版本做一定的调整。而要做调整需要知道当前的biblatex版本，以及当前版本做了哪些改动，是否影响原来的样式文件。
+
+因此样式首先根据biblatex版本信息进行版本判断，然后做针对性的兼容处理。
 biblatex在texlive中的版本对应关系是:
 texlive2015对应biblatex3.0;
 texlive2016对应biblatex3.4，从3.2版开始修改了姓名机制;
 texlive2017对应biblatex3.7;
-2017年底又出了biblatex3.8a到3.10版。
+texlive2018对应biblatex3.11;
 
-  \begin{enumerate}
-  \item biblatex版本判断
+因为biblatex版本升级需要做的一些兼容性处理包括：
 
-  原来是使用一个简单的字符流处理来解析版本信息，但容易出现问题。于是换成利用xstring宏包的命令来提取版本中的数字进行判断:
-  \begin{texlist}
-    %版本判断
-    \providetoggle{iftexlivesix}%用于处理biblatex3.3开始改变的新的姓名机制
-    \providetoggle{iftexliveseven}%用于处理biblatex3.7的兼容性
-    \providetoggle{iftexliveeight}%用于处理biblatex3.8a的兼容性
-    %\def\numparserta#1.#2a\relax{#1}%注意relax的重要性
-    %\def\numparsertb#1.#2a\relax{#2}
-    %\def\numinteger{\expandafter\numparserta\abx@version\relax}
-    %\def\numdigital{\expandafter\numparsertb\abx@version\relax}
-    \StrChar{\abx@version}{3}[\numdigital]
-    %根据biblatex更新历史，当版本大于3.2开始，就用设置\toggletrue{iftexlivesix}
-    \ifnumcomp{\numdigital}{>}{2}{\toggletrue{iftexlivesix}}{\togglefalse{iftexlivesix}}
-    \ifnumcomp{\numdigital}{>}{6}{\toggletrue{iftexliveseven}}{\togglefalse{iftexliveseven}}
-    \ifnumcomp{\numdigital}{>}{7}{\toggletrue{iftexliveeight}}{\togglefalse{iftexliveseight}}
-  \end{texlist}
+宏包选项:
+\begin{texlist}
+firstinits=true,%for texlive2014,2015;biblatex <=3.2
+giveninits=true,%for texlive2016,2017;biblatex >=3.3
+labeldate=true,%for texlive2014,2015,2016,2017;biblatex <3.8
+labeldateparts=true,%for biblatex >=3.8a
+\end{texlist}
 
+命令:
+\begin{texlist}
+\printdateextralabel,%for texlive2014,2015,2016;biblatex <=3.4
+\printlabeldateextra,%for texlive2017;biblatex >=3.7
+\DeclareSortingScheme %for texlive2014,2015,2016,2017;biblatex <3.8
+\DeclareSortingTemplate %for biblatex >=3.8a
+\end{texlist}
 
-  \item biblatex版本的一些兼容性处理
+biblatex的版本判断最初使用一个简单的字符流处理来解析
+版本信息\verb|\abx@version|，但这种方式容易出现问题。
+于是换成利用xstring宏包的命令来提取版本中的数字进行判断:
+\begin{texlist}
+%版本判断
+\providetoggle{iftexlivesix}%用于处理biblatex3.3开始改变的新的姓名机制
+\providetoggle{iftexliveseven}%用于处理biblatex3.7的兼容性
+\providetoggle{iftexliveeight}%用于处理biblatex3.8a的兼容性
+%\def\numparserta#1.#2a\relax{#1}%注意relax的重要性
+%\def\numparsertb#1.#2a\relax{#2}
+%\def\numinteger{\expandafter\numparserta\abx@version\relax}
+%\def\numdigital{\expandafter\numparsertb\abx@version\relax}
+\StrChar{\abx@version}{3}[\numdigital]
+%根据biblatex更新历史，当版本大于3.2开始，就用设置\toggletrue{iftexlivesix}
+\ifnumcomp{\numdigital}{>}{2}{\toggletrue{iftexlivesix}}{\togglefalse{iftexlivesix}}
+\ifnumcomp{\numdigital}{>}{6}{\toggletrue{iftexliveseven}}{\togglefalse{iftexliveseven}}
+\ifnumcomp{\numdigital}{>}{7}{\toggletrue{iftexliveeight}}{\togglefalse{iftexliveseight}}
+\end{texlist}
 
-  宏包选项:
-  \begin{texlist}
-  firstinits=true,%for texlive2014,2015;biblatex <=3.2
-  giveninits=true,%for texlive2016,2017;biblatex >=3.3
-  labeldate=true,%for texlive2014,2015,2016,2017;biblatex <3.8
-  labeldateparts=true,%for biblatex >=3.8a
-  \end{texlist}
-
-  命令:
-  \begin{texlist}
-  \printdateextralabel,%for texlive2014,2015,2016;biblatex <=3.4
-  \printlabeldateextra,%for texlive2017;biblatex >=3.7
-  \DeclareSortingScheme %for texlive2014,2015,2016,2017;biblatex <3.8
-  \DeclareSortingTemplate %for biblatex >=3.8a
-  \end{texlist}
-
-  \item 版本与兼容性的最终处理方法
-
-  经过最终设计，下面给出的另一版本兼容性处理方式取代前面给出的处理方式，便于以后的扩展。这种方式自然兼容最新的版本，但老的版本的代码处理必须要到位，即因为biblatex版本升级增加了新的老版本时，对应该老版本的选择必须要实现，否则可能漏掉这些版本的处理。
-  \begin{texlist}
-    %版本判断，当版本继续更新时，增加一个新的toggle用以处理新的旧版，最新版本永远用iftlatest
-    \providetoggle{iftlfive}%用于处理biblatex3.2之前的版本
-    \providetoggle{iftlsix}%用于处理biblatex3.3开始改变的新的姓名机制后版本
-    \providetoggle{iftlseven}%用于处理biblatex3.7的兼容性
-    \providetoggle{iftleight}%用于处理biblatex3.8到3.9的兼容性
-    \providetoggle{iftlatest}%用于最新版biblatex，目前是biblatex3.10，20180117
-    \StrBefore{\abx@version}{.}[\numinteger]%以点区分整数和小数
-    \StrBehind{\abx@version}{.}[\numdigital]%小数部分可能带字母所以需将其去掉，见下一行代码
-    \IfInteger{\numdigital}{}{\StrGobbleRight{\numdigital}{1}[\numdigital]}
-    \togglefalse{iftlfive}
-    \togglefalse{iftlsix}
-    \togglefalse{iftlseven}
-    \togglefalse{iftleight}
-    \toggletrue{iftlatest}
-    \ifnumcomp{\numinteger}{=}{3}{
-        \ifnumcomp{\numdigital}{<}{10}{\ifnumcomp{\numdigital}{>}{7}{\toggletrue{iftleight}\togglefalse{iftlatest}}{}}{}%>3.8 版本用iftleight=true表示
-        \ifnumcomp{\numdigital}{=}{7}{\toggletrue{iftlseven}\togglefalse{iftlatest}}{}%3.7 版本用iftlseven=true表示
-        \ifnumcomp{\numdigital}{<}{7}{\ifnumcomp{\numdigital}{>}{2}{\toggletrue{iftlsix}\togglefalse{iftlatest}}{}}{}%3.3-3.6 版本用iftlsix=true表示
-        \ifnumcomp{\numdigital}{<}{3}{\toggletrue{iftlfive}\togglefalse{iftlatest}}{}%3.0-3.2 版本用iftlfive=true表示
-    }{\ifnumcomp{\numinteger}{>}{3}{
-       \blx@warning@noline{%
-       biblatex version is >= 4.x.\MessageBreak
-       if errors raised，Please contact biblatex-gb7714-2015 pkg author.}%
-    }{ \toggletrue{iftlfive}\togglefalse{iftlatest}%2.x版本统一用iftlfive=true表示
-       \blx@warning@noline{%
-       biblatex version is <= 2.x.\MessageBreak
-       if errors raised，Please contact biblatex-gb7714-2015 pkg author.}%
-    }}
-    \newcommand\defversion[2]{\csdef{codeversion#1#2}}%定义不同版本的命令
-    \newcommand\switchversion[2]{\csuse{codeversion#1#2}}%使用不同版本的命令
+但这种方式仍然会存在问题，特别是当版本信息中带有字母的时候，比如3.8a版本。因此进一步考虑了判断的方式，设计了一种新的处理方式便于以后的扩展。这种方式自然兼容最新的版本，但老的版本的代码处理必须要到位，即因为biblatex版本升级增加了新的老版本时，对应该老版本的选择必须要实现，否则可能漏掉这些旧版本的处理。
+\begin{texlist}
+%版本判断，当版本继续更新时，增加一个新的toggle用以处理新的旧版，最新版本永远用iftlatest
+\providetoggle{iftlfive}%用于处理biblatex3.2之前的版本
+\providetoggle{iftlsix}%用于处理biblatex3.3开始改变的新的姓名机制后版本
+\providetoggle{iftlseven}%用于处理biblatex3.7的兼容性
+\providetoggle{iftleight}%用于处理biblatex3.8到3.9的兼容性
+\providetoggle{iftlatest}%用于最新版biblatex，目前是biblatex3.10，20180117
+\StrBefore{\abx@version}{.}[\numinteger]%以点区分整数和小数
+\StrBehind{\abx@version}{.}[\numdigital]%小数部分可能带字母所以需将其去掉，见下一行代码
+\IfInteger{\numdigital}{}{\StrGobbleRight{\numdigital}{1}[\numdigital]}
+\togglefalse{iftlfive}
+\togglefalse{iftlsix}
+\togglefalse{iftlseven}
+\togglefalse{iftleight}
+\toggletrue{iftlatest}
+\ifnumcomp{\numinteger}{=}{3}{
+    \ifnumcomp{\numdigital}{<}{10}{\ifnumcomp{\numdigital}{>}{7}{\toggletrue{iftleight}\togglefalse{iftlatest}}{}}{}%>3.8 版本用iftleight=true表示
+    \ifnumcomp{\numdigital}{=}{7}{\toggletrue{iftlseven}\togglefalse{iftlatest}}{}%3.7 版本用iftlseven=true表示
+    \ifnumcomp{\numdigital}{<}{7}{\ifnumcomp{\numdigital}{>}{2}{\toggletrue{iftlsix}\togglefalse{iftlatest}}{}}{}%3.3-3.6 版本用iftlsix=true表示
+    \ifnumcomp{\numdigital}{<}{3}{\toggletrue{iftlfive}\togglefalse{iftlatest}}{}%3.0-3.2 版本用iftlfive=true表示
+}{\ifnumcomp{\numinteger}{>}{3}{
+   \blx@warning@noline{%
+   biblatex version is >= 4.x.\MessageBreak
+   if errors raised，Please contact biblatex-gb7714-2015 pkg author.}%
+}{\toggletrue{iftlfive}\togglefalse{iftlatest}%2.x版本统一用iftlfive=true表示
+   \blx@warning@noline{%
+   biblatex version is <= 2.x.\MessageBreak
+   if errors raised，Please contact biblatex-gb7714-2015 pkg author.}%
+}}
+\newcommand\defversion[2]{\csdef{codeversion#1#2}}%定义不同版本的命令
+\newcommand\switchversion[2]{\csuse{codeversion#1#2}}%使用不同版本的命令
 
 \defversion{3.0}{opt}{
     %biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
-
-    %增加姓名大小写格式处理选项
-    \DeclareBibliographyOption{gbnamefmt}[uppercase]{%
-        %\ifstrequal{##1}{gbuppercase}{}{}%
-        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
-        \ifstrequal{##1}{none}{\execnamedefault}{}
-        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
-    }
-    %\ExecuteBibliographyOptions{gbnamefmt}
 
     %增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015无效，仍然为右对齐模式，因为舍弃了list类环境后出错。
     \DeclareBibliographyOption{gbalign}[right]{%texlive2015中的3.0版中的DeclareBibliographyOption选项没有类型说明
@@ -2650,26 +2653,8 @@ texlive2017对应biblatex3.7;
         \ifstrequal{##1}{gb7714-2015}{}{}
     }
 
-    %增加一个出版项自动处理控制选项，当true时使用出版者不详等信息补充缺失的出版信息。
-    \newtoggle{bbx:gbpub}
-    \DeclareBibliographyOption{gbpub}[true]{%
-        %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
-        \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
-    \ExecuteBibliographyOptions{gbpub}
-
-    %增加一个处理佚名或noauthor的控制选项
-    %因为在顺序编码制中，不需要使用，这里也增加，为了与作者年制的兼容性考虑。
-    \DeclareBibliographyOption{gbnoauthor}[true]{}%
-
     \ExecuteBibliographyOptions{
-      sorting=none,
-      useprefix=true,  %名字的信息包括前缀
       firstinits=true,    %名字有缩写，参考3.1.2.3 Internal
-      %giveninits=true,
-      date    = year,  %日期仅写到年
-      maxnames     = 3 ,    %设置名字最大数量
-      minnames     = 3       %设置缩减后的名字最小数量
-      %uniquename   = init
     }
 }
 
@@ -2677,127 +2662,48 @@ texlive2017对应biblatex3.7;
     % Alter settings that carry through from biblatex
     %biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
 
-    %增加姓名大小写格式处理选项
-    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
-        %\ifstrequal{##1}{gbuppercase}{}{}%
-        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
-        \ifstrequal{##1}{none}{\execnamedefault}{}
-        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
-    }
-    %\ExecuteBibliographyOptions{gbnamefmt}
-
     %增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
     \DeclareBibliographyOption[string]{gbalign}[right]{%
         \ifstrequal{##1}{left}{\setalignleft}{}
         \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
     }
 
-    %增加一个出版项自动处理控制选项，当true时使用出版者不详等信息补充缺失的出版信息。
-    \newtoggle{bbx:gbpub}
-    \DeclareBibliographyOption[boolean]{gbpub}[true]{%
-        %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
-        \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
-    \ExecuteBibliographyOptions{gbpub}
-
-    %增加一个处理佚名或noauthor的控制选项
-    %因为在顺序编码制中，不需要使用，这里也增加，为了与作者年制的兼容性考虑。
-    \DeclareBibliographyOption[boolean]{gbnoauthor}[true]{}%
-
     \ExecuteBibliographyOptions{
-      sorting=none,
-      useprefix=true,  %名字的信息包括前缀
-      %firstinits=true,    %名字有缩写，参考3.1.2.3 Internal
       giveninits=true,
-      date         = year,  %日期仅写到年
-      maxnames     = 3 ,    %设置名字最大数量
-      minnames     = 3       %设置缩减后的名字最小数量
-      %uniquename   = init
     }
 }
 
 \defversion{3.7}{opt}{
     %biblatex3.7版后(比如texlive2017中的3.7版)的使用方式
 
-    %增加姓名大小写格式处理选项
-    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
-        %\ifstrequal{##1}{gbuppercase}{}{}%
-        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
-        \ifstrequal{##1}{none}{\execnamedefault}{}
-        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
-    }
-    %\ExecuteBibliographyOptions{gbnamefmt}
-
     %增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
     \DeclareBibliographyOption[string]{gbalign}[right]{%
         \ifstrequal{##1}{left}{\setalignleft}{}
         \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
     }
 
-    %增加一个出版项自动处理控制选项，当true时使用出版者不详等信息补充缺失的出版信息。
-    \newtoggle{bbx:gbpub}
-    \DeclareBibliographyOption[boolean]{gbpub}[true]{%
-        %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
-        \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
-    \ExecuteBibliographyOptions{gbpub}
-
-    %增加一个处理佚名或noauthor的控制选项
-    %因为在顺序编码制中，不需要使用，这里也增加，为了与作者年制的兼容性考虑。
-    \DeclareBibliographyOption[boolean]{gbnoauthor}[true]{}%
-
     \ExecuteBibliographyOptions{
-      sorting=none,
-      useprefix=true,  %名字的信息包括前缀
-      %firstinits=true,    %名字有缩写，参考3.1.2.3 Internal
       giveninits=true,
       date         = year,  %日期仅写到年
       urldate =edtf, %iso8601
       eventdate =edtf,
-      maxnames     = 3 ,    %设置名字最大数量
-      minnames     = 3       %设置缩减后的名字最小数量
-      %uniquename   = init
     }
 }
 
 \defversion{3.10}{opt}{
     %biblatex3.10版后的使用方式
 
-    %增加姓名大小写格式处理选项
-    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
-        %\ifstrequal{##1}{gbuppercase}{}{}%
-        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
-        \ifstrequal{##1}{none}{\execnamedefault}{}
-        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
-    }
-    %\ExecuteBibliographyOptions{gbnamefmt}
-
     %增加标签对齐选项，right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
     \DeclareBibliographyOption[string]{gbalign}[right]{%
         \ifstrequal{##1}{left}{\setalignleft}{}
         \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
     }
 
-    %增加一个出版项自动处理控制选项，当true时使用出版者不详等信息补充缺失的出版信息。
-    \newtoggle{bbx:gbpub}
-    \DeclareBibliographyOption[boolean]{gbpub}[true]{%
-        %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
-        \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
-    \ExecuteBibliographyOptions{gbpub}
-
-    %增加一个处理佚名或noauthor的控制选项
-    %因为在顺序编码制中，不需要使用，这里也增加，为了与作者年制的兼容性考虑。
-    \DeclareBibliographyOption[boolean]{gbnoauthor}[true]{}%
-
     \ExecuteBibliographyOptions{
-      sorting=none,
-      useprefix=true,  %名字的信息包括前缀
-      %firstinits=true,    %名字有缩写，参考3.1.2.3 Internal
       giveninits=true,
       date         = year,  %日期仅写到年
       urldate =iso, %iso8601，edtf
       eventdate =iso,
-      maxnames     = 3 ,    %设置名字最大数量
-      minnames     = 3       %设置缩减后的名字最小数量
-      %uniquename   = init
     }
 }
 
@@ -2806,20 +2712,129 @@ texlive2017对应biblatex3.7;
 \iftoggle{iftlseven}{\switchversion{3.7}{opt}}{}%biblatex=3.7
 \iftoggle{iftleight}{\switchversion{3.7}{opt}}{}%3.8<=biblatex<=3.9
 \iftoggle{iftlatest}{\switchversion{3.10}{opt}}{}%biblatex最新3.10
-  \end{texlist}
+\end{texlist}
 
-  \end{enumerate}
+版本判断其实也可以考虑其它方法，比如用宏包的判断命令\verb|\@ifpackagelater|，具体可以参考nature样式的做法：
+\begin{texlist}
+\@ifpackagelater{biblatex}{2016/03/27}
+{\ExecuteBibliographyOptions{giveninits}}
+{\ExecuteBibliographyOptions{firstinits}}
+
+% Modify the name format
+\@ifpackagelater{biblatex}{2016/03/27}
+{
+\DeclareNameFormat{default}{%
+  \nameparts{#1}%
+  \usebibmacro{name:family-given}
+    {\namepartfamily}
+    {\namepartgiveni}
+    {\namepartprefix}
+    {\namepartsuffix}%
+ \usebibmacro{name:andothers}%
+}
+}
+{
+\DeclareNameFormat{default}{%
+  \usebibmacro{name:last-first}{#1}{#4}{#5}{#7}%
+  \usebibmacro{name:andothers}%
+}
+}
+\end{texlist}
+
+还有可能用到一些文档环境的判断方法，可以使用\verb|\@ifclassloaded|命令，类似的还有判断宏包是否加载的命令，\verb|\@ifpackageloaded|比如：
+\begin{texlist}
+\@ifclassloaded{beamer}{
+    \DeclareFieldFormat{title}{#1}%
+    \DeclareFieldFormat[article,patent,thesis,unpublished]{title}{#1}
+    \AtBeginDocument{%
+    \patchcmd{\abx@macro@title}{\newunitpunct}{}{}{}}}{}
+\end{texlist}
+
+同时也要注意，可能会用到要在编译不同时刻展开或替换，代码放置的位置，比如在宏包末尾，在导言区末尾，在正文开始处等：
+\begin{texlist}
+\AtEndOfPackage{code}
+\AtEndPreamble{code}
+\AtBeginDocument{code}
+\end{texlist}
 
 
-\subsubsection{中英文混合文献表的解决思路}
+\paragraph{GBK编码文件的兼容性}
 
-考虑到我国引用参考文献通常是中英文混合的情况，因此不考虑针对中文的本地化处理，而是在英文本地化的基础(英文的本地化字符串设置文档是english.lbx)上添加一些中文要求的本地化字符串来使用。需要注意:本地化字符串的定义在lbx文件和bbx文件中是不一样的，lbx文件中用的是DeclareBibliographyStrings，而bbx文件中用的是DefineBibliographyStrings，两者的参数是不一样的。
+在使用纯英文的文档中，不涉及到文件的编码问题。但在中文文档中可能涉及到文件编码的问题，因为默认情况下windows下创建的文件是cp 936编码即GBK编码，如果不将其转换为utf-8编码，那么就会涉及到该问题。
 
-而为了区分使用中英文的字符串，对参考文献条目中数据域内容进行中英文判断，若是中文则使用中文字符串，若是英文则使用英文字符串。
+我们知道gbk编码的tex文档，利用pdflatex/latex能正确编译，利用xelatex能编译，但中文会显示乱码，在源文档前面增加 XeTeX 原语：\verb|\XeTeXinputencoding "GBK"|  后，显示正常。而 utf-8编码的tex文档，利用xelatex能正确编译，而pdflatex/latex则不能编译。总的来说，使用GBK编码的情况现在已经大为减少，而遇到时通常是使用pdflatex/latex编译的。因此在参考文献样式中也将面临这一问题。
 
-这里的中英文判断主要是在tex中的判断，利用对域中的信息进行检测，当信息的第一个字符是CJK字符时，判断该域的信息是中文的，否则是英文的。
+在biblatex中提供了texencoding和bibencoding选项，它是通过将输入的选项值传递给biber，然后biber利用perl的encode模块实现编码转换的。因此只要是perl的encode模块支持的编码转换，biblatex都是支持的。perl的encode模块的信息见
+\href{http://perldoc.perl.org/Encode.html}{encode}，中文的编码信息见
+\href{http://perldoc.perl.org/Encode/CN.html}{encode::cn}。用法可以参见：
+\href{http://www.xuebuyuan.com/1128675.html}{perl文件编码处理问题}。
 
-在作者年制中不同语种文献分集时也有一个中英文判断，主要是利用动态数据修改的方法。利用perl正则表达式判断作者和标题域中是否有中文信息(可以用排除法即匹配不是英文数字标点的字符通常是中文字符，当然最直接的是用unicode的中文字符范围匹配)，有的话设置cn，否则为en。事实上这种判断可以进一步扩展，利用强大的perl正则表达式，对所有的关键域进行判断，并在一些域中设置标识，用于tex输出时进行判断，而避免直接使用上述CJK字符判断函数。
+当使用GBK编码时，我们可以在biblatex中使用选项：
+\begin{texlist}
+texencoding=GBK
+bibencoding=GBK
+\end{texlist}
+
+然而当biblatex的样式文件中含有一些中文字符串时，仍然会出现问题，因为这些字符与样式文件一样是utf-8编码的。因此要把这些字符串替换掉。这时可以使用命令来替换字符，然后用GBK编码的文件中的字符串来重定义这些命令。这一解决思路来自于
+\href{https://github.com/CasperVector/biblatex-caspervector}{biblatex-caspervector}
+。而且需要注意的是，当这一替换在样式文件内部进行时，仍然会出现问题，因此还需要在宏包结尾来进行替换。
+
+处理代码如下：
+\begin{texlist}
+%
+%   增加一个源文件编码选择选项，当true时可以使用GBK编码。
+%   v1.0k, 2018.05.08, by hzz
+%
+% 原理方法：将需要输出的中文字符串用命令形式表示存储，采用utf8编码时采用bbx文
+% 档内的定义即是utf8编码的中文字符串，但tex源文件是gbk编码时，利用gb7714-2015-gbk.def
+% 文档内的gbk编码的字符串覆盖。这种覆盖只能在宏包末尾加载时成功实现，所以使用
+% AtEndOfPackage。该解决思路学自biblatex-caspervector宏包。
+% 另外注意：
+% gbk编码的tex文档，利用pdflatex/latex能正确编译，利用xelatex能编译，但中文显示乱码
+% 在源文档前面增加 XeTeX 原语：\XeTeXinputencoding "GBK" 后，显示正常
+% utf-8编码的tex文档，利用xelatex能正确编译，而pdflatex/latex不能编译。
+    \newtoggle{bbx:codegbk}
+    \DeclareBibliographyOption{gbcodegbk}[false]{%
+        \settoggle{bbx:codegbk}{#1}}
+    \ExecuteBibliographyOptions{gbcodegbk}
+
+    \def\str@bibliography{参考文献}
+    \def\str@references{参考文献}
+    \def\str@bytranslator{译}
+    \def\str@andotherscn{等}
+    \def\str@backrefpage{引用页}
+    \def\str@backrefpages{引用页}
+    \def\str@noaddress{出版地不详}
+    \def\str@nopublisher{出版者不详}
+    \def\str@edition{版}
+
+    \AtEndOfPackage{%
+	\iftoggle{bbx:codegbk}{%
+		\ExecuteBibliographyOptions{texencoding = GBK}
+        \input{gb7714-2015-gbk.def}
+	}{}}
+\end{texlist}
+
+测试文件见：
+\href{run:exampleandimage/testeggbk.tex}{eggbk.tex}，
+\href{run:exampleandimage/testeggbkay.tex}{eggbkay.tex}。注意编译时请使用pdflatex或latex。
+
+同时也注意到，bbx文件处理“佚名”和“等”这些本地化字符串之间的差别，因为处理“佚名”的动态数据修改始终是在perl中进行的，所以直接给出中文字符没有问题。而“等”这些本地化字符串必须要用GBK编码的文件中的重定义进行覆盖。
+
+另外还要注意的是，GBK编码的文件不能使用中文的bibtex键即中文的引用关键字。
+
+
+\subsubsection{中英文混合文献表的解决思路}\label{sec:mix:cnen}
+
+考虑到我国引用参考文献通常是中英文混合的情况，因此不考虑针对中文的本地化处理，而是在英文本地化的基础(英文的本地化字符串设置文档是english.lbx)上添加一些中文要求的本地化字符串来使用。
+
+需要注意:本地化字符串的定义在lbx文件和bbx文件中是不一样的，lbx文件中用的是DeclareBibliographyStrings，而bbx文件中用的是DefineBibliographyStrings，两者的参数是不一样的。
+
+而为了区分使用中英文的字符串，对参考文献条目中数据域内容进行中英文判断，若是中文则使用中文字符串，若是英文则使用英文字符串。这里的中英文判断主要是在tex中的判断，利用对域中的信息进行检测，当信息的第一个字符是CJK字符时，判断该域的信息是中文的，否则是英文的。
+
+在作者年制中不同语种文献分集时也有一个中英文判断，主要是利用动态数据修改的方法。利用perl正则表达式判断作者和标题域中是否有中文信息(可以用排除法即匹配不是英文数字标点的字符通常是中文字符，当然最直接的是用unicode的中文字符范围匹配)，有的话设置cn，否则为en。
+
+事实上这种判断可以进一步扩展，利用强大的perl正则表达式，对所有的关键域进行判断，并在一些域中设置标识，用于tex输出时进行判断，而避免直接使用上述CJK字符判断函数。
 
 \paragraph{利用字符流解析或者xstring宏包的函数}\label{sec:cjkjudge} 以实现中英文的判断
 
@@ -2947,164 +2962,232 @@ cjk字符判断函数如下：
 因此，只能利用最终的办法，就是利用动态数据修改中perl进行直接标识。
 
 
+\subsubsection{功能增加及格式还原的解决思路}
 
+GB样式是在标准样式基础上修改的，因此只要还原每一个修改，那么最终一定能够从gb样式还原到标准样式。为了方便控制这种修改和还原，采用宏包选项控制的方式进行，因此需要增加相应的控制选项。
 
-\subsubsection{考虑兼容GBK编码文件的解决思路}
+从总体功能上看，GB样式与标准样式的区别主要有：
+\begin{itemize}
+  \item 中英文判断问题及对应的缩略词输出问题
+  \item GB样式中对于期刊有起止卷期的要求
+  \item GB样式对于多语言文献对照的要
+  \item GB样式对于作者缺省时处理的要求
+  \item GB样式对于顺序编码制文献表标签对齐要求
+\end{itemize}
 
-在使用纯英文的文档中，不涉及到文件的编码问题。但在中文文档中可能涉及到文件编码的问题，因为默认情况下windows下创建的文件是cp 936编码即GBK编码，如果不将其转换为utf-8编码，那么就会涉及到该问题。
+其中前三项在本节其它地方介绍，后面两项可以通过选项来进行控制。作者缺省时的处理用选项gbnoauthor控制还原，文献表标签对齐用gbalign选项控制还原。
 
-我们知道gbk编码的tex文档，利用pdflatex/latex能正确编译，利用xelatex能编译，但中文会显示乱码，在源文档前面增加 XeTeX 原语：\verb|\XeTeXinputencoding "GBK"|  后，显示正常。而 utf-8编码的tex文档，利用xelatex能正确编译，而pdflatex/latex则不能编译。总的来说，使用GBK编码的情况现在已经大为减少，而遇到时通常是使用pdflatex/latex编译的。因此在参考文献样式中也将面临这一问题。
+从著录格式上看，GB样式与标准样式的区别主要有：
+\begin{itemize}
+  \item 作者域格式
+  \item 标题、网址、页码等其他域的格式
+  \item 出版项缺省的格式
+  \item 标点
+  \item 文献类型和载体标识
+  \item 对一些域的输出做了限制
+\end{itemize}
 
-在biblatex中提供了texencoding和bibencoding选项，它是通过将输入的选项值传递给biber，然后biber利用perl的encode模块实现编码转换的。因此只要是perl的encode模块支持的编码转换，biblatex都是支持的。perl的encode模块的信息见
-\href{http://perldoc.perl.org/Encode.html}{encode}，中文的编码信息见
-\href{http://perldoc.perl.org/Encode/CN.html}{encode::cn}。用法可以参见：
-\href{http://www.xuebuyuan.com/1128675.html}{perl文件编码处理问题}。
+作者域格式利用选项gbnamefmt还原。
+标题等域的格式利用选项gbfieldstd还原。
+出版项缺省的格式利用选项gbpub还原。
+标点比如析出源之前的\texttt{//}利用选项gbpunctin还原。
+其它域比如卷等，在标准样式中是区分不同的文献条目类型，比如书籍或期刊文章中卷格式是不同的，书籍中加了vol引导词，而期刊文章中没有。而gb样式中[年份, 卷(期)]这种方法是比较清晰的格式，在一些样式如APA等也有应用，其实也可不考虑还原回，甚至也可以使用另一种常见的全部加引导词的方式，类似iso690样式的做法。
+而对于域出现的顺序，则不做还原，避免大量的代码改动。对于原来标准样式中输出的域做的限制，也可以利用选项取消，这里采用gbstrict选项还原。
 
-当使用GBK编码时，我们可以在biblatex中使用选项：
+总的来说，尽管GB/T 7714样式看起来并不一定让人觉得美观，但我认为它是经过深入设计的，特别是考虑了中英文文献混合的情况，当采用某些英文文献常见做法（比如使用引导词）时，这种英文的引导词其实并不适合于中文，而中文又没有对应的合适的引导词，所以还不如用标点来代替。比如用\texttt{//}代替in，用[年份, 卷(期)]代替[年份, vol. 卷, no. 期)]，用:代替pp.等。但域内容的一些格式、字体等是可以根据需要进行调整的，以达到更美观的效果。
+
+\paragraph{biblatex的宏包选项增加方法} 要利用biblatex的选项机制来实现某些目的，需要首先弄清楚biblatex及其样式文件中的一些判断/选择机制。
+
+在gb7714-2015.bbx文件中有四种常见的判断方式包括:
+版本的判断，
+宏包选项的判断，
+宏包选项控制的切换标记的判断，
+一般的域是否定义或与字符串比较是否相同的判断。
+
+第一种判断，是根据已有的信息直接判断，比如利用\verb|\abx@version|
+或\verb|\abx@date| 进行判断，这种处理结果是直接展开的，可以用于后面的任意定义。
+
+第二种判断，是根据不执行默认设置的选项进行判断。例如（注意该选项是string 类型）：
+
 \begin{texlist}
-texencoding=GBK
-bibencoding=GBK
+\DeclareBibliographyOption[string]{gbalign}[right]{%
+    \ifstrequal{##1}{left}{\setalignleft}{}
+    \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
+}
 \end{texlist}
 
-然而当biblatex的样式文件中含有一些中文字符串时，仍然会出现问题，因为这些字符与样式文件一样是utf-8编码的。因此要把这些字符串替换掉。这时可以使用命令来替换字符，然后用GBK编码的文件中的字符串来重定义这些命令。这一解决思路来自于
-\href{https://github.com/CasperVector/biblatex-caspervector}{biblatex-caspervector}
-。而且需要注意的是，当这一替换在样式文件内部进行时，仍然会出现问题，因此还需要在宏包结尾来进行替换。
+这里定义的选项gbalign，但不利用ExecuteBibliographyOptions命令执行默认的设置。这时宏包会按照没有该选项影响的方式进行处理。只有当在biblatex加载时，该选项才会有意义。
 
-处理代码如下：
+当选项给出时，宏包会执行选项中对应选项值的代码，比如给出为gbalign=left，则执行setalignleft命令。
+
+还要注意：当加载选项又不设置选项值时，宏包会执行DeclareBibliographyOption 命令中给出的默认选项，也就是说，当给出选项gbalign，等价于给出gbalign=right。但此时选项定义中没有对应该right 值需要再执行的命令，既不执行setalignleft，也不执行setaligngbstyle，因此不做任何处理。只有设置宏包选项为left或gb7714-2015时才会调用setalignleft和setaligngbstyle命令做进一步的处理。
+
+第三种判断，根据宏包选项控制对切换标记进行设置，然后在代码中应用切换标记判断。比如standard.bbx中定义的url 等选项。
 \begin{texlist}
-%
-%   增加一个源文件编码选择选项，当true时可以使用GBK编码。
-%   v1.0k, 2018.05.08, by hzz
-%
-% 原理方法：将需要输出的中文字符串用命令形式表示存储，采用utf8编码时采用bbx文
-% 档内的定义即是utf8编码的中文字符串，但tex源文件是gbk编码时，利用gb7714-2015-gbk.def
-% 文档内的gbk编码的字符串覆盖。这种覆盖只能在宏包末尾加载时成功实现，所以使用
-% AtEndOfPackage。该解决思路学自biblatex-caspervector宏包。
-% 另外注意：
-% gbk编码的tex文档，利用pdflatex/latex能正确编译，利用xelatex能编译，但中文显示乱码
-% 在源文档前面增加 XeTeX 原语：\XeTeXinputencoding "GBK" 后，显示正常
-% utf-8编码的tex文档，利用xelatex能正确编译，而pdflatex/latex不能编译。
-    \newtoggle{bbx:codegbk}
-    \DeclareBibliographyOption{gbcodegbk}[false]{%
-        \settoggle{bbx:codegbk}{#1}}
-    \ExecuteBibliographyOptions{gbcodegbk}
-
-    \def\str@bibliography{参考文献}
-    \def\str@references{参考文献}
-    \def\str@bytranslator{译}
-    \def\str@andotherscn{等}
-    \def\str@backrefpage{引用页}
-    \def\str@backrefpages{引用页}
-    \def\str@noaddress{出版地不详}
-    \def\str@nopublisher{出版者不详}
-    \def\str@edition{版}
-
-    \AtEndOfPackage{%
-	\iftoggle{bbx:codegbk}{%
-		\ExecuteBibliographyOptions{texencoding = GBK}
-        \input{gb7714-2015-gbk.def}
-	}{}}
-\end{texlist}
-
-测试文件见：
-\href{run:exampleandimage/testeggbk.tex}{eggbk.tex}，
-\href{run:exampleandimage/testeggbkay.tex}{eggbkay.tex}。注意编译时请使用pdflatex或latex。
-
-同时也注意到，bbx文件处理“佚名”和“等”这些本地化字符串之间的差别，因为处理“佚名”的动态数据修改始终是在perl中进行的，所以直接给出中文字符没有问题。而“等”这些本地化字符串必须要用GBK编码的文件中的重定义进行覆盖。
-
-另外还要注意的是，GBK编码的文件不能使用中文的bibtex键即中文的引用关键字。
-
-
-\subsubsection{GB样式还原到标准样式的解决思路}
-
-gb样式是在标准样式基础上修改的，因此只要还原每一个修改，那么最终一定能够从gb样式还原到标准样式。为了方便控制这种修改和还原，采用宏包选项控制的方式进行，因此需要增加相应的控制选项。
-
-biblatex的宏包选项增加方法：
-  \begin{enumerate}
-    \item 在gb7714-2015.bbx文件中有四种常见的判断方式包括:
-    版本的判断，
-    宏包选项的判断，
-    宏包选项控制的切换标记的判断，
-    一般的域的是否定义或与字符串比较是否相同的判断。
-
-        第一种判断，是直接根据已有的信息比如\verb|\abx@version|进行处理，该出的处理结果是直接展开的，可以用于后面的任意定义。
-
-        第二种判断，是根据给出的宏包选项值或者不给出选项进行处理，例如定义的宏包选项gbalign ，这一选项是string 类型。在选项的执行代码中直接给出每一个选项值对应要执行的命令。比如：
-        \begin{texlist}
-        \DeclareBibliographyOption[string]{gbalign}[right]{%
-            \ifstrequal{##1}{left}{\setalignleft}{}
-            \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
-        }
-        \end{texlist}
-        这种情况下，特别要注意DeclareBibliographyOption 选项定义命令中给出的默认值right是在加载该选项但不给出值时的默认值，而不是将选项设置为该默认值。因此当加载时不给出gbalign选项时，不执行任何的语句，即不执行setalignleft，也不执行setaligngbstyle(因为不使用这两个命令的情况下项标签是右对齐的，这样也就是gbalign选项默认是右对齐的，只有设置宏包选项为left或gb7714-2015时才会因为setalignleft和setaligngbstyle命令二改变)。
-        如果给出选项gbalign，相当于gbalign=默认值，如果给出选项gbalign=指定值，那么值就是指定值，然后并执行DeclareBibliographyOption 的定义代码，根据值进行处理。
-
-        第三种判断，根据宏包选项控制对切换标记进行设置，然后再代码中应用切换标记判断。比如gbpub 选项，这一选项类似于standard.bbx中定义的url 等选项。
-        \begin{texlist}
-        \newtoggle{bbx:gbpub}
-        \DeclareBibliographyOption[boolean]{gbpub}[true]{%
-            %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
-            \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
-        \end{texlist}
-        默认可以利用切换标记bbx:gbpub进行任何的定义。但如果展开的层次是与这里定义的宏包选项同一层次的，那么切换标记会根据默认值是false 而展开。如果是下一层的展开（就是不需要在加载时展开的），那么会根据展开时切换标记bbx:gbpub的值进行展开。
-
-        注意到在上述这一定义后面，使用了选项默认执行命令:
-        \begin{texlist}
-        \ExecuteBibliographyOptions{gbpub}
-        \end{texlist}
-        这是宏包选项定义中的代码会立刻被执行，即bbx:gbpub的值设置为true。ExecuteBibliographyOptions 命令是用来执行选项的，如果不给出这一命令，且宏包加载选择中没有给出选项设置，那么toggle只有新建toggle 时的默认定义。还要注意这里的切换标记设置是立刻进行的，如果这里的定义不是设置切换标记，而是直接调用命令，比如上面的gbalign的情况，那么就需要该被调用命令是有定义的，即定义至少与宏包选项定义在同一展开层次，甚至先于宏包选项定义。
-
-        还需要注意，如果给出了命令
-        \begin{texlist}
-        \ExecuteBibliographyOptions{gbpub}%等价于下一条命令
-        \ExecuteBibliographyOptions{gbpub=true}
-        \ExecuteBibliographyOptions{gbpub=false}
-        \end{texlist}
-        等价于在宏包加载时给出选项。但是宏包加载选项设置可以覆盖这个命令的设置。
-
-        如果在宏包加载时给出选项gbpub=false，那么bbx:gbpub的值设置为false。
-        如果在宏包加载时给出选项gbpub，gbpub=true，那么bbx:gbpub的值设置为true。
-
-        第四种判断，利用iffieldundef和iffieldequalstr进行判断即可。
-
-    \item 总结起来，宏包选项的问题需要注意宏包选项的展开顺序。宏包选项的定义如果不使用ExecuteBibliographyOptions命令或者不在加载时设置，那么定义的代码是不执行的。因此如果其他代码中需要使用该宏包选项定义代码中的信息是无法正确获取的。而当使用ExecuteBibliographyOptions命令或者加载选项时，那么宏包选项代码会立即展开，其中需要使用的宏则需要有定义，即先于或与宏包选项定义处于同一展开层。
-
-        \begin{texlist}
-    %\newtoggle{bbx:gbpub}
-    %\DeclareBibliographyOption[boolean]{gbpub}[true]{%
-    %  \settoggle{bbx:gbpub}{#1}}
-    %这种机制的标识判断，能用于usemacro使用，域格式定义中，但无法用来判断后定义macro
-    %定义宏和使用宏是两个不同的展开层级，而可以在定义macro中进行判断
-    %\ExecuteBibliographyOptions{gbpub}
-    %但是使用这句默认设置可以用来定义macro
-
-    %\DeclareBibliographyOption{gbpub}[true]{%应使用这种直接的机制
-    %\ifstrequal{#1}{false}{\pubaddmacronewdefine}{\pubaddmacroredefine}}
-
-    %特别注意DeclareBibliographyOption，而给出的默认值是在加载时没有选项没有给出值时的默认值。
-    %当加载时不给出gbpub选项时，不执行ifstrequal判断语句，无任何加载。
-    %如果给出选项gb，或者gb=true，那么ifstrequal判断仍然是假，执行的默认的加载\pubaddmacroredefine
-    %如果给出选项false，那么ifstrequal判断是真，执行的就是非默认的加载\pubaddmacronewdefine
-    %\ExecuteBibliographyOptions{gbpub}%这句报错是因为\pubaddmacroredefine没有定义，如果把定义放到前面那么应该是可以的。
-
-    %还是采用另一种方式可以较好的进行默认选项的处理
-    \newtoggle{bbx:gbpub}
-    \DeclareBibliographyOption[boolean]{gbpub}[true]{%
+\newtoggle{bbx:gbpub}
+\DeclareBibliographyOption[boolean]{gbpub}[true]{%
     %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
-      \ifstrequal{#1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
+    \ifstrequal{##1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
+\ExecuteBibliographyOptions{gbpub}
+\end{texlist}
+
+注意到在上述选项定义后面，使用了选项默认执行命令，这时宏包选项定义中的代码会立刻被执行，即在样式中设置了gbpub=true。
+
+注意，样式中可以利用切换标记bbx:gbpub进行任意的宏定义。但如果该宏展开层次是与这里定义的宏包选项同一层次的，那么切换标记会根据默认值是false 而展开，因为宏该宏展开时，选项的执行还未进行。如果宏是下一层的展开（即不需要在加载时展开的），那么会根据展开时，切换标记bbx:gbpub的值进行展开。即这种机制的切换标识判设置，能用于usemacro使用或者域格式定义中，但无法用来判断然后再定义macro，因为定义宏和使用宏是两个不同的展开层级。
+
+注意 ExecuteBibliographyOptions 命令是用来执行选项的，如果不给出这一命令，且宏包加载选择中没有给出选项设置（给出选项等价于执行ExecuteBibliographyOptions），那么toggle只有新建toggle 时的默认定义false。
+
+还要注意该命令执行选项是立刻进行的，如果选项的定义代码不是设置切换标记，而是直接调用命令，比如前面的gbalign的情况，那么就需要被调用命令是有定义的，即命令的定义至少与宏包选项定义在同一展开层次，甚至先于宏包选项定义。
+
+还需要注意，如果给出了命令
+\begin{texlist}
+\ExecuteBibliographyOptions{gbpub}%等价于下一条命令
+\ExecuteBibliographyOptions{gbpub=true}
+\ExecuteBibliographyOptions{gbpub=false}
+\end{texlist}
+等价于在宏包加载时给出选项。类似的，如果在宏包加载时给出选项gbpub=false，那么bbx:gbpub的值设置为false。如果在宏包加载时给出选项gbpub，gbpub=true，那么bbx:gbpub的值设置为true。
+但要注意宏包加载选项设置可以覆盖这个命令的设置，因为通常随宏包加载选项会把选项放在样式选项之后。而后面的选项设置会覆盖前面的设置。
+
+第四种判断，利用iffieldundef和iffieldequalstr进行判断即可。
+
+总结起来，宏包选项的问题需要注意宏包选项的展开顺序。宏包选项的定义如果不使用ExecuteBibliographyOptions命令或者不在加载时设置，那么定义的代码是不执行的。因此如果其他代码中需要使用该宏包选项定义代码中的信息比如切换标记是无法正确获取的。而当使用ExecuteBibliographyOptions命令或者加载选项时，那么宏包选项代码会立即展开，其中需要使用的宏则需要有定义，即先于或与宏包选项定义处于同一展开层。
+
+\paragraph{作者缺省处理} 利用选项gbnoauthor控制
+
+\begin{texlist}
+    %增加一个处理佚名或noauthor的控制选项
+    \DeclareBibliographyOption{gbnoauthor}[true]{%
+      \ifstrequal{##1}{false}{}{\dealnoathor}}
+    %\ExecuteBibliographyOptions{gbnoauthor=true}
+\end{texlist}
+
+这一选项的机制是，默认情况下不执行选项，这时按照bbx中给出的默认方式进行处理。当加载biblatex时，给出选项，如果是false，则不做任何处理。如果是true，则调用dealnoathor 命令，执行内部的代码，以产生‘佚名’等信息来补充缺失的作者。
+
+\paragraph{文献表标签对齐} 利用选项gbalign控制
+
+\begin{texlist}
+    %
+    %   增加标签对齐选项
+    %
+    %   right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
+    \DeclareBibliographyOption[string]{gbalign}[right]{%
+        \ifstrequal{##1}{left}{\setalignleft}{}
+        \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
+    }
+\end{texlist}
+
+这一选项的机制是，默认情况下不执行选项，这是按照bbx中给出的默认方式即右对齐处理标签。当加载biblatex时，给出选项，如果是left，则调用setalignleft 命令，利用其中的代码产生左对齐效果。如果是gb7714-2015，则调用setaligngbstyle 命令，执行内部的代码，以实现类似word中的项对齐效果。
+
+\paragraph{作者域格式} 利用选项gbnamefmt控制
+
+\begin{texlist}
+    %
+    %   增加姓名大小写格式处理选项
+    %
+    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
+        %\ifstrequal{##1}{gbuppercase}{}{}%
+        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
+        \ifstrequal{##1}{none}{\execnamedefault}{}
+        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
+        \ifstrequal{##1}{apa}{\execnameapa}{}
+    }
+    %\ExecuteBibliographyOptions{gbnamefmt}
+\end{texlist}
+
+这一选项的机制是，首先在bbx中定义了姓名域格式比如name:given-family等宏，然后根据输入的选项执行execgblowercase等命令，其中有重定义的姓名域格式。当宏包加载时给出选项设置，那么就会完成姓名域格式重定义。
+
+\paragraph{标题等的域格式} 利用选项gbfieldstd控制
+
+\begin{texlist}
+    %
+    %   增加一个恢复域格式为标准样式的控制选项
+    %   v1.0k, 2018.05.15, by hzz
+    %
+    %   原理方法:
+    %   默认设置该选项为false，采用国标要求的域格式输出相关域
+    %   当设置该选项为true时，则重新利用标准样式的域格式输出相关的域
+    \newtoggle{bbx:gbfieldstd}
+    \DeclareBibliographyOption{gbfieldstd}[false]{%
+      \settoggle{bbx:gbfieldstd}{#1}%
+      \ifstrequal{#1}{false}{}{\execgbfdfmtstd}%
+      }
+    \ExecuteBibliographyOptions{gbfieldstd}
+\end{texlist}
+这一选项里面有两个机制，默认情况下执行选项为false，此时设置toggle：bbx:gbfieldstd为false，不执行其它命令，此时采用bbx文件中默认定义的域格式输出，同时在某些宏中根据bbx:gbfieldstd标记为false输出相应的代码。当设置选项为true时，执行execgbfdfmtstd命令中的代码重定义对应的域格式，并在某些宏中输出对应toggle为true的代码。
+
+\paragraph{出版项缺省的格式} 利用选项gbpub控制。
+
+\begin{texlist}
+    %
+    %   增加一个出版项自动处理控制选项，当true时使用出版者不详等信息补充缺失的出版信息。
+    %
+    \newtoggle{bbx:gbpub}
+    \DeclareBibliographyOption{gbpub}[true]{%
+        %\settoggle{bbx:gbpub}{#1} %或采用下面这一句
+        \ifstrequal{#1}{false}{\togglefalse{bbx:gbpub}}{\toggletrue{bbx:gbpub}}}
     \ExecuteBibliographyOptions{gbpub}
+\end{texlist}
+这个选项的机制是默认执行选项为true，进而设置bbx:gbpub这一toggle为true。bbx中的处理出版项的宏根据该toggle输出相应的代码。
 
-    \end{texlist}
+\paragraph{标点格式} 特别是析出源之前的\texttt{//}利用选项gbpunctin控制。
 
-  \end{enumerate}
+\begin{texlist}
+    %
+    %   增加控制析出文献来源前的标点符号//输出的选项
+    %   v1.0k, 2018.04.20,added in  by hzz
+    \newtoggle{bbx:gbpunctin}
+    \DeclareBibliographyOption{gbpunctin}[true]{%
+        \settoggle{bbx:gbpunctin}{#1}}
+    \ExecuteBibliographyOptions{gbpunctin}
+\end{texlist}
+这个选项的机制是默认执行选项为true，进而设置bbx:gbpunctin这一toggle为true。bbx中的处理出版项的宏根据该toggle输出相应的代码。
 
 
+\paragraph{文献类型和载体标识} 利用选项gbtype控制。
+
+\begin{texlist}
+    %
+    %   增加一个控制是否输出文献类型和载体标识的选项
+    %
+    %   原理方法:
+    %   对于biblatex3.4以上版本DeclareBibliographyOption命令中的[datatype]如果是boolean，那么是可以省略的
+    %   所以用老版本的不用[datatype]的命令可以兼容所有biblatex版本
+    \newtoggle{bbx:gbtype}
+    %\DeclareBibliographyOption[boolean]{gbtype}[true]{%biblatex高版本
+    \DeclareBibliographyOption{gbtype}[true]{%biblatex低版本
+      \settoggle{bbx:gbtype}{#1}}
+    \ExecuteBibliographyOptions{gbtype}
+\end{texlist}
+
+这个选项的机制是默认执行选项为true，进而设置bbx:gbtype这一toggle为true。bbx中的处理出版项的宏根据该toggle输出相应的代码。
+
+\paragraph{域输出的限制} 利用选项gbstrict控制。
+
+\begin{texlist}
+    %
+    %   增加一个严格按GB/T 7714-2015给出著录格式控制域的输出的选项
+    %   v1.0k, 2018.05.08, by hzz
+    %
+    %   原理方法:
+    %   默认设置该选项为真，进而不输出GB/T 7714-2015中没有的域的信息
+    %   这样可以避免因为bib文件带有多余的域的信息的输出，比如因为bibtex样式
+    %   可能需要用于中英文判断的language域的信息。
+    \newtoggle{bbx:gbstrict}
+    \DeclareBibliographyOption{gbstrict}[true]{%
+      \settoggle{bbx:gbstrict}{#1}}
+    \ExecuteBibliographyOptions{gbstrict}
+\end{texlist}
+
+这个选项的机制是默认执行选项为true，进而设置bbx:gbstrict这一toggle为true，bbx中处理各条目类型的驱动根据toggle限制一些域的输出。当设置为false后，则取消相应的限制。
 
 
 \subsubsection{著录格式控制}
 
+著录格式不仅包括整个文献表的格式，还包括表中每一个条目的具体格式。下面分别介绍：
+
 \paragraph{文献表环境和打印输出}
-  biblatex宏包的参考文献表的打印
+  biblatex宏包的参考文献表的打印与文献表环境相关，或者说文献表环境直接决定了整个文献表的格式，下面来分析biblatex中关于文献表环境的代码：
+
   \begin{enumerate}
   \item 根据biblatex.sty文件中的\verb|\blx@bibliography|命令可以知道，定义的参考文献表的环境的开始代码在命令中\verb|\blx@bibliography| 中，结束代码在\verb|\blx@endbibliography|中，循环项代码在\verb|\blx@bibitem| 中的\verb|blx@item@\blx@theenv}|命令中。参考文献循环打印依靠\verb|\blx@listloop| 命令实现。
   \item 从\verb|\blx@listloop|可以知道，各条参考文献表的指引信息是混合在一起的并且以|字符为分隔。将混合的参考文献指引信息解析成单独的指引信息，并交给\verb|\blx@bibitem|命令处理。
@@ -3116,27 +3199,27 @@ biblatex的宏包选项增加方法：
 
 \zhongdian{【注意】：texlive2015中的biblatex版本是3.0，texlive2016中biblatex的版本是3.4，新版本对于名字域打印有了较大变化(即不同版本的biblatex对于DeclareNameFormat的输入参数处理有所不同，如例\ref{eg:name:variables}所示)，所以需做相应的修改，为此在biblatex中首先进行版本判断，然后根据版本不同分别进行设置。}
 
-    \begin{codetex}{texlive2016中biblatex3.4版Name域格式输入参数的修改}{eg:name:variables}
-    for biblatex version 3.0
-    #1 The last names.
-    #2 The last names, given as initials.
-    #3 The first names.
-    #4 The first names, given as initials.
-    #5 The name prefixes,
-    #6 The name prefixes, given as initials.
-    #7 The name affixes,
-    #8 The name affixes, given as initials.
-    for biblatex version 3.4
-    \namepartfamily
-    \namepartfamilyi
-    \namepartgiven
-    \namepartgiveni
-    \namepartprefix
-    \namepartprefixi
-    \namepartsuffix
-    \namepartsuffixi
-    \end{codetex}
-    样式文件中的处理见\ref{sec:name:fmt:out}节。
+\begin{codetex}{texlive2016中biblatex3.4版Name域格式输入参数的修改}{eg:name:variables}
+for biblatex version 3.0
+#1 The last names.
+#2 The last names, given as initials.
+#3 The first names.
+#4 The first names, given as initials.
+#5 The name prefixes,
+#6 The name prefixes, given as initials.
+#7 The name affixes,
+#8 The name affixes, given as initials.
+for biblatex version 3.4
+\namepartfamily
+\namepartfamilyi
+\namepartgiven
+\namepartgiveni
+\namepartprefix
+\namepartprefixi
+\namepartsuffix
+\namepartsuffixi
+\end{codetex}
+处理处理见样式文件。
 
 作者信息的输出最高一层是在驱动中:
 \begin{texlist}
@@ -3174,75 +3257,75 @@ printnames这种命令的输出格式通常由相应输出域的域格式控制�
 {namepartfamily}，{namepartgiven}，{namepartprefix}，{namepartsuffix}（不使用缩写）。
 
 \begin{texlist}
-    %biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
-    \renewbibmacro*{name:given-family}[4]{%利用family-given定义given-family
-      \ifuseprefix
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifdefvoid{##3}{}{%
-           \ifcapital
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifprefchar{}{\bibnamedelimc}}%
-         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot
-         \ifdefvoid{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{\MakeUppercase{##2}}\isdot}%\MakeCapital
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot
-         %
-         \ifboolexpe{%
-           test {\ifdefvoid{##2}}
-           and
-           test {\ifdefvoid{##3}}}
-           {}
-           {\revsdnamepunct}%
-         \ifdefvoid{##2}{}{\bibnamedelimd\mkbibnamegiven{\MakeUppercase{##2}}\isdot}%\MakeCapital
-         \ifdefvoid{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}
-     }
-     \renewbibmacro*{name:family-given}[4]{%
-     \usebibmacro{name:given-family}{##1}{##2}{##3}{##4}}
+%biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
+\renewbibmacro*{name:given-family}[4]{%利用family-given定义given-family
+  \ifuseprefix
+    {\usebibmacro{name:delim}{##3##1}%
+     \usebibmacro{name:hook}{##3##1}%
+     \ifdefvoid{##3}{}{%
+       \ifcapital
+         {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
+         {\mkbibnameprefix{##3}\isdot}%
+       \ifprefchar{}{\bibnamedelimc}}%
+     \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot
+     \ifdefvoid{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{\MakeUppercase{##2}}\isdot}%\MakeCapital
+     \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}
+    {\usebibmacro{name:delim}{##1}%
+     \usebibmacro{name:hook}{##1}%
+     \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot
+     %
+     \ifboolexpe{%
+       test {\ifdefvoid{##2}}
+       and
+       test {\ifdefvoid{##3}}}
+       {}
+       {\revsdnamepunct}%
+     \ifdefvoid{##2}{}{\bibnamedelimd\mkbibnamegiven{\MakeUppercase{##2}}\isdot}%\MakeCapital
+     \ifdefvoid{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}
+     \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}
+ }
+ \renewbibmacro*{name:family-given}[4]{%
+ \usebibmacro{name:given-family}{##1}{##2}{##3}{##4}}
 
-        %biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
-    \renewbibmacro*{name:last-first}[4]{%
-      \ifuseprefix
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifblank{##3}{}{%
-           \ifcapital
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifpunctmark{'}{}{\bibnamedelimc}}%
-         %\mkbibnamelast{#1}\isdot
-         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot%\MakeUppercase %\mkbibnamelast{\MakeUppercase{#1}} %\MakeSentenceCase
-         %注意上一句\MakeCapital后面如果再跟一个{}包含#1，则没有效果，可能是包在里面少了一层展开
-         %因为机构名通常包括在{}内，所以要多展开一次才行，所以这里去掉#1 外面的{}
-         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
-         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
-         \ifblank{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamefirst{\MakeUppercase{##2}}\isdot}%
-         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}}
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         %\mkbibnamelast{#1}\isdot  %3.9.1 Generic Commands and Hooks，对姓重新处理，如下句: %\mkbibnamelast{\MakeUppercase{#1}}
-         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot  %大写，参考4.6.4 Miscellaneous Commands，\MakeUppercase %\MakeSentenceCase
-         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
-         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
-         \ifblank{##2##3}{}{\revsdnamepunct}%
-         \ifblank{##2}{}{\bibnamedelimd\mkbibnamefirst{\MakeUppercase{##2}}\isdot}%
-         \ifblank{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}%
-         \addcomma\addspace%
-         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}%
-         }
+%biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
+\renewbibmacro*{name:last-first}[4]{%
+  \ifuseprefix
+    {\usebibmacro{name:delim}{##3##1}%
+     \usebibmacro{name:hook}{##3##1}%
+     \ifblank{##3}{}{%
+       \ifcapital
+         {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
+         {\mkbibnameprefix{##3}\isdot}%
+       \ifpunctmark{'}{}{\bibnamedelimc}}%
+     %\mkbibnamelast{#1}\isdot
+     \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot%\MakeUppercase %\mkbibnamelast{\MakeUppercase{#1}} %\MakeSentenceCase
+     %注意上一句\MakeCapital后面如果再跟一个{}包含#1，则没有效果，可能是包在里面少了一层展开
+     %因为机构名通常包括在{}内，所以要多展开一次才行，所以这里去掉#1 外面的{}
+     %\mkbibnamelast{\MakeUppercase{#1}}\isdot
+     %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
+     \ifblank{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamefirst{\MakeUppercase{##2}}\isdot}%
+     \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}}
+    {\usebibmacro{name:delim}{##1}%
+     \usebibmacro{name:hook}{##1}%
+     %\mkbibnamelast{#1}\isdot  %3.9.1 Generic Commands and Hooks，对姓重新处理，如下句: %\mkbibnamelast{\MakeUppercase{#1}}
+     \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot  %大写，参考4.6.4 Miscellaneous Commands，\MakeUppercase %\MakeSentenceCase
+     %\mkbibnamelast{\MakeUppercase{#1}}\isdot
+     %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
+     \ifblank{##2##3}{}{\revsdnamepunct}%
+     \ifblank{##2}{}{\bibnamedelimd\mkbibnamefirst{\MakeUppercase{##2}}\isdot}%
+     \ifblank{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}%
+     \addcomma\addspace%
+     \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}%
      }
+ }
 
-     \renewbibmacro*{name:first-last}[4]{%
-     \usebibmacro{name:last-first}{##1}{##2}{##3}{##4}}
+ \renewbibmacro*{name:first-last}[4]{%
+ \usebibmacro{name:last-first}{##1}{##2}{##3}{##4}}
 \end{texlist}
 
 
 \paragraph{日期格式控制}\label{sec:date:fmt}
-随着biblatex的更新，日期格式控制更趋完善。加上biblatex3.8a中biber解析出日期中月份和天数都不带引导的0，比如6月直接解析为6，而不像以前那样解析为06，所以需要特别的注意。因此对于新版本，有些日期比如online的发布日期，访问日期等，采用专门的格式edtf控制，而老版本则仍然使用原来定义的输出宏。比如:
+随着biblatex的更新，日期格式控制更趋完善。加上biblatex3.8a中biber解析出日期中月份和天数都不带引导的0，比如6月直接解析为6，而不像以前那样解析为06，所以需要特别的注意。因此对于新版本，有些日期比如online的发布日期，访问日期等，采用专门的格式选项如edtf（v3.10后弃用）、iso等进行控制，而老版本则仍然使用原来定义的输出宏。比如:
 
 \begin{texlist}
 \defversion{3.7}{date}{
@@ -3312,13 +3395,13 @@ printnames这种命令的输出格式通常由相应输出域的域格式控制�
 
 其中有两点需要注意:
 
-1. printdateextra，printlabeldateextra，这样的命令在biblatex.sty中是找不到的，因为biblatex实际定义的如下的命令:
+1. printdateextra，printlabeldateextra，这样的命令在biblatex.sty中是找不到的定义，因为biblatex实际有定义的命令是这样的:
 \begin{texlist}
 {\protected\def\blx@imc@printlabeldate{\csuse{mkdaterange#1}{label}}
         \protected\def\blx@imc@printlabeldateextra{\csuse{mkdaterange#1extra}{label}}}
 \end{texlist}
 
-然后由如下命令，解析为printdateextra，printlabeldateextra:
+printdateextra，printlabeldateextra等命令是由如下命令解析为上述命令:
 \begin{texlist}
 \blx@regimcs{\printlabeldate \printlabeltime \printlabeldateextra \stripzeros \forcezerosy \forcezerosmdt \mkyearzeros \mkmonthzeros \mkdayzeros \mktimezeros}
 \end{texlist}
@@ -3672,31 +3755,10 @@ biber动态数据处理，详见biblatex说明文档Dynamic Modification of Data
      \usebibmacro{endrelated}}}
 \end{texlist}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \subsubsection{标注样式的设计途径}
-  针对GB/T 7714-2015标注，设定相应的选项，其中考虑不同biblatex版本带来的变化。同时也修改或增加用于实现标准要求的标注命令。
+针对GB/T 7714-2015标注，设定相应的选项，其中考虑不同biblatex版本带来的变化。同时也修改或增加用于实现标准要求的标注命令。
 
-  标注命令定义使用DeclareCiteCommand命令，设置上标，包围符号，标注前后内容等。针对GB/T7714-2015中关于引用标注的特殊要求，增加了一些方便实现要求的命令比如pagescite、yearpagescite等。具体的实现见gb*.cbx文件。
+标注命令定义使用DeclareCiteCommand命令，设置上标，包围符号，标注前后内容等。针对GB/T7714-2015中关于引用标注的特殊要求，增加了一些方便实现要求的命令比如pagescite、yearpagescite等。具体的实现见gb*.cbx文件。
 
 \paragraph{标签中的标点和间隔符号}
 文献表中的标签和正文中的标注标签都有标点和间隔符号问题，但两者可能存在一定的差异，不同版本的biblatex中也可能不同，但新的版本中通常是可以用一个相同的钩子来实现的，比如作者年制中作者和年份之间的标点:
@@ -3733,9 +3795,6 @@ biber动态数据处理，详见biblatex说明文档Dynamic Modification of Data
 \def\blx@opt@uniquelist@minyear{2}
 \end{texlist}
 无论选项是否给出，上面定义选项中的代码都会自动执行，当选项不给出，则自动调用默认的参数(因为代码中直接使用了输入参数，当没有输入参数，自然就会使用默认参数)来进行处理，显然这里是true。
-
-
-
 
 
 \subsection{一个项目示例}
