@@ -2757,6 +2757,136 @@ biblatex的版本判断最初使用一个简单的字符流处理来解析
 \AtBeginDocument{code}
 \end{texlist}
 
+\paragraph{版本兼容的两个途径}
+
+从实践看，实现不同biblatex版本的兼容有两个比较合适的途径。
+
+一是 不同版本不同的实现。这是前述选项设置不同版本处理的方法，不同的版本的选项不一样，所以针对具体版本设置相应的选项。其他的宏和命令，也可以类似，在不同的版本下，同一个命令有不同的定义，不同版本使用不同的代码。
+
+二是 使用最新的实现代码。这与第一种方法不同，即不同的版本使用相同的定义，使用一个代码，比如最新的代码。但这时可能会出现问题，因为随着biblatex的更新，最新的代码中可能会使用一些biblatex中新增的定义或功能，而老版本的biblatex不具备，其解决方案是判断当前的版本，如果是biblatex新增的功能不存在就把它从biblatex新版中拷贝进样式文件中来补全功能。
+
+两种途径，一般第一种途径使用较多。第二种也有，但较少。目前应用的主要是在修改textcite命令的标点时候用，由于要在文献表中和标注标签中实现作者域不同的标点，因此需要不同的文境下面使用不同的定义，这在较新的版本中通过 DeclareDelimFormat 定义不同文境下的标点是很容易实现的。因此考虑使用这种方式，但由于texlive2015中的biblatex 3.0不具备该功能，因此对其做补充。
+
+比如 name:andothers 宏中使用的\verb|\printdelim{andothersdelim}|，在不同的文境下需要不同的定义，标注中需要是空格，而文献表中需要是逗号。
+\begin{texlist}
+\DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
+\DeclareDelimFormat[textcite]{andothersdelim}{\addspace}
+%
+%   修改作者数量超过限定值，做省略时的处理格式
+%
+%   原理方法:判断作者或译者是否中文，若中文用字符等，否则用etcl。
+\renewbibmacro*{name:andothers}{%
+  \ifboolexpr{%
+    test {\ifnumequal{\value{listcount}}{\value{liststop}}}
+    and
+    test \ifmorenames
+  }%
+    {%这里做一个判断是在处理author还是translator用于两者是不同语言的情况
+    \ifcurrentname{translator}{\testCJKfirst{usere}}{\testCJKfirst{userf}}%
+    %这句判断如果放到\andothersdelim后面会在等或etc.前增加一个空格，所以放前面
+    \ifnumgreater{\value{liststop}}{1}%
+       {\finalandcomma}%
+       {}%biblatex作者要区别单作者加等的情况，这里为符合gbt7714-2015第7.2节的要求加上了逗号。
+\printdelim{andothersdelim}\iftoggle{ifCJKforgbt}{\bibstring{andotherscn}}{\bibstring{andothers}}%
+%\andothersdelim\bibstring{andotherscn}
+}%
+{}}
+\end{texlist}
+
+但biblatex3.0没有相应功能，为简便起见，直接将 DelimFormat 相关的功能补充进来。当然这仍然可以采用前述的第一种方法来解决，针对biblatex3.0做针对性的实现，即不考虑不同文境下的标点输出，而直接在标注命令中根据版本进行标点的局部重定义。两中途径主要根据方便与否进行选择，这里的问题选择第二种途径，因此补充 DelimFormat 相关功能：
+\begin{texlist}
+    \iftoggle{iftlfive}{
+
+    \def\blx@inf@delimdeclare#1#2{%
+    \blx@info{Delimiter '#1' in context '#2' already defined, overwriting}}
+
+    \def\blx@warn@delimuse#1#2{%
+    \blx@warning{Delimiter '#1' in context '#2' undefined}}
+    % Delimiter interface
+
+    % [<contextname, ...>]{<name, ...>}{<code>}
+    \newrobustcmd*{\DeclareDelimFormat}{%
+      \@ifstar
+        {\blx@declaredelimclear}
+        {\blx@declaredelim}}
+
+    \newrobustcmd*{\blx@declaredelimclear}[3][]{%
+      \ifcsvoid{blx@declaredelimcontexts@#2}
+        {}
+        {\def\do##1{\csundef{blx@printdelim@##1@#2}}%
+         \dolistcsloop{blx@declaredelimcontexts@#2}}%
+      \cslet{blx@declaredelimcontexts@#2}\@empty
+      \ifblank{#1}
+        {\blx@declaredelim{#2}{#3}}
+        {\blx@declaredelim[#1]{#2}{#3}}}
+
+    \newrobustcmd*{\blx@declaredelim}[3][]{%
+      \ifblank{#1}
+        {\blx@declaredelim@i{}{}{#2}{#3}}
+        {\def\do##1{%
+           \listcsadd{blx@declaredelimcontexts@#2}{##1}%
+           \blx@declaredelim@i{blx@printdelim@##1@}{##1}{#2}{#3}}%
+         \docsvlist{#1}}}%
+
+    \def\blx@declaredelim@i#1#2#3#4{%
+      \def\do@i##1{%
+        \ifcsdef{#1##1}
+          {\blx@inf@delimdeclare{##1}{#2}}
+          {}%
+        \csdef{#1##1}{#4}}%
+      \forcsvlist{\do@i}{#3}}
+
+    % *[<contextname, ...>]{<alias>}{<delim>}
+    \newrobustcmd*{\DeclareDelimAlias}{%
+      \@ifstar
+        {\blx@declaredelimalias}
+        {\blx@declaredelimaliasauto}}
+
+    \newrobustcmd*{\blx@declaredelimalias}[3][]{%
+      \ifblank{#1}
+        {\blx@declaredelimalias@i{}{#2}{#3}}
+        {\def\do##1{%
+           \blx@declaredelimalias@i{blx@printdelim@##1@}{#2}{#3}}%
+         \docsvlist{#1}}}
+
+    \newrobustcmd*{\blx@declaredelimaliasauto}[2]{%
+      \blx@declaredelimalias@i{}{#1}{#2}%
+      \ifcsvoid{blx@declaredelimcontexts@#2}
+        {}
+        {\def\do##1{%
+           \blx@declaredelimalias@i{blx@printdelim@##1@}{#1}{#2}}%
+         \dolistcsloop{blx@declaredelimcontexts@#2}}}
+
+    \def\blx@declaredelimalias@i#1#2#3{%
+      \ifcsdef{#1#2}
+        {\blx@inf@delimdeclare{#2}{#1}}
+        {}%
+      \csdef{#1#2}{\csuse{#1#3}}}
+
+    \def\blx@delimcontext{none}
+    \newcommand*{\printdelim}[2][]{%
+      \ifblank{#1}
+        {\ifcsdef{blx@printdelim@\blx@delimcontext @#2}
+          {\csuse{blx@printdelim@\blx@delimcontext @#2}}
+          {\ifcsdef{#2}% fall back on legacy macros
+            {\csuse{#2}}
+            {\blx@warn@delimuse{#2}{*}}}}
+        {\ifcsdef{blx@printdelim@#1@#2}
+          {\csuse{blx@printdelim@#1@#2}}
+          {\blx@warn@delimuse{#2}{#1}}}}
+
+    \newcommand*{\delimcontext}[1]{%
+      \edef\blx@delimcontext{\blx@delimcontextalias{#1}}}
+
+    \def\blx@delimcontextalias#1{%
+      \ifcsdef{blx@delimcontextalias@#1}
+        {\csuse{blx@delimcontextalias@#1}}
+        {#1}}
+
+    \newcommand*{\DeclareDelimcontextAlias}[2]{%
+      \csgdef{blx@delimcontextalias@#1}{#2}}
+    }{}
+\end{texlist}
 
 \paragraph{GBK编码文件的兼容性}
 
