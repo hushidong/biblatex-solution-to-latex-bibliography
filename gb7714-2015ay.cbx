@@ -3,16 +3,11 @@
 %% biblatex-gb7714-2015 --- A biblatex implementation of the
 %% GBT7714-2015 citation style,author year sequence
 %% Maintained by huzhenzhen
-%% history:
-%% 2016/05/20 v1.0  2016/10/23 v1.0a 2016/11/11 v1.0b
-%% 2016/11/14 v1.0c 2016/11/24 v1.0d 2016/12/07 v1.0e
-%% 2017/02/26 v1.0g 2017/04/11 v1.0h 2017/11/21 v1.0i
-%% 2018/01/20 v1.0j 2018/04/03 v1.0k
 %% E-mail: hzzmail@163.com
 %% Released under the LaTeX Project Public License v1.3c or later
 %% ---------------------------------------------------------------
 %%
-\ProvidesFile{gb7714-2015ay.cbx}[2018/04/03 v1.0k biblatex citation style]
+\ProvidesFile{gb7714-2015ay.cbx}[2018/06/01 v1.0l biblatex citation style]
 
 %
 %   加载标准样式
@@ -61,6 +56,20 @@ test {\iftoggle{iftlfive}}%biblatex<=3.2
 or
 test {\iftoggle{iftlsix}}%3.3<=biblatex<=3.6
 }{\switchversion{3.4}{cbxopt}}{\switchversion{3.7}{cbxopt}}%else: biblatex>=3.7
+
+
+\ifboolexpr{%兼容cite:labelyear+extrayear
+test {\iftoggle{iftlfive}}%biblatex<=3.2
+or
+test {\iftoggle{iftlsix}}%3.3<=biblatex<=3.6
+or
+test {\iftoggle{iftlseven}}%3.7=biblatex
+}{\newbibmacro{cite:labeldate+extradate}{\usebibmacro{cite:labelyear+extrayear}}}{}%else: biblatex>3.7
+
+%textcite标注命令中的标点设置
+\DeclareDelimFormat[textcite]{nameyeardelim}{}%\addcomma\space
+\DeclareDelimFormat[textcite]{andothersdelim}{\addspace}%
+
 
 
 %
@@ -122,7 +131,7 @@ test {\iftoggle{iftlsix}}%3.3<=biblatex<=3.6
 %   参考biblatex.DEF中的\DeclareCiteCommand*{\citeyear}命令
 \DeclareCiteCommand{\yearpagescite}
   {\printtext{(}\usebibmacro{prenote}}
-  {\printfield{year}\printfield{extrayear}}
+  {\usebibmacro{cite:labeldate+extradate}}%\printfield{year}\printfield{extrayear}
   {\multicitedelim}
   {\printtext{)}\textsuperscript{\usebibmacro{postpages}}}
 
@@ -132,7 +141,7 @@ test {\iftoggle{iftlsix}}%3.3<=biblatex<=3.6
 %   原理:增加一个命令yearcite
 \DeclareCiteCommand{\yearcite}%仅输出年份，不要页码
   {\printtext{(}\usebibmacro{prenote}}
-  {\printfield{year}\printfield{extrayear}}
+  {\usebibmacro{cite:labeldate+extradate}}%\printfield{year}\printfield{extrayear}
   {\multicitedelim}
   {\printtext{)}}
 
