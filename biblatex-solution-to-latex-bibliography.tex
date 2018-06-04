@@ -832,34 +832,17 @@ type，nottype分别表示打印是和不是某种条目类型的文献，keywor
 
 \subsubsection{筛选打印示例}
 
-例\ref{eg:bib:filter}给出了这些选项的测试，分别利用type和keyword区分了图书等文献，定义了collections和standard两个筛选器用于打印论文集会议录和标准文献，定义了名为reportandthesis的category用于打印学位论文和报告。结果如图\ref{fig:eg:bibfilter}所示。
+例\ref{eg:bib:filter}给出了这些选项的测试，分别利用type和keyword区分了图书等文献，定义了collections和standard两个筛选器用于打印论文集会议录和标准文献，定义了名为reportandthesis的category用于打印学位论文和报告。
+结果如图\ref{fig:eg:bibfilter}所示。
+测试文档见：\href{run:exampleandimage/egbibfilter.tex}{egbibfilter.tex}
 
 \begin{codetex}{分类筛选打印参考文献表}{eg:bib:filter}
 %file:egbibfilter
-\documentclass{article}
-\usepackage{ctex,hyperref}
-\usepackage{geometry}
-\geometry{paperwidth=21cm,paperheight=26cm,%
-left=1cm,right=1cm,top=1cm,bottom=1.5cm}
-\usepackage[backend=biber,style=gb7714-2015]{biblatex}
-\addbibresource{example.bib}
-\renewcommand{\bibfont}{\zihao{6}}
-\usepackage{titlesec}
-%\titleformat{command}[shape]{format}{label}{sep}{before}[after]
-\titleformat{\section}{\centering\bfseries}{第\thesection 节}{1em}{}[]
-\titlespacing*{\section}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
-\titleformat{\subsection}{\flushleft\bfseries}{\S\,\thesubsection}{1em}{}[]
-\titlespacing*{\subsection}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
 \DeclareBibliographyCategory{reportandthesis}
 \addtocategory{reportandthesis}{汤万金2013-09-30--,Calkin2011-8-9,吴云芳2003--,CALMS1965--}
-\begin{document}
-文献\cite{张伯伟2002--}\cite{CRAWFPRD1995--}\cite{陈志勇2011--}\cite{Babu2014--}\cite{汤万金2013-09-30--}
-\cite{Calkin2011-8-9}\cite{吴云芳2003--}\cite{CALMS1965--}\cite{张凯军2012-04-05--}\cite{KOSEKI2002--}
-\cite{全国广播电视标准化技术委员会2007-1-1}\cite{国家环境保护局科技标准司1996-2-3}
-\cite{楼梦麟2011-11-12}\cite{BUSECK1980-117-211}\cite{陈建军2010-93-93}
-\cite{DESMARAIS1992-605-609}\cite{张田勤2000--}\cite{萧钰2001--}
 
 \printbibliography[type=book,notkeyword=standard,title=【普通图书】]
+
 \defbibfilter{collections}{%
 type=collection
 or type=proceedings
@@ -867,6 +850,7 @@ or type=incollection
 or type=inproceedings
 }
 \printbibliography[filter=collections,title=【论文集、会议录】]
+
 \defbibfilter{standard}{%
 ( type=book or type=inbook )
 and keyword=standard
@@ -883,8 +867,59 @@ and keyword=standard
 \begin{figure}[!htb]
   \centering
   \fbox{\includegraphics[width=0.8\textwidth,page=1]{egbibfilter.pdf}}
-  \caption{脚注和旁注中参考文献表}\label{fig:eg:bibfilter}
+  \caption{文献表筛选打印}\label{fig:eg:bibfilter}
 \end{figure}
+
+例\ref{eg:bib:cgck}所示的category和check筛选，见测试文件：
+\href{run:exampleandimage/testfilterCategory.tex}{testfilterCategory.tex}，
+\href{run:exampleandimage/testfilterCheck.tex}{testfilterCheck.tex}。
+
+\begin{codetex}{category和check筛选}{eg:bib:cgck}
+%category
+\DeclareBibliographyCategory{kindsofnameformats}
+\addtocategory{kindsofnameformats}{zhang2009china,xu2012role,wang2006another,
+calvo2006phoenix,bernanke1989agency,adam2011house,fazzari1993working}
+
+\printbibliography[category=kindsofnameformats,title=五种不同的姓名格式]
+\printbibliography[notcategory=kindsofnameformats,title=某种期刊的姓名格式]
+
+%check
+\defbibcheck{uppercase}{%
+\iffieldundef{nameformat}{}{\skipentry}}
+
+\defbibcheck{lowercase}{%
+\iffieldequalstr{nameformat}{lowercase}{}{\skipentry}}
+
+\defbibcheck{givenahead}{%
+\iffieldequalstr{nameformat}{givenahead}{}{\skipentry}}
+
+\defbibcheck{familyahead}{%
+\iffieldequalstr{nameformat}{familyahead}{}{\skipentry}}
+
+\defbibcheck{pinyin}{%
+\iffieldequalstr{nameformat}{pinyin}{}{\skipentry}}
+
+\printbibliography[check=uppercase,title=国标风格-全大写]
+\printbibliography[check=lowercase,title=国标风格-大小写不变]
+\printbibliography[check=pinyin,title=中文常见风格-拼音]
+\printbibliography[check=givenahead,title=biblatex标准风格-名在前]
+\printbibliography[check=familyahead,title=biblatex标准风格-姓在前]
+\end{codetex}
+
+\subsubsection{多个筛选文献表的顺序编码标签}
+
+biblatex与标准的 LaTeX 不同，默认情况下，biblatex宏包生成的顺序编码标签在文档正文开始处就分配给文献表的全体文献。因此当有多个筛选文献表时可能会出现文献表中的顺序编码不连续的情况，这可以利用宏包的defernumbers选项解决。
+
+但如果defernumbers选项被激活，各文献的顺序编码标签会在任意文献表中被打印时才会做第一次分配。
+
+该选项需要在后端将数据导出到 bbl文件后再运行两次 LaTeX （除由分页变化等要求的编译外）。需注意的一个要点是，如果你在文档中改变了该选项值（或者那些依赖于本选项的选项值，例如与 printbibliography 宏相关的选项，，那么很可能需要删除当前的辅助文件然后重新运行 \LaTeX 来获得正确的顺序编码。需要记住 defernumbers 选项只与顺序编码标签有关，而与文献表中文献的排序无关。主要用于解决做文献筛选后顺序编码不连续的问题。如例\ref{eg:print:defernumber}所示：
+
+\begin{codetex}{多个筛选文献表的顺序编码}{eg:print:defernumber}
+略，详见testdefernumber.tex文档
+\end{codetex}
+
+文档为：
+\href{run:exampleandimage/testdefernumber.tex}{testdefernumber.tex}
 
 
 \subsubsection{文献缩略信息打印}
