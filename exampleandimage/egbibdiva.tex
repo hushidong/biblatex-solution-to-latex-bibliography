@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage{ctex,hyperref}
+\usepackage{geometry}
+\geometry{paperwidth=21cm,paperheight=26cm,%
+left=1cm,right=1cm,top=1cm,bottom=1.5cm}
+\usepackage[backend=biber,style=numeric,sorting=none,defernumbers=true]{biblatex}%gb7714-2015,defernumbers=true
+\addbibresource{example.bib}
+\renewcommand{\bibfont}{\zihao{6}}
+\usepackage{titlesec}
+%\titleformat{command}[shape]{format}{label}{sep}{before}[after]
+\titleformat{\section}{\centering\bfseries}{第\thesection 节}{1em}{}[]
+\titlespacing*{\section}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\titleformat{\subsection}{\flushleft\bfseries}{\S\,\thesubsection}{1em}{}[]
+\titlespacing*{\subsection}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
+\begin{document}
+
+\small 	参考文献测试\cite{Gradshteyn2000--}。
+
+	\begin{refsegment}
+		\section{refSegment A}
+		分章节参考文献测试\cite{Chiani2003-840-845}
+        %\printbibliography[heading=subbibliography,title=文献A] %不制定segment则遍历所有的segment
+		\printbibliography[segment=1,heading=subbibliography,title=文献A]
+	\end{refsegment}
+	
+	\begin{refsegment}
+		\section{refSegment B}
+		参考文献测试\cite{张敏莉2007-500-503}
+	\end{refsegment}
+	%\printbibliography放在refsegment环境外也是可以的
+	\printbibliography[segment=2,heading=subbibliography,title=文献B]
+	
+	\begin{refsegment}
+		\section{refsegment C}
+		分章节参考文献测试\cite{Simon2004--}。
+	\end{refsegment}
+
+	\begin{refsegment}
+		\section{refsegment D}
+		分章节参考文献测试\cite{Lin2004--}。
+	\end{refsegment}
+
+	%遍历非refsection内的参考文献
+%	\printbibliography[heading=bibliography,title=文献全局]
+    
+%    \begin{refcontext}
+%    \printbibliography[heading=bibliography,title=文献全局,resetnumbers=true]
+%    \end{refcontext}
+
+%    \printbibliography[heading=bibliography,title=文献全局,sorting=none]
+
+    \begin{refcontext}[sorting=none]
+    \printbibliography[heading=bibliography,title=文献全局,resetnumbers=1]
+    \end{refcontext}
+
+
+\end{document} 

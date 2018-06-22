@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage{ctex}
+%\usepackage{fontspec}
+%\setmainfont{CMU Serif}
+\usepackage{geometry}
+\geometry{paperwidth=15cm,paperheight=12cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm}
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}%sorting=none,
+
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+@ARTICLE{aritileeg,
+  AUTHOR = {Zhang, Qi},
+  DATE = {2007},
+  JOURNALTITLE = {An periodical αβγδεζηθικλμνξοπρστυφχψω},
+  PAGES = {82--92},
+  TITLE = {An article for test αβγδεζηθικλμνξοπρστυφχψω},
+  VOLUME = {12},
+  NUMBER ={2},
+}
+\end{filecontents}
+\addbibresource[location=local]{\jobname.bib}
+
+\begin{document}
+
+\nocite{*}
+{
+\newcommand{\ftcmu}{\fontspec{CMU Serif}\selectfont}
+\renewcommand{\bibfont}{\ftcmu}%设置英文字体不影响中文字体
+\printbibliography
+
+}
+\end{document} 

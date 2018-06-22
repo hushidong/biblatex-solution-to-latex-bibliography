@@ -539,8 +539,8 @@ frame=tb,
 fontadjust=true,
 language=[LaTeX]TeX,
 %backgroundcolor=\color{yellow}, %背景颜色
-backgroundcolor=\color{codebackground},
-fillcolor=\color{codebackground},
+%backgroundcolor=\color{codebackground},
+%fillcolor=\color{codebackground},
 rulecolor=\color{green!50!black},
 numbers=left,
 numberstyle=\tiny\color{red},
@@ -570,7 +570,7 @@ showstringspaces=false}% no special string spaces
 itemsep=0pt,leftmargin=2em}%label=$\triangleright$
 %\setlist[itemize]{topsep=2pt,partopsep=0pt,parsep=0pt,%
 %itemsep=0pt,leftmargin=4em}%label=$\triangleright$
-\setlist[enumerate]{topsep=2pt,partopsep=0pt,parsep=0pt,%
+\setlist[enumerate]{label=\bfseries\textcolor{teal}{(\arabic*)},topsep=2pt,partopsep=0pt,parsep=0pt,%
 itemsep=0pt,leftmargin=4em}%label=$\triangleright$
 \setlist[description]{topsep=5pt,partopsep=0pt,parsep=0pt,%
 itemsep=0pt,leftmargin=2cm,rightmargin=0cm,labelwidth=2cm}

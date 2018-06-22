@@ -1,9 +1,9 @@
 \documentclass{article}
 \usepackage{ctex,hyperref}
 \usepackage{geometry}
-\geometry{paperwidth=21cm,paperheight=26cm,%
+\geometry{paperwidth=18cm,paperheight=20cm,%
 left=1cm,right=1cm,top=1cm,bottom=1.5cm}
-\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\usepackage[backend=biber,style=numeric]{biblatex}%gb7714-2015,defernumbers=true
 \addbibresource{example.bib}
 \renewcommand{\bibfont}{\zihao{6}}
 \usepackage{titlesec}
@@ -13,45 +13,61 @@ left=1cm,right=1cm,top=1cm,bottom=1.5cm}
 \titleformat{\subsection}{\flushleft\bfseries}{\S\,\thesubsection}{1em}{}[]
 \titlespacing*{\subsection}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
 \begin{document}
-\small 	参考文献测试\cite{Gradshteyn2000--}。
+\footnotesize
+
+ 	参考文献测试\cite{Gradshteyn2000--}。
+    
+    \section{refSegment A}
 	\begin{refsegment}
-		\section{refSegment A}
+		
 		分章节参考文献测试\cite{Chiani2003-840-845}
 		\printbibliography[segment=1,heading=subbibliography,title=文献A]
 	\end{refsegment}
 	
+    \section{refSegment B}
 	\begin{refsegment}
-		\section{refSegment B}
 		参考文献测试\cite{张敏莉2007-500-503}
 	\end{refsegment}
 	%\printbibliography放在refsegment环境外也是可以的
 	\printbibliography[segment=2,heading=subbibliography,title=文献B]
 	
+    \section{refsection C}
 	\begin{refsection}
-		\section{refsection C}
 		参考文献测试\cite{Zhang2007-500-503}
 	\end{refsection}
 
+\section{refsection D}
 	\begin{refsection}
-		\section{refsection D}
 		分章节参考文献测试\cite{Andersen1995-42-49}
+\subsection{refsegment D-1}
     	\begin{refsegment}
-			\subsection{refsegment D-1}
 			分章节参考文献测试\cite{Simon2004--}。
 		\end{refsegment}
+
+\subsection{refsegment D-2}
 		\begin{refsegment}
-			\subsection{refsegment D-2}
 			分章节参考文献测试\cite{Lin2004--}。
 		\end{refsegment}
 	\end{refsection}
-    \printbibliography[section=2,segment=0,heading=subbibliography,title=文献D0]
-    \printbibliography[section=2,segment=1,heading=subbibliography,title=文献D1]
-    \printbibliography[section=2,segment=2,heading=subbibliography,title=文献D2]
-	\printbibliography[section=1,heading=subbibliography,title=文献C]
-    \printbibliography[section=2,heading=subbibliography,title=文献D]
-	%遍历非refsection内的参考文献
-	\printbibliography[heading=bibliography,title=文献全局]
-	\appendix
-	\section{Section E}
-	参考文献测试\cite{Parsons2000--}。
+
+%\printbibliography[section=2,segment=0,heading=subbibliography,title=文献D0]
+%\printbibliography[section=2,segment=1,heading=subbibliography,title=文献D1]
+%\printbibliography[section=2,segment=2,heading=subbibliography,title=文献D2]
+\printbibliography[section=1,heading=subbibliography,title=文献C]
+\printbibliography[section=2,heading=subbibliography,title=文献D]
+
+%遍历非refsection内的参考文献
+\printbibliography[heading=bibliography,title=文献全局]
+
+%\printbibliography[heading=bibliography,title=文献全局,resetnumbers=true]
+%
+%\printbibliography[heading=bibliography,title=文献全局,omitnumbers=true]
+%
+%\begin{refcontext}[sorting=ynt]
+%\printbibliography[heading=bibliography,title=文献全局,resetnumbers=true]
+%\end{refcontext}
+
+\appendix
+\section{Section E}
+参考文献测试\cite{Parsons2000--}。
 \end{document} 

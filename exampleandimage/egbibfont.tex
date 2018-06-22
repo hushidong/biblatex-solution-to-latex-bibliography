@@ -1,7 +1,7 @@
 \documentclass{report}
 \usepackage{ctex}
 \usepackage{geometry}
-\geometry{paperwidth=15cm,paperheight=12cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm}
+\geometry{paperwidth=15cm,paperheight=8cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm}
 \usepackage{titlesec}
 \titleformat{\chapter}{\zihao{5}\heiti}{\thechapter}{1em}{}
 \titlespacing*{\chapter}{0pt}{0.0\baselineskip}{0.0\baselineskip}[0pt]
@@ -43,12 +43,15 @@
 
 \begin{document}
 
-\chapter{序章}
-\section{序节}
-%\tiny
-序章内容\cite{GPS1988--,杨洪升2013-56-75,马克思2013-302-302}
-正文内容一\cite{Andersen1995-42-49,BUSECK1980-117-211,Calkin2011-8-9}
-正文内容二\cite{Parsons2000b--,Parsons2000--,Parsons2000noloc--,Parsons2000nodate--}
+\nocite{GPS1988--,杨洪升2013-56-75,马克思2013-302-302}
+\nocite{Andersen1995-42-49,BUSECK1980-117-211,Calkin2011-8-9}
+
+%\chapter{序章}
+%\section{序节}
+%%\tiny
+%序章内容\cite{GPS1988--,杨洪升2013-56-75,马克思2013-302-302}
+%正文内容一\cite{Andersen1995-42-49,BUSECK1980-117-211,Calkin2011-8-9}
+%正文内容二\cite{Parsons2000b--,Parsons2000--,Parsons2000noloc--,Parsons2000nodate--}
 \printbibliography[heading=subbibliography,title=参考文献]
 \newpage
 \renewcommand{\bibfont}{\zihao{6}\ftArial\fangsong}
