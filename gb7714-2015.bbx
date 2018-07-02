@@ -14,6 +14,7 @@
 \ProvidesFile{gb7714-2015.bbx}[2018/06/01 v1.0l biblatex bibliography style]
 \def\versionofgbtstyle{2018/06/01 v1.0l}
 \def\versionofbiblatex{\abx@version}
+\RequireBiber[3]%显式指定用biber后端
 
 %=====================================================================
 %   加载标准样式
@@ -31,21 +32,15 @@
     %   20180405，v1.0k，为兼容biblatexv3.11增加toggle:iftlnine，HU zhenzhen
     %
     %   原理方法:当版本继续更新时，增加一个新的toggle用以处理新的旧版，最新版和未判断出来的版本永远用iftlatest
-    \providetoggle{iftlfive}%用于处理biblatex3.2之前的版本
-    \providetoggle{iftlsix}%用于处理biblatex3.3开始改变的新的姓名机制后版本
-    \providetoggle{iftlseven}%用于处理biblatex3.7的兼容性
-    \providetoggle{iftleight}%用于处理biblatex3.8到3.9的兼容性
-    \providetoggle{iftlnine}%用于处理biblatex10的兼容性
-    \providetoggle{iftlatest}%用于最新版biblatex，目前是biblatex3.11，20180402
+    \providetoggle{iftlfive}\togglefalse{iftlfive}%用于处理biblatex3.2之前的版本
+    \providetoggle{iftlsix}\togglefalse{iftlsix}%用于处理biblatex3.3开始改变的新的姓名机制后版本
+    \providetoggle{iftlseven}\togglefalse{iftlseven}%用于处理biblatex3.7的兼容性
+    \providetoggle{iftleight}\togglefalse{iftleight}%用于处理biblatex3.8到3.9的兼容性
+    \providetoggle{iftlnine}\togglefalse{iftlnine}%用于处理biblatex10的兼容性
+    \providetoggle{iftlatest}\toggletrue{iftlatest}%假设是最新版biblatex
     \StrBefore{\abx@version}{.}[\numinteger]%以点区分整数和小数
     \StrBehind{\abx@version}{.}[\numdigital]%小数部分可能带字母所以需将其去掉，见下一行代码
     \IfInteger{\numdigital}{}{\StrGobbleRight{\numdigital}{1}[\numdigital]}
-    \togglefalse{iftlfive}
-    \togglefalse{iftlsix}
-    \togglefalse{iftlseven}
-    \togglefalse{iftleight}
-    \togglefalse{iftlnine}
-    \toggletrue{iftlatest}
     \ifnumcomp{\numinteger}{=}{3}{
         \ifnumcomp{\numdigital}{=}{10}{\toggletrue{iftlnine}\togglefalse{iftlatest}}{}%3.10版本
         \ifnumcomp{\numdigital}{<}{10}{\ifnumcomp{\numdigital}{>}{7}{\toggletrue{iftleight}\togglefalse{iftlatest}}{}}{}%>3.8版本用iftleight=true表示
@@ -99,6 +94,8 @@
             {\def\multinumberfirst{#1}\def\multinumbersecond{}}%
     }
 
+    %    对没有分隔符环境命令的低版本biblatex做增补，避免报错
+    %
     \iftoggle{iftlfive}{
 
     \def\blx@inf@delimdeclare#1#2{%
@@ -195,10 +192,11 @@
 %=====================================================================
 %   数据模型定义
 %=====================================================================
-%定义类型和载体标识，从gb内容看载体基本属于介质。
-%为与lee zeping的bst的样式统一，使用mark和medium这一域名
-\DeclareDatamodelFields[type=field,datatype=literal]{mark}
-\DeclareDatamodelFields[type=field,datatype=literal]{medium}
+    %定义类型和载体标识，从gb内容看载体基本属于介质。
+    %为与lee zeping的bst的样式统一，使用mark和medium这两域名
+    %为单个条目的姓名格式控制增加nameformat和namefmtid两个域
+    \DeclareDatamodelFields[type=field,datatype=literal]{mark,medium,nameformat}
+    \DeclareDatamodelFields[type=field,datatype=integer]{namefmtid}
 
 
 
@@ -275,6 +273,30 @@
       \settoggle{bbx:titlelink}{#1}}
     \ExecuteBibliographyOptions{gbtitlelink}
 
+    %
+    %   增加一个控制参考文献标题是否能够被ctex宏包设置的选项
+    %   v1.0l, 2018.07.02, by hzz
+    %
+    %   原理方法:
+    %   重定义biblatex的宏，去除使用本地化字符串的方式，是的可以利用ctexset进行设置
+    \newtoggle{bbx:ctexset}
+    \DeclareBibliographyOption{gbctexset}[true]{%
+      \settoggle{bbx:ctexset}{#1}}
+    \ExecuteBibliographyOptions{gbctexset}
+
+    \AtEndOfPackage{%
+	\iftoggle{bbx:ctexset}{%
+        \def\blx@defbibstrings#1#2{%
+          \def\do##1{\csundef{abx@lstr@##1}\csundef{abx@sstr@##1}}%
+          \abx@dostrings
+          \csuse{abx@strings@#1}%
+          \setkeys{blx@lbx}{#2}%
+          \let\do\blx@defbibstrings@i
+          \csxdef{abx@strings@#1}{\abx@dostrings}%
+        }
+	}{}}
+
+
 
     %
     %   增加一个恢复域格式为标准样式的控制选项
@@ -327,22 +349,97 @@
       isbn=false,
     }
 
+    %
+    %为日期相关选项增加选项值gb7714-2015
+    %
+    \csdef{mkdaterangegb7714-2015}#1{%
+      \begingroup
+        \blx@metadateinfo{#1}%
+        \iffieldundef{#1year}
+          {}
+          {\printtext[#1date]{%
+             \blx@gbdate{#1}{}}}%
+      \endgroup}
 
-%
-%   针对biblatex<3.3版本的选项设置，比如texlive2015中的3.0版
-%
-\defversion{3.0}{opt}{
+    \newrobustcmd*{\blx@gbdate}[3][]{%
+      \dateeraprintpre{#2#3year}%
+      \blx@imc@forcezerosy{\thefield{#2#3year}}\ifblank{#1}{}{\printfield{#1}}%
+        \iffieldundef{#2#3month}{}{\hyphen\blx@imc@forcezerosmdt{\thefield{#2#3month}}}%
+         \iffieldundef{#2#3day}{}{\hyphen\blx@imc@forcezerosmdt{\thefield{#2#3day}}}}
+
+
+    %为姓名格式选择增加的计数器
+    \newcounter{namefmtcase}
+    \def\thenamefmtcase{\the\c@namefmtcase}
+
+    %为数字标签格式选择增加的计数器/命令
+    %\newcounter{bibnumlabel}
+    %\def\thebibnumlabel{\the\c@bibnumlabel}
+    \newcommand{\mkgbnumlabel}[1]{\mkbibbrackets{#1}}
+    \def\gbbiblabelopt@bracket{\renewcommand{\mkgbnumlabel}[1]{\mkbibbrackets{##1}}}
+    \def\gbbiblabelopt@parens{\renewcommand{\mkgbnumlabel}[1]{\mkbibparens{##1}}}
+    \def\gbbiblabelopt@dot{\renewcommand{\mkgbnumlabel}[1]{##1\adddot}}
+    \def\gbbiblabelopt@plain{\renewcommand{\mkgbnumlabel}[1]{##1}}
+    \def\gbbiblabelopt@box{\renewcommand{\mkgbnumlabel}[1]{\framebox{##1}}}
+    \def\gbbiblabelopt@circle{\renewcommand{\mkgbnumlabel}[1]{\textcircled{##1}}}
+    \newcounter{alignlabel}
+    \def\thealignlabel{\the\c@alignlabel}
+
+
+\@ifpackagelater{biblatex}{2016/03/27}
+  { % 针对biblatex>=3.3版本的选项设置
+    %   增加序号标签格式处理选项
+    %   v1.0l，20180623，hzz
+    %
+    \DeclareBibliographyOption[string]{gbbiblabel}[bracket]{%
+        \csuse{gbbiblabelopt@#1}
+    }
+    \ExecuteBibliographyOptions{gbbiblabel}
+
+    %
+    %   增加姓名大小写格式处理选项
+    %
+    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
+        \ifstrequal{#1}{uppercase}{\setcounter{namefmtcase}{0}}{}%
+        \ifstrequal{#1}{lowercase}{\setcounter{namefmtcase}{1}}{}%
+        \ifstrequal{#1}{givenahead}{\setcounter{namefmtcase}{2}}{}%given-family
+        \ifstrequal{#1}{familyahead}{\setcounter{namefmtcase}{3}}{}
+        \ifstrequal{#1}{pinyin}{\setcounter{namefmtcase}{4}}{}%family-given
+    }
+    \ExecuteBibliographyOptions{gbnamefmt}
+
+    %
+    %   增加标签对齐选项
+    %
+    %   right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
+    \DeclareBibliographyOption[string]{gbalign}[right]{%
+        \ifstrequal{#1}{right}{\setcounter{alignlabel}{0}}{}
+        \ifstrequal{#1}{left}{\setcounter{alignlabel}{1}}{}
+        \ifstrequal{#1}{center}{\setcounter{alignlabel}{2}}{}
+        \ifstrequal{#1}{gb7714-2015}{\setaligngbstyle}{}
+    }
+  }
+  {% 针对biblatex<3.3版本的选项设置
+    %
+    %   增加序号标签格式处理选项
+    %   v1.0l，20180623，hzz
+    %
+    \DeclareBibliographyOption{gbbiblabel}[bracket]{%
+        \csuse{gbbiblabelopt@#1}
+    }
+    \ExecuteBibliographyOptions{gbbiblabel}
+
     %
     %   增加姓名大小写格式处理选项
     %
     \DeclareBibliographyOption{gbnamefmt}[uppercase]{%
-        %\ifstrequal{##1}{gbuppercase}{}{}%
-        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
-        \ifstrequal{##1}{none}{\execnamedefault}{}%given-family
-        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
-        \ifstrequal{##1}{apa}{\execnameapa}{}%family-given
+        \ifstrequal{#1}{uppercase}{\setcounter{namefmtcase}{0}}{}%
+        \ifstrequal{#1}{lowercase}{\setcounter{namefmtcase}{1}}{}%
+        \ifstrequal{#1}{givenahead}{\setcounter{namefmtcase}{2}}{}%given-family
+        \ifstrequal{#1}{familyahead}{\setcounter{namefmtcase}{3}}{}
+        \ifstrequal{#1}{pinyin}{\setcounter{namefmtcase}{4}}{}%family-given
     }
-    %\ExecuteBibliographyOptions{gbnamefmt}
+    \ExecuteBibliographyOptions{gbnamefmt}
 
     %
     %   增加标签对齐选项
@@ -351,124 +448,50 @@
     %   因为在这种biblatex低版本中，舍弃了list类环境后，会出错。
     %   注意:texlive2015中的3.0版中的DeclareBibliographyOption选项没有类型说明
     \DeclareBibliographyOption{gbalign}[right]{%
-        \ifstrequal{##1}{right}{}{}
-        \ifstrequal{##1}{left}{\setalignleft}{}
-        \ifstrequal{##1}{gb7714-2015}{}{}
+        \ifstrequal{#1}{right}{\setcounter{alignlabel}{0}}{}
+        \ifstrequal{#1}{left}{\setcounter{alignlabel}{1}}{}
+        \ifstrequal{#1}{center}{\setcounter{alignlabel}{2}}{}
+        \ifstrequal{#1}{gb7714-2015}{}{}
     }
+  }
 
-    %
-    %   选项设置
-    %
+
+%
+%   针对biblatex<3.3版本的选项设置，比如texlive2015中的3.0版
+%
+\defversion{3.0}{opt}{
     \ExecuteBibliographyOptions{
       firstinits=true, %名字有缩写，参考3.1.2.3 Internal
     }
 }
-
-
 %
 %   针对3.3<=biblatex<3.5版本的选项设置，比如texlive2016中的3.4版
 %
 \defversion{3.4}{opt}{
-    %
-    %   增加姓名大小写格式处理选项
-    %
-    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
-        %\ifstrequal{##1}{gbuppercase}{}{}%
-        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
-        \ifstrequal{##1}{none}{\execnamedefault}{}
-        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
-        \ifstrequal{##1}{apa}{\execnameapa}{}
-    }
-    %\ExecuteBibliographyOptions{gbnamefmt}
-
-    %
-    %   增加标签对齐选项
-    %
-    %   right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
-    \DeclareBibliographyOption[string]{gbalign}[right]{%
-        \ifstrequal{##1}{left}{\setalignleft}{}
-        \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
-    }
-
-    %
-    %   选项设置
-    %
     \ExecuteBibliographyOptions{
       giveninits=true, %名字有缩写，参考3.1.2.3 Internal
     }
 }
-
-
 %
 %   针对3.7<=biblatex<=3.9版本的选项设置，比如texlive2017中的3.7版
 %
 \defversion{3.7}{opt}{
-    %
-    %   增加姓名大小写格式处理选项
-    %
-    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
-        %\ifstrequal{##1}{gbuppercase}{}{}%
-        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
-        \ifstrequal{##1}{none}{\execnamedefault}{}
-        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
-        \ifstrequal{##1}{apa}{\execnameapa}{}
-    }
-    %\ExecuteBibliographyOptions{gbnamefmt}
-
-    %
-    %   增加标签对齐选项
-    %
-    %   right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
-    \DeclareBibliographyOption[string]{gbalign}[right]{%
-        \ifstrequal{##1}{left}{\setalignleft}{}
-        \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
-    }
-
-    %
-    %   选项设置
-    %
     \ExecuteBibliographyOptions{
       giveninits=true,
       urldate =edtf, %iso8601
       eventdate =edtf,
     }
 }
-
 %
 %   针对3.10<=biblatex版本的选项设置，比如texlive2018中的3.11版
 %
 \defversion{3.10}{opt}{
-    %
-    %   增加姓名大小写格式处理选项
-    %
-    \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
-        %\ifstrequal{##1}{gbuppercase}{}{}%
-        \ifstrequal{##1}{lowercase}{\execgblowercase}{}%
-        \ifstrequal{##1}{none}{\execnamedefault}{}
-        \ifstrequal{##1}{pinyin}{\execnamepinyin}{}
-        \ifstrequal{##1}{apa}{\execnameapa}{}
-    }
-    %\ExecuteBibliographyOptions{gbnamefmt}
-
-    %
-    %   增加标签对齐选项
-    %
-    %   right是默认的右对齐，left是左对齐，gb7714-2015是项对齐方式
-    \DeclareBibliographyOption[string]{gbalign}[right]{%
-        \ifstrequal{##1}{left}{\setalignleft}{}
-        \ifstrequal{##1}{gb7714-2015}{\setaligngbstyle}{}
-    }
-
-    %
-    %   选项设置
-    %
     \ExecuteBibliographyOptions{
       giveninits=true,
-      urldate =iso, %iso8601，edtf
-      eventdate =iso,
+      urldate =gb7714-2015, %iso，iso8601，edtf
+      eventdate =gb7714-2015,
     }
 }
-
 
 %
 %   根据biblatex版本信息，选择选项设置
@@ -490,8 +513,6 @@
     %   新建当地化字符串，用来记录“等”字符
     %
     \NewBibliographyString{andotherscn}
-    \NewBibliographyString{noaddress}
-    \NewBibliographyString{nopublisher}
 
     %
     %   修改一些当地化字符串
@@ -508,8 +529,6 @@
         and         = {\addcomma},%将第2和3人名见的and符号改成 逗号，用\finalnamedelim命令也可以定义，参见3.9.1节
         %andothers   = {et al.},  %将超过3个人名的省略，et al.改成为 等
         andotherscn   = {\str@andotherscn},     %将超过3个人名的省略，et al.改成为 等
-        noaddress = {[S.l.]},
-        nopublisher = {[s.n.]},
         backrefpage = {\str@backrefpage:},
         backrefpages = {\str@backrefpages:},
         in={in\intitlepunct},
@@ -536,6 +555,22 @@
         \map{%
             \step[fieldsource=mark,final]
             \step[fieldset=usera, origfieldval]
+            }
+        \map{%
+            \step[fieldsource=nameformat,match=lowercase,final]
+            \step[fieldset=namefmtid,fieldvalue={1}]
+            }
+        \map{%
+            \step[fieldsource=nameformat,match=givenahead,final]
+            \step[fieldset=namefmtid,fieldvalue={2}]
+            }
+        \map{%
+            \step[fieldsource=nameformat,match=familyahead,final]
+            \step[fieldset=namefmtid,fieldvalue={3}]
+            }
+        \map{%
+            \step[fieldsource=nameformat,match=pinyin,final]
+            \step[fieldset=namefmtid,fieldvalue={4}]
             }
         \map{%
             %\perdatasource{examples.bib}
@@ -680,7 +715,7 @@
             \step[fieldset=keywords, fieldvalue={,}, append]
             \step[fieldset=keywords, origfieldval, append]
             }
-	\map{%
+	    \map{%
             \step[fieldsource=language,match=english,final]
             \step[fieldset=langid,fieldvalue={english}]
             }
@@ -869,26 +904,52 @@
 %=====================================================================
 %   参考文献表环境
 %=====================================================================
+%
+%   列表格式
+%
+%   增加一个\bibitemindent尺寸用于控制list环境的itemindent
+%   v1.0l，20180615，hzz
+\newlength{\bibitemindent}
+\setlength{\bibitemindent}{0pt}
+\setlength{\bibhang}{\biblabelsep}%
+
+\defbibenvironment{bibliography}
+  {\list
+     {\printtext[labelnumberwidth]{%
+        \printfield{labelprefix}%
+        \printfield{labelnumber}}}
+     {\setlength{\labelwidth}{\labelnumberwidth}%
+      \setlength{\labelsep}{\biblabelsep}%
+      \setlength{\leftmargin}{\bibhang}%
+      \addtolength{\leftmargin}{\labelnumberwidth}%
+      \setlength{\itemindent}{\bibitemindent}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}}%
+      \renewcommand*{\makelabel}[1]{\hss##1}}
+  {\endlist}
+  {\item}
 
 %
-%   默认的参考文献列表格式，放这里作为参考
+%   顺序编码制-标签对齐方式处理
 %
-%\defbibenvironment{bibliography}
-
-%
-%   顺序编码制标签对齐方式处理
-%
-%   原理方法:修改序号标签格式为左对齐,注意各参考文献内容还是对齐的，
-%   这样就会使得序号标签与参考文献内容的间隔增大，这个问题是没有办法解决的
-%   因为采用list做具有一定宽度的序号标签，\labelwidth只能设置一个，且是最宽的标签的宽度
-%   但总的来说参考文献内容对齐是合理和漂亮的，
-%   而标签则只能对齐一个方向，要么左对齐要么右对齐，看个人选择了。
+%   原理方法:利用选项提供的计数器数值做选择
+%   左对齐，右对齐为list环境下的处理，此时list环境的\labelwidth只能设置一个，是最宽标签的宽度
+%   项对齐则是在段落环境下做的处理。
+%   左对齐时，参考文献各项内容对齐，序号标签与参考文献项内容的间距可变
+%   右对齐时，参考文献各项内容对齐，序号标签与参考文献项内容的间距相等，标签与页边距离可变
+%   项对齐时，序号标签贴在页边，序号标签与参考文献项内容的间距相等
+%   修改序号标签格式为:
 %   \DeclareFieldFormat{shorthandwidth}{\mkbibbrackets{#1}} %源来自numeric.BBX
 %   \DeclareFieldFormat{labelnumberwidth}{\ttfamily\mkbibbrackets{#1}\hfill}
-%   \iftoggle{alignleft}{\DeclareFieldFormat{labelnumberwidth}{\mkbibbrackets{#1}\hfill}}{}%这种方式无效是因为加载时就已经展开了。
-%
-%   修改序号标签格式为左对齐
-\def\setalignleft{\DeclareFieldFormat{labelnumberwidth}{\mkbibbrackets{##1}\hfill}}
+\DeclareFieldFormat{labelnumberwidth}{%
+\ifcase\value{alignlabel}%右对齐，整个标签为右对齐
+    \mkgbnumlabel{#1}%
+\or%左对齐，整个标签为左对齐
+    \mkgbnumlabel{#1}\hfill%
+\or%中间对齐，比如：序号数字居于[]中间
+    \hfil\mkgbnumlabel{\hfill#1\hfill}\hfil%
+\fi}
+
 %
 %   修改序号标签格式为以各条参文献为基础进行对齐的方式，即序号与条目内容间隔相等的方式。
 \def\setaligngbstyle{%
@@ -924,14 +985,17 @@
 \newlength{\lengthid}
 \newlength{\lengthlw}
 \newcommand{\itemcmd}{%
-\settowidth{\lengthid}{[\printfield{labelnumber}]}
+\settowidth{\lengthid}{\mkgbnumlabel{\printfield{labelnumber}}}
 \addtolength{\lengthid}{\biblabelsep}
 \setlength{\lengthlw}{\textwidth}
 \addtolength{\lengthlw}{-\lengthid}
 \addvspace{\bibitemsep}%恢复\bibitemsep的作用
 %\parshape 2 0em \textwidth \lengthid \lengthlw
 \hangindent\lengthid
-[\printfield{labelnumber}]\hspace{\biblabelsep}}
+\mkgbnumlabel{\printfield{labelnumber}}%
+\hspace{\biblabelsep}}
+%
+%   简单的段落环境
 \defbibenvironment{bibliography}
 {\begingroup\setlength{\parindent}{0em}}
 {\endgroup}
@@ -1004,6 +1068,7 @@
   {title}{#1}%\nopunct\unspace
 \DeclareFieldFormat{url}{\url{#1}} %%url相关输出，url域修改如本行，源来自biblatex.def
 \def\UrlFont{\rmfamily}%设置url字体为roman字体%\ttfamily
+%\urlstyle{rm} %使用这句也一样
 \setcounter{biburlnumpenalty}{100} %让url可以在数字后断行
 \setcounter{biburlucpenalty}{100} %让url可以在大写字母后断行
 \setcounter{biburllcpenalty}{100} %让url可以在小写字母后断行
@@ -1084,21 +1149,19 @@
 %
 %   原理方法:判断作者或译者是否中文，若中文用字符等，否则用etcl。
 \renewbibmacro*{name:andothers}{%
-  \ifboolexpr{%
+  \ifboolexpr{
     test {\ifnumequal{\value{listcount}}{\value{liststop}}}
     and
     test \ifmorenames
-  }%
-    {%这里做一个判断是在处理author还是translator用于两者是不同语言的情况
+  }{%这里做一个判断是在处理author还是translator用于两者是不同语言的情况
     \ifcurrentname{translator}{\testCJKfirst{usere}}{\testCJKfirst{userf}}%
     %这句判断如果放到\andothersdelim后面会在等或etc.前增加一个空格，所以放前面
-    \ifnumgreater{\value{liststop}}{1}%
+    \ifnumgreater{\value{liststop}}{1}
        {\finalandcomma}%
        {}%biblatex作者要区别单作者加等的情况，这里为符合gbt7714-2015第7.2节的要求加上了逗号。
 \printdelim{andothersdelim}\iftoggle{ifCJKforgbt}{\bibstring{andotherscn}}{\bibstring{andothers}}%
 %\andothersdelim\bibstring{andotherscn}
-}%
-{}}
+}{}}
 
 
 %
@@ -1136,440 +1199,278 @@
 %   作者信息的输出格式
 %
 %   20180425，v1.0k，为作者增加字体控制命令，Hu Zhenzhen
-%   针对biblatex<3.3版本，gbt7714-2015的姓名全大写格式
-\defversion{3.0}{name}{
-    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉，%来源biblatex2.STY
-    %\renewrobustcmd*{\bibinithyphendelim}{\addnbspace}%biblatex.STY，名中间带-符号的情况下的首字母缩写中间的分隔符
-    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
-
-    %biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
-    \renewbibmacro*{name:last-first}[4]{\bibauthorfont%增加字体控制命令%
-      \ifuseprefix
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifblank{##3}{}{%
-           \ifcapital
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifpunctmark{'}{}{\bibnamedelimc}}%
-         %\mkbibnamelast{#1}\isdot
-         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot%\MakeUppercase %\mkbibnamelast{\MakeUppercase{#1}} %\MakeSentenceCase
-         %注意上一句\MakeCapital后面如果再跟一个{}包含#1，则没有效果，可能是包在里面少了一层展开
-         %因为机构名通常包括在{}内，所以要多展开一次才行，所以这里去掉#1外面的{}
-         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
-         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
-         \ifblank{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamefirst{\MakeUppercase{##2}}\isdot}%
-         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}}
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         %\mkbibnamelast{#1}\isdot  %3.9.1 Generic Commands and Hooks，对姓重新处理，如下句: %\mkbibnamelast{\MakeUppercase{#1}}
-         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot  %大写，参考4.6.4 Miscellaneous Commands，\MakeUppercase %\MakeSentenceCase
-         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
-         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
-         \ifblank{##2##3}{}{\revsdnamepunct}%
-         \ifblank{##2}{}{\bibnamedelimd\mkbibnamefirst{\MakeUppercase{##2}}\isdot}%
-         \ifblank{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}%
-         \addcomma\addspace%
-         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}%
-         }%
-     }
-     \renewbibmacro*{name:first-last}[4]{%
-     \usebibmacro{name:last-first}{##1}{##2}{##3}{##4}}
-}
-%
-%   针对biblatex>=3.3版本，gbt7714-2015的姓名全大写格式
-%
-\defversion{3.4}{name}{
-    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉，%来源biblatex2.STY
-    %\renewrobustcmd*{\bibinithyphendelim}{\addnbspace}%biblatex.STY，名中间带-符号的情况下的首字母缩写中间的分隔符
-    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
-
-    %biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
-    \renewbibmacro*{name:given-family}[4]{\bibauthorfont%用family-given修改后的内容定义given-family
-      \ifuseprefix%
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifdefvoid{##3}{}{%
-           \ifcapital%
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}%
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifprefchar{}{\bibnamedelimc}}%
-         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot%
-         \ifdefvoid{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{\MakeUppercase{##2}}\isdot}%\MakeCapital
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}%
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot%
-         \ifboolexpe{%
-           test {\ifdefvoid{##2}}
-           and
-           test {\ifdefvoid{##3}}}
-           {}{\revsdnamepunct}%
-         \ifdefvoid{##2}{}{\bibnamedelimd\mkbibnamegiven{\MakeUppercase{##2}}\isdot}%\MakeCapital
-         \ifdefvoid{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}%
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}%
-     }
-     \renewbibmacro*{name:family-given}[4]{%
-     \usebibmacro{name:given-family}{##1}{##2}{##3}{##4}}
-}
-%
-%   针对biblatex<3.3版本，姓名大小写格式不变
-%
-\defversion{3.0}{nameb}{
-    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉，%来源biblatex2.STY
-    %\renewrobustcmd*{\bibinithyphendelim}{\addnbspace}%biblatex.STY，名中间带-符号的情况下的首字母缩写中间的分隔符
-    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
-
-    %biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
-    \renewbibmacro*{name:last-first}[4]{\bibauthorfont%
-      \ifuseprefix
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifblank{##3}{}{%
-           \ifcapital
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifpunctmark{'}{}{\bibnamedelimc}}%
-         %\mkbibnamelast{#1}\isdot
-         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{{##1}}}\isdot%\MakeUppercase %\mkbibnamelast{\MakeUppercase{#1}} %\MakeSentenceCase
-         %注意上一句\MakeCapital后面如果再跟一个{}包含#1，则没有效果，可能是包在里面少了一层展开
-         %因为机构名通常包括在{}内，所以要多展开一次才行，所以这里去掉#1外面的{}
-         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
-         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
-         \ifblank{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamefirst{{##2}}\isdot}%
-         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}}
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         %\mkbibnamelast{#1}\isdot  %3.9.1 Generic Commands and Hooks，对姓重新处理，如下句: %\mkbibnamelast{\MakeUppercase{#1}}
-         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{{##1}}}\isdot  %大写，参考4.6.4 Miscellaneous Commands，\MakeUppercase %\MakeSentenceCase
-         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
-         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
-         \ifblank{##2##3}{}{\revsdnamepunct}%
-         \ifblank{##2}{}{\bibnamedelimd\mkbibnamefirst{{##2}}\isdot}%
-         \ifblank{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}%
-         \addcomma\addspace%
-         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}%
-         }%
-     }
-     \renewbibmacro*{name:first-last}[4]{%
-     \usebibmacro{name:last-first}{##1}{##2}{##3}{##4}}
-}
-%
-%   针对biblatex>=3.3版本，姓名大小写格式不变
-%
-\defversion{3.4}{nameb}{
-    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉，%来源biblatex2.STY
-    %\renewrobustcmd*{\bibinithyphendelim}{\addnbspace}%biblatex.STY，名中间带-符号的情况下的首字母缩写中间的分隔符
-    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
-
-    %biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
-    \renewbibmacro*{name:given-family}[4]{\bibauthorfont%用family-given修改后的内容定义given-family
-      \ifuseprefix
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifdefvoid{##3}{}{%
-           \ifcapital
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifprefchar{}{\bibnamedelimc}}%
-         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{{##1}}}\isdot%
-         \ifdefvoid{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{{##2}}\isdot}%\MakeCapital
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{{##1}}}\isdot%
-         \ifboolexpe{%
-           test {\ifdefvoid{##2}}
-           and
-           test {\ifdefvoid{##3}}}
-           {}{\revsdnamepunct}%
-         \ifdefvoid{##2}{}{\bibnamedelimd\mkbibnamegiven{{##2}}\isdot}%\MakeCapital
-         \ifdefvoid{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}%
-     }
-     \renewbibmacro*{name:family-given}[4]{%
-     \usebibmacro{name:given-family}{##1}{##2}{##3}{##4}}
-}
-%
-%   针对biblatex<3.3版本，姓名大小写格式采用标准样式，名在前，姓在后
-%
-\defversion{3.0}{namec}{
-    \renewrobustcmd*{\bibinitperiod}{\adddot}
-    \renewrobustcmd*{\bibinithyphendelim}{\adddot\addnbspace}%biblatex.STY，名中间带-符号的情况下的首字母缩写中间的分隔符
-    \renewcommand*{\revsdnamepunct}{\addcomma}
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
-
-    %biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
-    \renewbibmacro*{name:last-first}[4]{\bibauthorfont%
-      \ifuseprefix
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifblank{##3}{}{%
-           \ifcapital
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifpunctmark{'}{}{\bibnamedelimc}}%
-         \mkbibnamelast{##1}\isdot
-         \ifblank{##4}{}{\bibnamedelimd\mkbibnameaffix{##4}\isdot}%这句放到后面
-         \ifblank{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamefirst{{##2}}\isdot}}
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         \mkbibnamelast{##1}\isdot  %3.9.1 Generic Commands and Hooks，对姓重新处理，如下句: %\mkbibnamelast{\MakeUppercase{#1}}
-         \ifblank{##4}{}{\bibnamedelimd\mkbibnameaffix{##4}\isdot}%这句放到后面
-         \ifblank{##2##3}{}{\revsdnamepunct}%
-         \ifblank{##2}{}{\bibnamedelimd\mkbibnamefirst{{##2}}\isdot}%
-         \ifblank{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}%
-         }%
-     }
-     \renewbibmacro*{name:first-last}[4]{%
-     \usebibmacro{name:last-first}{##1}{##2}{##3}{##4}}
-}
-%
-%   针对biblatex>=3.3版本，姓名大小写格式采用标准样式
-%
-\defversion{3.4}{namec}{
-    \renewrobustcmd*{\bibinitperiod}{\adddot}
-    \renewrobustcmd*{\bibinithyphendelim}{\adddot\addnbspace}%biblatex.STY，名中间带-符号的情况下的首字母缩写中间的分隔符
-    \renewcommand*{\revsdnamepunct}{\addcomma}
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
-
-    \renewbibmacro*{name:given-family}[4]{\bibauthorfont%
-      \usebibmacro{name:delim}{##2##3##1}%
-      \usebibmacro{name:hook}{##2##3##1}%
-      \ifdefvoid{##2}{}{\mkbibnamegiven{##2}\isdot\bibnamedelimd}%
-      \ifdefvoid{##3}{}{%
-        \mkbibnameprefix{##3}\isdot
-        \ifprefchar
-          {}
-          {\ifuseprefix{\bibnamedelimc}{\bibnamedelimd}}}%
-      \mkbibnamefamily{##1}\isdot
-      \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}
-    \DeclareNameAlias{family-given}{default}
-
-    \renewbibmacro*{name:family-given}[4]{%
-         \usebibmacro{name:given-family}{##1}{##2}{##3}{##4}}
-}
-%
-%   针对biblatex<3.3版本，姓名大小写格式采用拼音样式
-%
-\defversion{3.0}{named}{
-    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉，%来源biblatex2.STY
-    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
-    \renewrobustcmd*{\bibnamedelima}{\mbox{-}}
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
-
-    \DeclareNameFormat{first-last}{%
-    \usebibmacro{name:first-last}{##1}{##3}{##5}{##7}%
-    \usebibmacro{name:andothers}}
-
-    %biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
-    \renewbibmacro*{name:last-first}[4]{\bibauthorfont%
-      \ifuseprefix
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifblank{##3}{}{%
-           \ifcapital
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifpunctmark{'}{}{\bibnamedelimc}}%
-         %\mkbibnamelast{#1}\isdot
-         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot%\MakeUppercase %\mkbibnamelast{\MakeUppercase{#1}} %\MakeSentenceCase
-         %注意上一句\MakeCapital后面如果再跟一个{}包含#1，则没有效果，可能是包在里面少了一层展开
-         %因为机构名通常包括在{}内，所以要多展开一次才行，所以这里去掉#1外面的{}
-         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
-         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
-         \ifblank{##2}{}{\revsdnamepunct\bibnamedelimd\MakeSentenceCase{\mkbibnamefirst{##2}}\isdot}%
-         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}}
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         %\mkbibnamelast{#1}\isdot  %3.9.1 Generic Commands and Hooks，对姓重新处理，如下句: %\mkbibnamelast{\MakeUppercase{#1}}
-         \ifblank{##2}{\MakeCapital##1}{\mkbibnamelast{\MakeUppercase{##1}}}\isdot  %大写，参考4.6.4 Miscellaneous Commands，\MakeUppercase %\MakeSentenceCase
-         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
-         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
-         \ifblank{##2##3}{}{\revsdnamepunct}%
-         \ifblank{##2}{}{\bibnamedelimd\mkbibnamefirst{\MakeUppercase{##2}}\isdot}%
-         \ifblank{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}%
-         \addcomma\addspace%
-         \ifblank{##4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{##4}\isdot}%
-         }%
-     }
-     \renewbibmacro*{name:first-last}[4]{%
-     \usebibmacro{name:last-first}{##1}{##2}{##3}{##4}}
-}
-%
-%   针对biblatex>=3.3版本，姓名大小写格式采用拼音样式
-%
-\defversion{3.4}{named}{
-    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉，%来源biblatex2.STY
-    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
-    \renewrobustcmd*{\bibnamedelima}{\mbox{-}}
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
-
-    \DeclareNameFormat{given-family}{%
-    {\usebibmacro{name:given-family}
+%   20180603，v1.0l，增加使用nameformat域来选择姓名格式
+\DeclareNameFormat{namefmtselected}{%
+\iffieldundef{namefmtid}{}%
+{\defcounter{namefmtcase}{\thefield{namefmtid}}}%
+\ifcase\value{namefmtcase}%
+  \ifgiveninits
+    {\usebibmacro{name:gbuppercase}
       {\namepartfamily}
-      {\namepartgiven}%用全名而不是首字母缩写,因为用的时拼音
+      {\namepartgiveni}
+      {\namepartprefix}
+      {\namepartsuffix}}
+    {\usebibmacro{name:gbuppercase}
+      {\namepartfamily}
+      {\namepartgiven}
       {\namepartprefix}
       {\namepartsuffix}}%
+\or
+  \ifgiveninits
+    {\usebibmacro{name:gblowercase}
+      {\namepartfamily}
+      {\namepartgiveni}
+      {\namepartprefix}
+      {\namepartsuffix}}
+    {\usebibmacro{name:gblowercase}
+      {\namepartfamily}
+      {\namepartgiven}
+      {\namepartprefix}
+      {\namepartsuffix}}%
+\or
+  \ifgiveninits
+    {\usebibmacro{name:given-family}
+      {\namepartfamily}
+      {\namepartgiveni}
+      {\namepartprefix}
+      {\namepartsuffix}}
+    {\usebibmacro{name:given-family}
+      {\namepartfamily}
+      {\namepartgiven}
+      {\namepartprefix}
+      {\namepartsuffix}}%
+\or
+    \ifgiveninits
+       {\usebibmacro{name:family-given}
+         {\namepartfamily}
+         {\namepartgiveni}
+         {\namepartprefix}
+         {\namepartsuffix}}
+       {\usebibmacro{name:family-given}
+         {\namepartfamily}
+         {\namepartgiven}
+         {\namepartprefix}
+         {\namepartsuffix}}%
+\or
+\usebibmacro{name:gbpinyin}
+      {\namepartfamily}
+      {\namepartgiven}
+      {\namepartprefix}
+      {\namepartsuffix}%
+\fi
   \usebibmacro{name:andothers}}
 
-    %biblatex3.3版后(比如texlive2016中的3.4版)的使用方式
-    \renewbibmacro*{name:given-family}[4]{\bibauthorfont%用family-given修改后的内容定义given-family
+\DeclareNameAlias{default}{namefmtselected}%姓名的默认格式采用可选的模式
+\DeclareNameAlias{sortname}{default}% Used in the bibliography %family-given/given-family
+\DeclareNameAlias{citename}{default}% Default used by \citename
+
+\DeclareDelimFormat[bib,biblist]{andothersdelim}{\addcomma\addspace}
+%\DeclareDelimFormat[textcite]{andothersdelim}{\addspace}%
+
+%GB/T 7714-2015 风格，全部大写
+\newbibmacro*{name:gbuppercase}[4]{\bibauthorfont%
+\renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉
+\renewcommand*{\revsdnamepunct}{}%
+  \ifuseprefix%
+    {\usebibmacro{name:delim}{#3#1}%
+     \usebibmacro{name:hook}{#3#1}%
+     \ifdefvoid{#3}{}{%
+       \ifcapital%
+         {\mkbibnameprefix{\MakeCapital{#3}}\isdot}%
+         {\mkbibnameprefix{#3}\isdot}%
+       \ifprefchar{}{\bibnamedelimc}}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{\MakeUppercase{#1}}}\isdot%
+     \ifdefvoid{#2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{\MakeUppercase{#2}}\isdot}%\MakeCapital
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}%
+    {\usebibmacro{name:delim}{#1}%
+     \usebibmacro{name:hook}{#1}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{\MakeUppercase{#1}}}\isdot%
+     \ifboolexpe{%
+       test {\ifdefvoid{#2}}
+       and
+       test {\ifdefvoid{#3}}}
+       {}{\revsdnamepunct}%
+     \ifdefvoid{#2}{}{\bibnamedelimd\mkbibnamegiven{\MakeUppercase{#2}}\isdot}%\MakeCapital
+     \ifdefvoid{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}%
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}%
+}
+
+%GB/T 7714-2015 风格，大小写不变，根据bib文件内输入原样输出
+\newbibmacro*{name:gblowercase}[4]{\bibauthorfont%
+    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉
+    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
+  \ifuseprefix
+    {\usebibmacro{name:delim}{#3#1}%
+     \usebibmacro{name:hook}{#3#1}%
+     \ifdefvoid{#3}{}{%
+       \ifcapital
+         {\mkbibnameprefix{\MakeCapital{#3}}\isdot}
+         {\mkbibnameprefix{#3}\isdot}%
+       \ifprefchar{}{\bibnamedelimc}}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{{#1}}}\isdot%
+     \ifdefvoid{#2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{{#2}}\isdot}%\MakeCapital
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}
+    {\usebibmacro{name:delim}{#1}%
+     \usebibmacro{name:hook}{#1}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{{#1}}}\isdot%
+     \ifboolexpe{%
+       test {\ifdefvoid{#2}}
+       and
+       test {\ifdefvoid{#3}}}
+       {}{\revsdnamepunct}%
+     \ifdefvoid{#2}{}{\bibnamedelimd\mkbibnamegiven{{#2}}\isdot}%\MakeCapital
+     \ifdefvoid{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}%
+}
+
+%中文常见风格，汉语拼音全拼模式
+\newbibmacro*{name:gbpinyin}[4]{\bibauthorfont%
+\renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉，%来源biblatex2.STY
+\renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
+\renewrobustcmd*{\bibnamedelima}{\mbox{-}}%
+  \ifuseprefix
+    {\usebibmacro{name:delim}{#3#1}%
+     \usebibmacro{name:hook}{#3#1}%
+     \ifdefvoid{#3}{}{%
+       \ifcapital
+         {\mkbibnameprefix{\MakeCapital{#3}}\isdot}
+         {\mkbibnameprefix{#3}\isdot}%
+       \ifprefchar{}{\bibnamedelimc}}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{\MakeUppercase{#1}}}\isdot%
+     \ifdefvoid{#2}{}{\revsdnamepunct\bibnamedelimd\MakeSentenceCase{\mkbibnamegiven{#2}}\isdot}%\MakeCapital
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}
+    {\usebibmacro{name:delim}{#1}%
+     \usebibmacro{name:hook}{#1}%
+     \ifdefvoid{#2}{\mkbibnamefamily{\MakeCapital{#1}}}{\mkbibnamefamily{\MakeUppercase{#1}}}\isdot%
+     \ifboolexpe{%
+       test {\ifdefvoid{#2}}
+       and
+       test {\ifdefvoid{#3}}}
+       {}
+       {\revsdnamepunct}%
+     \ifdefvoid{#2}{}{\bibnamedelimd\mkbibnamegiven{\MakeCapital{#2}}\isdot}%\MakeCapital
+     \ifdefvoid{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}
+     \ifdefvoid{#4}{}{\bibnamedelimd\mkbibnamesuffix{#4}\isdot}}%
+}
+
+
+\@ifpackagelater{biblatex}{2016/03/27}%biblatex<3.2版的情况
+  {}{
+    %GB/T 7714-2015 风格，全部大写
+    \renewbibmacro*{name:gbuppercase}[4]{\bibauthorfont%
+    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉
+    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
       \ifuseprefix
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifdefvoid{##3}{}{%
+        {\usebibmacro{name:delim}{#3#1}%
+         \usebibmacro{name:hook}{#3#1}%
+         \ifblank{#3}{}{%
            \ifcapital
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifprefchar{}{\bibnamedelimc}}%
-         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot%
-         \ifdefvoid{##2}{}{\revsdnamepunct\bibnamedelimd\MakeSentenceCase{\mkbibnamegiven{##2}}\isdot}%\MakeCapital
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         \ifdefvoid{##2}{\mkbibnamefamily{\MakeCapital{##1}}}{\mkbibnamefamily{\MakeUppercase{##1}}}\isdot%
-         \ifboolexpe{%
-           test {\ifdefvoid{##2}}
-           and
-           test {\ifdefvoid{##3}}}
-           {}
-           {\revsdnamepunct}%
-         \ifdefvoid{##2}{}{\bibnamedelimd\mkbibnamegiven{\MakeCapital{##2}}\isdot}%\MakeCapital
-         \ifdefvoid{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}}%
+             {\mkbibnameprefix{\MakeCapital{#3}}\isdot}
+             {\mkbibnameprefix{#3}\isdot}%
+           \ifpunctmark{'}{}{\bibnamedelimc}}%
+         %\mkbibnamelast{#1}\isdot
+         \ifblank{#2}{\MakeCapital#1}{\mkbibnamelast{\MakeUppercase{#1}}}\isdot%\MakeUppercase %\mkbibnamelast{\MakeUppercase{#1}} %\MakeSentenceCase
+         %注意上一句\MakeCapital后面如果再跟一个{}包含#1，则没有效果，可能是包在里面少了一层展开
+         %因为机构名通常包括在{}内，所以要多展开一次才行，所以这里去掉#1外面的{}
+         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
+         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
+         \ifblank{#2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamefirst{\MakeUppercase{#2}}\isdot}%
+         \ifblank{#4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{#4}\isdot}}
+        {\usebibmacro{name:delim}{#1}%
+         \usebibmacro{name:hook}{#1}%
+         %\mkbibnamelast{#1}\isdot  %3.9.1 Generic Commands and Hooks，对姓重新处理，如下句: %\mkbibnamelast{\MakeUppercase{#1}}
+         \ifblank{#2}{\MakeCapital#1}{\mkbibnamelast{\MakeUppercase{#1}}}\isdot  %大写，参考4.6.4 Miscellaneous Commands，\MakeUppercase %\MakeSentenceCase
+         %\mkbibnamelast{\MakeUppercase{#1}}\isdot
+         %\ifblank{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}%这句放到后面
+         \ifblank{#2#3}{}{\revsdnamepunct}%
+         \ifblank{#2}{}{\bibnamedelimd\mkbibnamefirst{\MakeUppercase{#2}}\isdot}%
+         \ifblank{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}%
+         \addcomma\addspace%
+         \ifblank{#4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{#4}\isdot}%
+         }%
      }
-     \renewbibmacro*{name:family-given}[4]{%
-     \usebibmacro{name:given-family}{##1}{##2}{##3}{##4}}
-}
-%
-%   针对biblatex<3.3版本，姓名大小写格式采用标准样式，姓在前，名在后
-%
-\defversion{3.0}{namea}{
-    \renewrobustcmd*{\bibinitperiod}{\adddot}
-    \renewrobustcmd*{\bibinithyphendelim}{\adddot\addnbspace}%biblatex.STY，名中间带-符号的情况下的首字母缩写中间的分隔符
-    \renewcommand*{\revsdnamepunct}{\addcomma}
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
 
-    %biblatex3.3版前(比如texlive2015中的3.0版)的使用方式
-    \renewbibmacro*{name:last-first}[4]{\bibauthorfont%
-      \ifuseprefix%
-        {%
-          \usebibmacro{name:delim}{##3##1}%
-           \usebibmacro{name:hook}{##3##1}%
-           \ifblank{##3}{}%
-             {%
-               \ifcapital%
-                 {\mkbibnameprefix{\MakeCapital{##3}}\isdot}%
-    	         {\mkbibnameprefix{##3}\isdot}%
-               \ifpunctmark{'}{}{\addhighpenspace}%
-             }%
-           \mkbibnamelast{##1}\isdot%
-           \ifblank{##2}%
-             {}{\addcomma\addlowpenspace\mkbibnamefirst{##2}\isdot}%
-           \ifblank{##4}{}{\addlowpenspace\mkbibnameaffix{##4}\isdot}%
-        }
-        {%
-          \usebibmacro{name:delim}{##1}%
-          \usebibmacro{name:hook}{##1}%
-          \mkbibnamelast{##1}\isdot%
-          \ifblank{##2##3}{}{\addcomma}%
-          \ifblank{##2}{}{\addlowpenspace\mkbibnamefirst{##2}\isdot}%
-          \ifblank{##3}{}{\addlowpenspace\mkbibnameprefix{##3}\isdot}%
-          \ifblank{##4}{}{\addlowpenspace\mkbibnameaffix{##4}\isdot}%
-        }%
-     }
-     \renewbibmacro*{name:first-last}[4]{%
-     \usebibmacro{name:last-first}{##1}{##2}{##3}{##4}}
-}
-%
-%   针对biblatex>=3.3版本，姓名大小写格式采用标准样式
-%
-\defversion{3.4}{namea}{
-    \renewrobustcmd*{\bibinitperiod}{\adddot}
-    \renewrobustcmd*{\bibinithyphendelim}{\adddot\addnbspace}%biblatex.STY，名中间带-符号的情况下的首字母缩写中间的分隔符
-    \renewcommand*{\revsdnamepunct}{\addcomma}
-    \DeclareDelimFormat{andothersdelim}{\addcomma\addspace}
-
-    \renewbibmacro*{name:given-family}[4]{\bibauthorfont%
-        \ifuseprefix
-        {\usebibmacro{name:delim}{##3##1}%
-         \usebibmacro{name:hook}{##3##1}%
-         \ifdefvoid{##3}{}{%
+    %GB/T 7714-2015 风格，大小写不变，根据bib文件内输入原样输出
+    \renewbibmacro*{name:gblowercase}[4]{\bibauthorfont%
+    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉
+    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
+      \ifuseprefix
+        {\usebibmacro{name:delim}{#3#1}%
+         \usebibmacro{name:hook}{#3#1}%
+         \ifblank{#3}{}{%
            \ifcapital
-             {\mkbibnameprefix{\MakeCapital{##3}}\isdot}
-             {\mkbibnameprefix{##3}\isdot}%
-           \ifprefchar{}{\bibnamedelimc}}%
-         \mkbibnamefamily{##1}\isdot
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}%
-         \ifdefvoid{##2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamegiven{##2}\isdot}}
-        {\usebibmacro{name:delim}{##1}%
-         \usebibmacro{name:hook}{##1}%
-         \mkbibnamefamily{##1}\isdot
-         \ifdefvoid{##4}{}{\bibnamedelimd\mkbibnamesuffix{##4}\isdot}%
-         \ifboolexpe{%
-           test {\ifdefvoid{##2}}
-           and
-           test {\ifdefvoid{##3}}}
-           {}
-           {\revsdnamepunct}%
-         \ifdefvoid{##2}{}{\bibnamedelimd\mkbibnamegiven{##2}\isdot}%
-         \ifdefvoid{##3}{}{\bibnamedelimd\mkbibnameprefix{##3}\isdot}}}
-    \DeclareNameAlias{family-given}{default}
+             {\mkbibnameprefix{\MakeCapital{#3}}\isdot}
+             {\mkbibnameprefix{#3}\isdot}%
+           \ifpunctmark{'}{}{\bibnamedelimc}}%
+         \ifblank{#2}{\MakeCapital#1}{\mkbibnamelast{{#1}}}\isdot%\MakeUppercase %\mkbibnamelast{\MakeUppercase{#1}} %\MakeSentenceCase
+         \ifblank{#2}{}{\revsdnamepunct\bibnamedelimd\mkbibnamefirst{{#2}}\isdot}%
+         \ifblank{#4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{#4}\isdot}}
+        {\usebibmacro{name:delim}{#1}%
+         \usebibmacro{name:hook}{#1}%
+         \ifblank{#2}{\MakeCapital#1}{\mkbibnamelast{{#1}}}\isdot  %大写，参考4.6.4 Miscellaneous Commands，\MakeUppercase %\MakeSentenceCase
+         \ifblank{#2#3}{}{\revsdnamepunct}%
+         \ifblank{#2}{}{\bibnamedelimd\mkbibnamefirst{{#2}}\isdot}%
+         \ifblank{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}%
+         \addcomma\addspace%
+         \ifblank{#4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{#4}\isdot}%
+         }%
+     }
 
-    \renewbibmacro*{name:family-given}[4]{%
-         \usebibmacro{name:given-family}{##1}{##2}{##3}{##4}}
-}
+    %中文常见风格，汉语拼音全拼模式
+    \renewbibmacro*{name:gbpinyin}[4]{\bibauthorfont%
+    \renewrobustcmd*{\bibinitperiod}{}%将名字简写后的点去掉
+    \renewcommand*{\revsdnamepunct}{}%%来源biblatex.def
+    \renewrobustcmd*{\bibnamedelima}{\mbox{-}}%
+      \ifuseprefix
+        {\usebibmacro{name:delim}{#3#1}%
+         \usebibmacro{name:hook}{#3#1}%
+         \ifblank{#3}{}{%
+           \ifcapital
+             {\mkbibnameprefix{\MakeCapital{#3}}\isdot}
+             {\mkbibnameprefix{#3}\isdot}%
+           \ifpunctmark{'}{}{\bibnamedelimc}}%
+         \ifblank{#2}{\MakeCapital#1}{\mkbibnamelast{\MakeUppercase{#1}}}\isdot%\MakeUppercase %\mkbibnamelast{\MakeUppercase{#1}} %\MakeSentenceCase
+         \ifblank{#2}{}{\revsdnamepunct\bibnamedelimd\MakeSentenceCase{\mkbibnamefirst{#2}}\isdot}%
+         \ifblank{#4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{#4}\isdot}}
+        {\usebibmacro{name:delim}{#1}%
+         \usebibmacro{name:hook}{#1}%
+         \ifblank{#2}{\MakeCapital#1}{\mkbibnamelast{\MakeUppercase{#1}}}\isdot  %大写，参考4.6.4 Miscellaneous Commands，\MakeUppercase %\MakeSentenceCase
+         \ifblank{#2#3}{}{\revsdnamepunct}%
+         \ifblank{#2}{}{\bibnamedelimd\mkbibnamefirst{\MakeUppercase{#2}}\isdot}%
+         \ifblank{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}%
+         \addcomma\addspace%
+         \ifblank{#4}{}{\addcomma\addspace\bibnamedelimd\mkbibnameaffix{#4}\isdot}%
+         }%
+     }
 
-%
-%   根据姓名格式控制选项做处理
-%
-\iftoggle{iftlfive}%根据texlive/biblatex版本选择
-    {%%当采用biblatex<=3.3版本时
-    \switchversion{3.0}{name}
-    }{%%当采用3.3<=biblatex版本时
-    \switchversion{3.4}{name}
-    }
-%
-\def\execnamedefault{%style like: science、ieee,名在前，姓在后
-\iftoggle{iftlfive}%根据texlive/biblatex版本选择
-    {%%当采用biblatex<=3.3版本时
-    \switchversion{3.0}{namec}
-    }{%%当采用3.3<=biblatex版本时
-    \switchversion{3.4}{namec}
-    }
+  %%biblatex<3.2版的情况，姓名的处理格式带参数
+  \DeclareNameFormat{namefmtselected}{%
+    \iffieldundef{namefmtid}{}%
+    {\defcounter{namefmtcase}{\thefield{namefmtid}}}%
+    \ifcase\value{namefmtcase}%
+       \iffirstinits
+       {\usebibmacro{name:gbuppercase}{#1}{#4}{#5}{#7}}
+       {\usebibmacro{name:gbuppercase}{#1}{#3}{#5}{#7}}%
+    \or
+       \iffirstinits
+       {\usebibmacro{name:gblowercase}{#1}{#4}{#5}{#7}}
+       {\usebibmacro{name:gblowercase}{#1}{#3}{#5}{#7}}%
+    \or
+       \iffirstinits
+       {\usebibmacro{name:last-first}{#1}{#4}{#5}{#7}}
+       {\usebibmacro{name:last-first}{#1}{#3}{#5}{#7}}%
+        \ifblank{#3#5}
+       {}
+       {\usebibmacro{name:revsdelim}}%
+    \or
+        \iffirstinits
+       {\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}}
+       {\usebibmacro{name:first-last}{#1}{#3}{#5}{#7}}%
+    \or
+    \usebibmacro{name:gbpinyin}{#1}{#3}{#5}{#7}%
+  \fi
+  \usebibmacro{name:andothers}}
 }
-%
-\def\execnameapa{%style like: apa,nature,姓在前，名在后
-\iftoggle{iftlfive}%根据texlive/biblatex版本选择
-    {%%当采用biblatex<=3.3版本时
-    \switchversion{3.0}{namea}
-    }{%%当采用3.3<=biblatex版本时
-    \switchversion{3.4}{namea}
-    }
-}
-%
-\def\execgblowercase{
-\iftoggle{iftlfive}%根据texlive/biblatex版本选择
-    {%%当采用biblatex<=3.3版本时
-    \switchversion{3.0}{nameb}
-    }{%%当采用3.3<=biblatex版本时
-    \switchversion{3.4}{nameb}
-    }
-}
-%
-\def\execnamepinyin{
-\iftoggle{iftlfive}%根据texlive/biblatex版本选择
-    {%%当采用biblatex<=3.3版本时
-    \switchversion{3.0}{named}
-    }{%%当采用3.3<=biblatex版本时
-    \switchversion{3.4}{named}
-    }}
-
 
 %
 %   url和url日期格式
@@ -1582,6 +1483,8 @@
      \setunit{\addperiod\addspace}%
      \usebibmacro{url}}
 \renewbibmacro*{url}{\printfield{url}}
+
+
 
 
 %
@@ -1665,9 +1568,11 @@
     %   20180405，为biblatexv3.10版本，出现多出点bug做处理，Hu Zhenzhen
     %
     %   原理方法:加上printtext避免破坏异步标点机制
-    %
+    %   本可以用\printdate，但由于date选项设置为year，所以仅会给出年份
+    %   所以无法再用选项设置的方法，印象需要用底层的命令
+    %   这里可以用\blx@isodate，但用\blx@gbdate试图避免版本判断
     \newbibmacro*{newsdate}{%%
-    \printtext{\blx@isodate{}{}}%%
+    \printtext{\blx@gbdate{}{}}%%\blx@isodate{}{}%
     }
 
     \newbibmacro*{modifydate}{%新增加一个带括号的日期，用于表示电子资源的更新和修改日期，而公告日期则按日期格式
@@ -1675,7 +1580,7 @@
                 \iffieldundef{endyear}{\iffieldundef{eventyear}{}{\printtext{(}\printeventdate\printtext{)}}}%
                 {\printtext{(}\printenddate\printtext{)}}%
         }{\iffieldequalstr{year}{}{%因为year存在，但为空
-            }{\printtext{(}\blx@isodate{}{}\printtext{)}}%
+            }{\printtext{(}\blx@gbdate{}{}\printtext{)}}%
          }%
     }%
 }
@@ -2404,11 +2309,11 @@ test{\iftoggle{iftlnine}}
   \newunit\newblock
   \printfield{type}%
   \setunit*{\addspace}%
-  %\printfield{number}%
+  %\printfield{number}%已放到patenttitle中处理
   \iflistundef{location}
     {}
     {\setunit*{\addspace}%
-     \printtext[parens]{%
+     \printtext{%[parens]
        \printlist[][-\value{listtotal}]{location}}}%
   \newunit\newblock
   \usebibmacro{byholder}%

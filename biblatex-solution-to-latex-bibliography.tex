@@ -5011,6 +5011,395 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
 \subsubsection{小结}
 通过上述实践，我们完成了一个定制项目，可以看到biblatex的强大，它提供的api相当全面和有效，利用它以及标准样式可以较为方便构建满足需要的定制格式。
 
+\subsection{样式定制中的一些技巧}
+
+\subsubsection{选项的范围限制}
+
+选项有不同的作用范围，包括Load-time、Global、Per-refcontext、Per-type、 Per-entry、Per-namelist、Per-name等，有时可以针对不同的需要来设置不同的选项作用范围，例就是一种针对条目类型的选项设置：
+
+\begin{codetex}{针对条目类型的选项设置}{eg:opt:range}
+\ExecuteBibliographyOptions[%
+  book,%
+  bookinbook,%
+  bookinarticle,%
+  bookincollection,%
+  bookinincollection,%
+  mvbook,%
+  inbook,%
+  bookininbook,%
+  bookininarticle,%
+  inreference,%
+  bookinreference,%
+  bookininreference%
+  ]{useeditor=false,usetranslator=false}
+\end{codetex}
+
+\subsubsection{排序格式的宏重用}
+
+排序格式用 DeclareSortingScheme(老版本biblatex)/DeclareSortingTemplate 定义，很多时候可以利用宏重用来精简代码，比如有多个不同的格式，其中仅有部分的差别，多数内容都是相同的，此时可以将相同的内容定义为宏，然后在不同的格式中重用，比如：
+
+\begin{codetex}{排序格式中的宏重用}{eg:sort:scheme}
+\def\bbx@sorting@reused{
+  \sort{
+    \field{sortname}
+    \field{author}
+    \field{editor}
+    \field{translator}
+    \literal{0000}
+  }
+  \sort{
+    \field{sorttitle}
+    \field{title}
+  }
+  \sort{
+    \field{sortyear}
+    \field{year}
+  }
+}
+
+\DeclareSortingScheme{anonymous}{
+  \sort{
+    \field{presort}
+  }
+  \sort[final]{
+    \field{sortkey}
+  }
+ \bbx@sorting@reused
+}
+\end{codetex}
+
+\subsubsection{不同位置的代码处理}
+
+biblatex 提供了很多接口可以在不同的位置使用一些代码，比如在AtEndPreamble、AtEveryCitekey、AtDataInput等处，进行一些内容检测、筛选、处理操作，比如：
+
+\begin{codetex}{排序格式中的宏重用}{eg:sort:scheme}
+%导言区结束加代码：
+\AtEndPreamble{
+  \ifundef{\bbx@manuscripts@sorting}{}%
+    {
+    \DeclareSortingScheme{anonymous+manuscripts}{
+      \sort{
+        \field{presort}
+      }
+      \sort[final]{
+        \field{sortkey}
+      }
+      \bbx@anonymous@sorting
+      \bbx@manuscripts@sorting
+      }
+    }
+}
+
+%条目引用开始处加代码：
+\AtEveryCitekey{\iffieldundef{prenote}{\blx@initunit}{}}
+\end{codetex}
+
+
+\subsubsection{数据模型定义}
+
+biblatex 提供了数据模型的高级定义功能，可以自定义条目类型、域、域集合、条目类型支持的域等，比如下例定义了一种新的条目类型 newsarticle：
+
+\begin{codetex}{数据模型定义}{eg:datamodel:define}
+\DeclareDatamodelEntrytypes{
+  newsarticle}
+
+\DeclareDatamodelFields[type=list, datatype=name]{
+  with,
+  writer,
+  producer,
+  execproducer,
+  director}
+
+\DeclareDatamodelFields[type=field, datatype=literal]{
+  abstractloc,
+  titleisdescription,
+  newspaper,
+  urldescription}
+
+\DeclareDatamodelFields[type=field, datatype=verbatim]{
+  abstracturl}
+  
+\DeclareDatafieldSet{author}{
+    \member[field=author]
+
+\DeclareDatamodelEntryfields{
+  titleisdescription,
+  with,
+  abstractloc,
+  abstracturl,
+  urldescription}
+
+\DeclareDatamodelEntryfields[newsarticle]{
+  author,
+  newspaper,
+  title,
+  day,
+  endday,
+  endmonth,
+  endyear,
+  month,
+  year,
+  addendum,
+  doi,
+  editor,
+  editora,
+  editorb,
+  editorc,
+  editoratype,
+  editorbtype,
+  editorctype,
+  eid,
+  eprint,
+  eprintclass,
+  eprinttype,
+  issn,
+  issue,
+  issuetitle,
+  issuesubtitle,
+  language,
+  note,
+  number,
+  origlanguage,
+  pages,
+  series,
+  subtitle,
+  titleaddon,
+  translator,
+  url,
+  urlday,
+  urlendday,
+  urlendmonth,
+  urlendyear,
+  urlmonth,
+  urlyear,
+  volume}
+\end{codetex}
+
+当然，数据模型定义很多时候并不是唯一的解决方案，一些情况下，利用条目类型别名设置已经能够满足需求，不需要专门为某一类型条目设置数据模型。
+
+
+\subsubsection{日期格式控制选项定义}
+
+根据日期格式选择的定义可以知道，样式作者可以为不同的日期增加新的选项，先看一下 biblatex 中日期相关选项的定义：
+
+\begin{codetex}{日期相关选项的定义}{eg:dateopt:define}
+\def\do#1{%
+  \DeclareBibliographyOption[string]{#1date}{%
+    \ifstrequal{##1}{iso8601}
+      {\blx@warning@noline{'iso8601' date format specifier is deprecated.\MessageBreak
+         Use 'iso' instead}%
+       \csdef{blx@dateformat@#1date}{iso}}
+      {\ifstrequal{##1}{edtf}
+         {\blx@warning@noline{'edtf' date format specifier is deprecated.\MessageBreak
+            Use 'iso' instead}%
+          \csdef{blx@dateformat@#1date}{iso}}
+         {\csdef{blx@dateformat@#1date}{##1}}}%
+    \ifstrequal{##1}{ymd}
+      {\renewrobustcmd*{\bibdaterangesep}{\slash}%
+       \renewrobustcmd*{\bibtimerangesep}{\slash}%
+       \renewrobustcmd*{\bibdateeraendprefix}{\bibdateeraprefix}}
+      {}%
+    \ifcsdef{mkdaterange##1}
+      {\protected\csedef{blx@imc@print#1date}{\noexpand\csuse{mkdaterange##1}{#1}}%
+       \protected\csedef{blx@imc@print#1dateextra}{\noexpand\csuse{mkdaterange##1extra}{#1}}}
+      {\ifcsdef{mkbibrange##1}%LEGACY(<3.5)
+        {\blx@warning@noline{%
+           '\string\mkbibrange##1(extra)' date range macro in style is deprecated,\MessageBreak
+           please define '\string\mkdaterange##1(extra)' instead}%
+         \protected\csedef{blx@imc@print#1date}{\noexpand\csuse{mkbibrange##1}{#1}}%
+         \protected\csedef{blx@imc@print#1dateextra}{\noexpand\csuse{mkbibrange##1extra}{#1}}}
+        {\blx@err@invopt{#1date=##1}{}}}}%
+    % Default for new date fields is "comp" but this is overridden below by
+    % biblatex defaults
+    \setkeys{blx@opt@pre}{#1date=comp}%
+    % Time format options
+    \DeclareBibliographyOption[string]{#1time}{%
+      \csdef{blx@timeformat@#1time}{##1}%
+      \ifcsdef{mktimerange##1}
+        {\protected\csedef{blx@imc@print#1time}{\csuse{mktimerange##1}{#1}}}
+        {\blx@err@invopt{#1time=##1}{}}}%
+    % Default for new time fields is "24h"
+    \setkeys{blx@opt@pre}{#1time=24h}%
+    % Boolean to determine if times are printed with dates
+    \newtoggle{blx@#1dateusetime}%
+    \DeclareBibliographyOption[boolean]{#1dateusetime}{%
+      \ifstrequal{##1}{true}
+        {\toggletrue{blx@#1dateusetime}}
+        {\togglefalse{blx@#1dateusetime}}}}
+\abx@dodatetypes
+\end{codetex}
+
+可以看到当存在\verb|mkdaterange##1|命令时，biblatex就会定义一个对应的\verb|blx@imc@print#1date|用来输出日期。因此只要定义\verb|mkdaterange##1|就可以为日期选项比如date，urldate等增加新的选项。
+
+比如：
+
+\begin{codetex}{日期选项的增加}{eg:dateopt:valueadd}
+\newcommand*{\mkdaterangeapalong}[1]{%
+  \blx@metadateinfo{#1}%
+  \iffieldundef{#1year}{}
+    {\datecircaprint
+     \ifstrequal{#1}{url}% URL dates are unlikely to be BCE ...
+       {\printtext{%
+           \mkbibdateapalongmdy{#1year}{#1month}{#1day}%
+           \iffieldundef{#1endyear}%
+             {}%
+             {\iffieldequalstr{#1endyear}{}% open-ended range?
+               {\mbox{\bibdatedash}}
+               {\bibdatedash%
+                \iffieldsequal{#1year}{#1endyear}%
+                  {\iffieldsequal{#1month}{#1endmonth}%
+                    {\iffieldsequal{#1day}{#1endday}%
+                      {}%
+                      {\mkbibdateapalongmdy{}{}{#1endday}}}%
+                    {\mkbibdateapalongmdy{}{#1endmonth}{#1endday}}}%
+                  {\mkbibdateapalongmdy{#1endyear}{#1endmonth}{#1endday}}}}%
+           \dateuncertainprint}}
+       {\printtext{%
+           \mkbibdateapalong{#1year}{#1month}{#1day}%
+           \dateeraprint{#1year}%
+           \iffieldundef{#1endyear}%
+             {}%
+             {\iffieldequalstr{#1endyear}{}% open-ended range?
+               {\mbox{\bibdatedash}}
+               {\bibdatedash%
+                \iffieldsequal{#1year}{#1endyear}%
+                  {\iffieldsequal{#1month}{#1endmonth}%
+                    {\iffieldsequal{#1day}{#1endday}%
+                      {}%
+                      {\mkbibdateapalong{}{}{#1endday}}}%
+                    {\mkbibdateapalong{}{#1endmonth}{#1endday}}}%
+                  {\mkbibdateapalong{#1endyear}{#1endmonth}{#1endday}%
+                 \dateeraprint{#1endyear}}}%
+             \enddateuncertainprint}}}}}
+			
+  \protected\def\mkbibdateapalongmdy#1#2#3{%
+    \iffieldundef{#2}%
+      {}%
+      {\mkbibmonth{\thefield{#2}}}%
+    \iffieldundef{#3}%
+      {}%
+      {\addspace}%
+       \stripzeros{\thefield{#3}}%
+    \iffieldundef{#1}%
+      {}%
+      {\ifthenelse{\iffieldundef{#3}}%
+        {\ifthenelse{\iffieldundef{#2}}%
+          {}%
+          {\addspace}}%
+        {\addcomma\addspace}%
+       \iffieldbibstring{#1}{\biblcstring{\thefield{#1}}}{\thefield{#1}}}}}
+\end{codetex}
+
+\subsubsection{标签的格式和装饰}%封套/包围符号
+
+标签的格式控制主要是通过域格式实现，比如：
+\begin{codetex}{标签的格式控制}{eg:label:fmt}
+\DeclareFieldFormat{labelnumberwidth}{\mkbibparens{#1}}
+\DeclareFieldFormat{labelformat}{\mkbibbrackets{#1}}
+\DeclareFieldFormat{labelnumber}{\mkbibitalic{#1}}
+\end{codetex}
+
+标签的包围符号，一般是[]，但也可以其它的，有时可以全局的做修改，比如：
+\begin{codetex}{标签的包围符号全局修改}{eg:label:wrappera}
+\renewcommand*\bibleftbracket{(}
+\renewcommand*\bibrightbracket{)\midsentence}
+\end{codetex}
+
+也可以用另一种方式做局部修改，比如在引用的地方修改，比如：
+\begin{codetex}{标签的包围符号局部修改}{eg:label:wrapperb}
+%利用()
+\newrobustcmd*{\parentexttrack}[1]{%
+  \begingroup
+  \blx@blxinit
+  \blx@setsfcodes
+  \blx@bibopenparen#1\blx@bibcloseparen%
+  \endgroup}
+
+\AtEveryCite{%
+  \let\parentext=\parentexttrack%
+  \let\bibopenparen=\bibopenbracket
+  \let\bibcloseparen=\bibclosebracket}
+
+%利用[]
+\newrobustcmd*{\parentexttrack}[1]{%
+  \begingroup
+  \blx@blxinit
+  \blx@setsfcodes
+  \blx@bibopenbracket#1\blx@bibclosebracket%
+  \endgroup}
+
+\AtEveryCite{%
+  \let\parentext=\parentexttrack%
+  \let\bibopenbracket=\bibopenparen%
+  \let\bibclosebracket=\bibcloseparen}
+\end{codetex}
+
+\subsubsection{美式标点}
+
+\begin{codetex}{美式标点}{eg:punc:us}
+\uspunctuation
+\end{codetex}
+
+\subsubsection{不同条目类型的域格式}
+
+\begin{codetex}{不同条目类型的域格式}{eg:fieldfmt:entrytypes}
+\DeclareFieldFormat[article]{number}{\bibstring{number}\addnbspace#1}
+\DeclareFieldFormat[patent]{number}{\mkonepagegrouped{#1}}
+\DeclareFieldFormat{pages}{%
+  \mkpageprefix[bookpagination][\mkpagegrouped]{#1}%
+}
+\DeclareFieldFormat{sentencecase}{\bbx@colon@search{\MakeSentenceCase*}{#1}}
+\DeclareFieldFormat[book,inbook,incollection,inproceedings]{series}
+  {\bibstring{jourser}\addnbspace#1}
+\DeclareFieldFormat[online]{title}{#1\isdot}
+\DeclareFieldFormat[report]{title}{\mkbibquote{#1\isdot}}
+\DeclareFieldFormat{url}{\bibstring{url}\addcolon\space\url{#1}}
+\DeclareFieldFormat*{volume}
+  {\bibstring{volume}\addnbspace#1}
+\DeclareFieldFormat[article,periodical]{volume}
+  {\bibstring{jourvol}\addnbspace#1}
+\end{codetex}
+
+\subsubsection{文献表中相同作者用dash代替}
+
+可以利用authoryear中的代码：
+\begin{codetex}{相同作者用dash代替}{eg:author:same}
+% An option that carries through from author-year styles
+\DeclareBibliographyOption[boolean]{dashed}[true]{%
+  \ifstrequal{#1}{true}
+    {\ExecuteBibliographyOptions{pagetracker}%
+     \renewbibmacro*{bbx:savehash}{\savefield{fullhash}{\bbx@lasthash}}}
+    {\renewbibmacro*{bbx:savehash}{}}}
+    
+\InitializeBibliographyStyle{\global\undef\bbx@lasthash}
+
+\newbibmacro*{bbx:savehash}{\savefield{fullhash}{\bbx@lasthash}}
+
+% Bibliography macros
+\renewbibmacro*{author}{%
+  \ifboolexpr{
+    test \ifuseauthor
+    and
+    not test {\ifnameundef{author}}
+  }
+    {%
+      \iffieldequals{fullhash}{\bbx@lasthash}
+        {\bibnamedash\addcomma\space}
+        {\printnames{author}}%
+      \usebibmacro{bbx:savehash}%
+      \iffieldundef{authortype}
+        {}
+        {%
+          \setunit{\addcomma\space}%
+          \usebibmacro{authorstrg}%
+        }%
+    }
+    {\global\undef\bbx@lasthash}%
+}
+\end{codetex}
+
+
+
 \section{结论}
 通过本文的工作给出了\LaTeX 文档中文参考文献相关问题的biblatex解决方案，包括: 基本参考文献生成、分章参考文献、指定格式的著录和标注样式等，基本能够满足日常的各类参考文献生成需求，能够为\LaTeX 文档写作提供帮助。
 
