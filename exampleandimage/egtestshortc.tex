@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage{geometry}
+\geometry{paperwidth=12cm,paperheight=9cm,top=0.5cm, bottom=0.5cm, left=0.5cm,right=0.5cm}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[babel=false]{csquotes}
+\usepackage[style=verbose-ibid,citepages=suppress]{biblatex}
+
+% 在标注或文献表中使用期刊的缩略名的方法
+
+%在标注时使用钩子
+%\AtEveryCitekey{%
+%  \savefield{shortjournal}{\temptitle}%
+%  \restorefield{journaltitle}{\temptitle}%
+%}
+
+%在作脚注等时使用userdriver时使用钩子
+%\AtUsedriver{
+%\savefield{shortjournal}{\temptitle}%
+%\restorefield{journaltitle}{\temptitle}%
+%}
+
+%在输出文献表时使用钩子
+%\AtEveryBibitem{
+%  \savefield{shortjournal}{\temptitle}%
+%  \restorefield{journaltitle}{\temptitle}%
+%}
+
+%全局的设置，利用宏定义的方法，当然也可以利用ifcitation等来做是否处于标注中等判断。
+\renewbibmacro*{journal}{%
+  \iffieldundef{shortjournal}
+    {\iffieldundef{journaltitle}
+       {}
+       {\printtext[journaltitle]{%
+          \printfield[titlecase]{journaltitle}%
+          \setunit{\subtitlepunct}%
+         \printfield[titlecase]{journalsubtitle}}}}
+    {\printfield{shortjournal}}}
+
+\usepackage{filecontents}
+
+\begin{filecontents}{\jobname.bib}
+@Article{Episkepsis1971:36,
+title = {La Commission préparatoire},
+journaltitle = {Episkepsis},
+shortjournal = {EP},
+date = {1971},
+number = {36},
+pages = {2},
+}
+@Article{Episkepsis1971:36_2,
+title = {Communique de la Commission},
+journaltitle = {Episkepsis},
+shortjournal = {EP},
+date = {1971},
+number = {36},
+pages = {8--9},
+}
+@Article{Episkepsis1972:54,
+title = {La première Conférence},
+journaltitle = {Episkepsis},
+shortjournal = {EP},
+date = {1972},
+number = {54},
+pages = {2--5},
+}
+
+@Collection{Episkepsis,
+title = {Episkepsis},
+date = {1970/},
+shorthand = {EP},
+keywords = {primary},
+}
+\end{filecontents}
+
+\addbibresource{\jobname.bib}
+
+\nocite{*}
+
+\begin{document}
+
+Some text \autocite{Episkepsis1971:36}.
+
+\printshorthands
+
+\printbibheading
+\printbibliography[keyword=primary,heading=subbibliography,title={Les sources principaux}]
+\printbibliography[notkeyword=primary,heading=subbibliography,title={Les sources secondaires}]
+
+\end{document} 

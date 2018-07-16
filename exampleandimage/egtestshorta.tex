@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage{geometry}
+\geometry{paperwidth=19cm,paperheight=10cm,top=0.5cm, bottom=0.0cm, left=0.5cm,right=0.5cm}
+\usepackage{fontspec}
+\usepackage[style=authoryear]{biblatex}
+\begin{filecontents}{\jobname.bib}
+@ARTICLE{test1,
+    AUTHOR = {John Smith},
+    TITLE = {A Tremendously Interesting Opinion},
+    SHORTHAND = {JSTIP},
+    SHORTTITLE = {TIP},
+    JOURNALTITLE = {Journal of Tremendously Interesting Opinions},
+    SHORTJOURNAL = {JTIO},
+    VOLUME = {1},
+    NUMBER = {1},
+    YEAR = {1947}
+}
+@ARTICLE{test2,
+    AUTHOR = {John Tumble},
+    TITLE = {A Tremendously Interesting Idea},
+    SHORTHAND = {JSTII},
+    SHORTTITLE = {TII},
+    JOURNALTITLE = {Journal of Tremendously Interesting Ideas},
+    SHORTJOURNAL = {JTII},
+    VOLUME = {1},
+    NUMBER = {1},
+    YEAR = {1946}
+}
+\end{filecontents}
+
+\addbibresource{\jobname.bib}
+
+\DeclareBibliographyDriver{shortjournal}{%
+  \printfield{journaltitle}}
+
+\DeclareBibliographyDriver{shorttitle}{%
+  \printfield{title}}
+
+\begin{document}
+\nocite{*}
+
+\printshorthands% With biber, just an alias for \printbiblist{shorthand}
+\printbiblist[title={Journal Shorthands}]{shortjournal}
+\printbiblist[title={Title Shorthands}]{shorttitle}
+\printbibliography
+\end{document} 

@@ -1,0 +1,109 @@
+\documentclass{article}
+\usepackage{geometry}
+\geometry{paperwidth=19cm,paperheight=8cm,top=0.5cm, bottom=0.0cm, left=0.5cm,right=0.5cm}
+\usepackage[style=authoryear,backend=biber]{biblatex}
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+@book{talbert:1992,
+  author = {Talbert, Charles H.},
+  title = {Reading John: A Literary and Theological Commentary on the Fourth Gospel and the Johannine Epistles},
+  location = {New York},
+  publisher = {Crossroad},
+  date = {1992}
+}
+@book{hofius:1989,
+  author = {Hofius, Otfried},
+  title = {Paulusstudien},
+  series = {Wissenschaftliche Untersuchungen zum Neuen Testament},
+  shortseries = {WUNT},
+  number = {51},
+  location = {T\"{u}bingen},
+  publisher = {Mohr Siebeck},
+  date = {1989}
+}
+@mvbook{TDNT,
+  editor = {Kittel, Gerhard and Friedrich, Gerhard},
+  title = {Theological Dictionary of the New Testament},
+  shorthand = {\emph{TDNT}},
+  translator = {Bromiley, Geoffrey W.},
+  volumes = {10},
+  location = {Grand Rapids},
+  publisher = {Eerdmans},
+  date = {1964/1976}
+}
+\end{filecontents}
+\addbibresource{\jobname.bib}
+
+%为abbreviations缩略表定义驱动
+\DeclareBibliographyDriver{abbreviations}{%
+  \iffieldundef{shorthand}{}{\usedriver{}{\thefield{entrytype}}}%
+  \iffieldundef{shortseries}{}{\printfield{series}}%
+}
+
+
+
+%为abbreviations缩略表定义环境
+\newlength{\abbrevwidth}
+\def\setmaxlength#1#2{%
+  \ifdim\dimexpr#2>\dimexpr#1
+    \global\setlength{#1}{#2}%
+  \fi
+}
+
+\defbibenvironment{abbreviations}
+  {\list
+     {\printfield[shorthandwidth]{shortseries}%
+      \printfield[shorthandwidth]{shorthand}}
+     {\setmaxlength{\abbrevwidth}{\shorthandwidth}%
+      \setmaxlength{\abbrevwidth}{\shortserieswidth}%
+      \setlength{\labelwidth}{\shorthandwidth}%
+      \setlength{\leftmargin}{\labelwidth}%
+      \setlength{\labelsep}{\biblabelsep}%
+      \addtolength{\leftmargin}{\labelsep}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}%
+      \renewcommand*{\makelabel}[1]{##1\hss}}}
+  {\endlist}
+  {\item}
+
+
+
+
+%为abbreviations缩略表定义过滤器，采用DeclareBiblistFilter方法
+\DeclareBiblistFilter{abbreviations}{
+\filteror{
+\filter[type=field,filter=shorthand]
+\filter[type=field,filter=shortseries]%
+}}
+
+%为abbreviations缩略表定义过滤器，采用defbibcheck方法，是类似的
+%\defbibcheck{abbreviations}{%
+%  \iffieldundef{series}
+%    {}
+%    {\ifcsdef{\strfield{series}}
+%      {\skipentry}
+%      {\savefieldcs{series}{\strfield{series}}}%
+%    }%
+%  \ifboolexpr{
+%    test {\iffieldundef{shorthand}}
+%    and
+%    test {\iffieldundef{shortseries}}
+%  }
+%    {\skipentry}
+%    {}}
+
+%为abbreviations缩略表定义排序格式
+\DeclareSortingTemplate{abbreviations}{%
+  \sort{%
+    \field{shorthand}%
+    \field{shortseries}%
+  }%
+}
+
+\begin{document}
+\autocite{talbert:1992}
+\autocite{hofius:1989}
+\autocite{TDNT}
+\printbiblist{abbreviations}
+\printbibliography
+\end{document} 

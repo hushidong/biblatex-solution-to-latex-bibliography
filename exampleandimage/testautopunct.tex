@@ -1,0 +1,78 @@
+\documentclass[twoside]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=21cm,paperheight=29cm,top=1.5cm, bottom=1.5cm, left=2.54cm,right=2.54cm}
+\usepackage{xcolor}
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
+%\usepackage[backend=biber,style=gb7714-2015,maxbibnames=5,minbibnames=5]{biblatex}
+\usepackage[backend=biber,style=numeric,autocite=footnote,autopunct=true]{biblatex}%align=gb7714-2015
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+
+@Inproceedings{refa,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  Author                   = {AlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  editor={Name, B and Dome, C},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refb,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  editor={Name, B and Dome, C},
+  Author                   = {BlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refc,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  bookauthor={Name, B and Dome, C},
+  Author                   = {ClayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refd,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  bookauthor={Name, B and Dome, C},
+  Author                   = {MlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Book{Simon2001--,
+  Title                    = {Spread Spectrum Communications Handbook},
+  Address                  = {New York City},
+  Author                   = {Simon, M. K. and Omura,J. K. and Scholtz,R. A. and Levitt,B. K.},
+  Publisher                = {McGraw-Hill, Inc.},
+  Year                     = {2001}
+}
+\end{filecontents}
+\addbibresource{\jobname.bib}
+
+
+\begin{document}
+%编译信息:biblatex v\versionofbiblatex;gb7714-2015*.* version number \versionofgbtstyle.
+
+\section{文献表}
+文献\cite{refc}.
+
+文献\autocite{refa}.
+
+文献\autocite{refb}。
+
+文献\cite{refd}.
+
+文献\cite{Simon2001--}.
+
+\printbibliography%[heading=subbibintoc,title=【参考文献】]
+\end{document}

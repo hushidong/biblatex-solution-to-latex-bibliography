@@ -44,17 +44,9 @@
 
                                           %收稿等时间,第一/通信作者简介,
 %% history:
-%% 2016-12-07 v1.0  完成基本内容
-%% 2017-01-05 v1.0a beamer类下的内容完善
-%% 2017-01-18 v1.0b 修正一些错别字，加了后记
-%% 2017-03-15 v1.0c 增加了关于参考文献表文本转换成bib文件的内容
-%% 2017-10-31 v1.0d 增加了一个参考文献样式定制项目的示例，见第3节
-%% 2018-04-21 v1.0e 增加了利用biblatex宏包选项调整著录表和标注的内容，见2.8节
-%% 2018-05-04 v1.0f 增加了参考文献缩略信息打印，排序，索引等介绍，见2.5节
-%% 2018-05-18 v1.0g 进一步完善了文档、gb7714-2015的一些设计方法
 
 \def\versionnumber{v1.0g}    %版本和修改时间信息
-\def\versiondate{2018-06-22}
+\def\versiondate{2018-07-16}
 \diyizuozhe{The files have version number \versionnumber, last revised \versiondate.\\ 第一作者简介：}
                                           %introduction of corresponding author
 \zuozhejianjie{HU ZHENZHEN，A \LaTeX ~LOVER，Email: hzzmail@163.com。}
@@ -782,348 +774,203 @@ refsegment 与 refsection 作用很像，也用于划分，但其内部的文献
 	\caption{全局参考文献综合示例}\label{fig:eg:global:complex}
 \end{figure}
 
-\subsection{筛选、缩略信息、排序、索引}
+\subsection{参考文献著录和标注样式}\label{sec:bib:style}
 
-\subsubsection{文献表分类筛选的不同方法}
-除了前述的分章节打印外参考文献可以分类筛选打印，主要基于printbibliography命令的选项来实现。主要包括:
-\begin{itemize}
-  \item type
-  \item nottype
-  \item keyword
-  \item notkeyword
-  \item category
-  \item notcategory
-  \item filter
-  \item check
-\end{itemize}
-其中category，filter，check是需要手动定义的。
+参考文献著录和标注样式是排版的主要内容之一，但对于普通用户来说只要学会选择使用即可，因为其格式已经由样式作者所设定。当然如果用户需要在某种样式的基础上有进一步的修改，那么完全可以开展这方面的工作。其中著录样式的在*.bbx文件中修改，而标注样式在*.cbx文件中修改。
 
-type，nottype分别表示打印是和不是某种条目类型的文献，keyword，notkeyword分别表示打印keywords域中含有或不含有某一个关键词的文献，category，notcategory分别表示是或不是某一设定的category的文献，filter表示属于某一设定筛选器的文献。注意因为category必须要在导言区设置，其实使用并不方便。
+\subsubsection{标准样式}
+biblatex提供了一些标准的样式，比如numeric，authoryear，这两个样式是比较常用的，也是样式作者定制自定义样式的重要基础。biblatex还提供了更多著录样式，比如alphabetic，authortitle，verbose等，详见biblatex手册Bibliography Styles一节。标注样式也还有numeric-comp，numeric-verb，alphabetic，authortitle等，详见biblatex手册Citation Styles 一节。
 
-\subsubsection{筛选打印示例}
+\emph{特别需要强调的是numeric-comp，authoryear-comp是针对顺序编码和作者年制的两个标签压缩样式，顺序编码制的压缩样式主要针对多篇文献传递给一个标注命令的情况，而作者年制的压缩样式除了给一个标注命令传递多篇文献外，还需要连续引用文献具有相同作者，而要使相同作者的文献连续，可以通过手动方式给出，也可以通过自动排序方式实现}。
 
-例\ref{eg:bib:filter}给出了这些选项的测试，分别利用type和keyword区分了图书等文献，定义了collections和standard两个筛选器用于打印论文集会议录和标准文献，定义了名为reportandthesis的category用于打印学位论文和报告。
-结果如图\ref{fig:eg:bibfilter}所示。
-测试文档见：\href{run:exampleandimage/egbibfilter.tex}{egbibfilter.tex}
+读者可以测试这些样式的效果，以便在需要的时候选择使用，而且著录和标注可以分别使用不同的样式，著录是一种，而标注则是另一种，实际使用的例子可以参考\href{https://github.com/sjtug/SJTUThesis/issues/300}{参考文献的顺序}。
 
-\begin{codetex}{分类筛选打印参考文献表}{eg:bib:filter}
-%file:egbibfilter
-\DeclareBibliographyCategory{reportandthesis}
-\addtocategory{reportandthesis}{汤万金2013-09-30--,Calkin2011-8-9,吴云芳2003--,CALMS1965--}
+需要注意: 还有一种情况是在同一种标注样式下有的标注需要是上标，有的则不需要，而且这种应用看来是比较常见的，网友海阔天空和xmtangjun都提出了这种需求，在标准样式下有supercite命令提供上标模式，而cite和parencite命令提供非上标模式。而在下一节的gb7714-2015样式中，xmtangjun提出把已经修改成上标模式parencite恢复成非上标模式，那么可以由cite命令提供上标模式，而parencite命令提供非上标模式，这种方法是可取的。
 
-\printbibliography[type=book,notkeyword=standard,title=【普通图书】]
+\subsubsection{gb7714-2015样式}
+本文的作者在学习GB/T 7714-2015标准的基础上，定制了符合该标准的gb7714-2015样式包，分顺序制和作者年制两类。其加载方式见例\ref{code:pkg:load}。
 
-\defbibfilter{collections}{%
-type=collection
-or type=proceedings
-or type=incollection
-or type=inproceedings
-}
-\printbibliography[filter=collections,title=【论文集、会议录】]
+样式包的主要特点包括:
+\begin{enumerate}
+  \item 实现了GB/T 7714-2015标准的完整功能，不仅包括两种编制方式下的各类型参考文献著录格式和标注格式等基本内容，还包括:双语文献格式，带页码的标注格式，作者年制下文献的自动排序和仅有年的标注格式，两种编码制方式下责任者缺省不同处理，其他信息缺省时的自动处理，一些信息如页码卷期等自动解析等特殊功能，而且增加了一个顺序编码制的标签对齐选项，提供右对齐、左对齐和项对齐三种方式。
+  \item 实现了用户文献数据录入优化，用户在录入参考文献数据的时候，只需要录入文献的实际信息即可，不需要录入文献标识符和载体标识符，不需要录入language或者其它域信息用来区分中英文文献，完全实现自动中英文判断并处理。仅需要针对报纸文章和标准文章在note域输入news和standard 用以区分。
+  \item 实现了对biblatex不同版本的兼容，能够应用于biblatex3.2以前的老版本，也能用于3.3以后姓名处理方式改变后的版本。即可以与texlive2014/2015/2016配合使用，无需升级biblatex情况下安装biblatex-gb7714-2015宏包即可使用。
+  \item 实现了常规文档类book/report/article以及beamer类下的样式文件测试，均能达到要求。文档详细介绍了各条目类型的著录格式及其在biblatex 中对应域的构成，以及域信息的录入方法和一些注意点，说明了样式文件的使用方法和注意事项，并严格按照GB/T 7714-2015 标准测试了各种类型的文献。
+\end{enumerate}
 
-\defbibfilter{standard}{%
-( type=book or type=inbook )
-and keyword=standard
-}
-\printbibliography[filter=standard,title=【标准文献】]
-\printbibliography[type=inbook,notkeyword=standard,title=【专著中析出的文献】]
-\printbibliography[type=article,notkeyword=news,title=【期刊中析出的文献】]
-\printbibliography[type=article,keyword=news,title=【报纸析出的文献】]
-\printbibliography[category=reportandthesis,title=【报告和学位论文】]
-\printbibliography[notcategory=reportandthesis,title=【非报告和学位论文】]
-\end{document}
-\end{codetex}
+关于参考文献数据录入准备、条目类型的域构成、样式包使用说明等更多的内容详见\cite{胡振震2016}。
+
+biblatex-gb7714-2015样式宏包可以使用tlmgr或离线方式安装。
+在texlive 2016及以上版本下，使用tlmgr比较方便，步骤如下:
+
+(a) 打开tlmgr-gui，在选项通用里面设置国内的ctan镜像源，比如\url{http://mirrors.ustc.edu.cn/CTAN/systems/texlive/tlnet}
+
+(b) 点击，加载缺省软件包仓库。加载完成后可能要求升级tlmgr，那么先升级tlmgr。
+
+(c) 在完成加载后，在匹配文本框填入biblatex-gb7714-2015，搜索安装即可。
+
+这与安装其他宏包原理是一样的。
+
+在texlive 2014 / texlive2015 下使用如下步骤:
+
+(a) 在ctan上面下载biblatex-gb7714-2015宏包，下载地址:https://www.ctan.org/pkg/biblatex-gb7714-2015
+
+(b) 解压压缩包，放到:texlive的texmf-dist/tex/latex或者texmf-local/tex/latex或者它们的子目录下面。(参考:文献\parencite{Berry2016--}的3.4.6节)
+
+(c) 运行texhash或者mktexlsr命令，刷新文件名数据库。
+
+texlive 2016及以上版本当然也可以用这种方式离线安装。
+
+\subsubsection{其他定制样式}
+在texlive安装包中或者ctan上面可以找到更多的定制样式，有针对某些期刊的文献样式比如nature，science，nejm等等，有些是作者自己兴趣所做比如:biblatex-caspervector样式包，该包作者本来是根据GB/T 7714-2005做的样式，后进一步形成了自己喜欢的风格。用户可以测试各样式包，并按需使用，进一步也可以参考其代码，修改自己需要的样式。
+
+总的来说，因为biblatex提供了参考文献数据的完全访问能力，所以定义任何需要的样式都是可能的。因此用户一定可以选择合适的样式或者定制合适的样式来满足自身需要。
+
+\subsubsection{快速定制/临时定制}\label{sec:style:def}
+
+有的时候对于参考文献格式会有一些特殊的需求，而且往往这些格式并没有一个对应能够满足其要求的参考文献样式包，这种情况下就需要进行定制，比如\parencite{olqa2016--}提出的问题。在latex传统方法中，当文献量较小时，这种临时定制采用thebibliography环境是比较方便的，因为thebibliography 环境显式的将其中的内容插入，因此需要什么样的格式，那么就在bibitem中输入指定格式的条目内容即可。但该环境存在一个问题即: 无论引用与否环境中的参考文献都会全部打印。该环境也可以用来生成多个参考文献表，当然文献量较大时采用这种手动输入方式毕竟是繁琐的。
+
+事实上利用biblatex可以实现快速的定制，biblatex宏包使用手册的Bibliography Style Files给出了样式文件定义的一般模式和方法。依据该模式是容易实现样式快速定制的，因为在一般情况下定制样式文件，其实并不需要处理太多的内容。总结起来，定制简单的参考文献格式需要处理的主要内容包括:
+\begin{enumerate}
+  \item 加载定制所需的基础样式比如标准样式或其它样式；
+  \item 设置宏包选项；
+  \item 设置单元或块的标点；
+  \item 设置域格式；
+  \item 设置驱动格式；
+\end{enumerate}
+
+当然对于一些复杂的参考文献样式(比如gb7714-2015)还需要处理更多的内容,包括:
+\begin{enumerate}
+  \item 增加和应用需要的判断和功能函数；
+  \item 增加一些域格式,增加修改应用本地化字符等；
+  \item 动态数据处理；
+  \item 增加宏包选项；
+  \item 等等。
+\end{enumerate}
+
+而标注样式的定制则更为简单，主要处理内容包括:
+\begin{enumerate}
+  \item 加载定制所需的基础样式比如标准样式或其它样式；
+  \item 设置宏包选项；
+  \item 定义或重定义引用命令；
+\end{enumerate}
+
+在上述ctex论坛上的提问中，参考文献著录格式主要需要修改的内容是分块、分块的标点、分块内容的格式。其中: 作者是一个块作为一行，标题是一个块作为一行，其它是一个块作为一行，那么把块标点设置为换行，就可以实现多行。同时各块的内容的字体不同，作者是粗体，标题是等宽，其它是斜体，那么把对应的块所构成域的格式改成需要的格式即可。这里给出该问题的一个简单解答，如图\ref{bib:style}所示。采用的样式文件代码如例\ref{bib:style:customize}所示，其中为了简化修改，把一些条目设置成了相同的格式。
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=0.8\textwidth,page=1]{egbibfilter.pdf}}
-  \caption{文献表筛选打印}\label{fig:eg:bibfilter}
+  \fbox{\includegraphics*[viewport=0cm 1cm 20cm 19cm,clip=true,scale=0.8,page=1]{egstylecustomize.pdf}}
+  \caption{参考文献样式快速定制}\label{bib:style}
 \end{figure}
 
-例\ref{eg:bib:cgck}所示的category和check筛选，见测试文件：
-\href{run:exampleandimage/testfilterCategory.tex}{testfilterCategory.tex}，
-\href{run:exampleandimage/testfilterCheck.tex}{testfilterCheck.tex}。
+\begin{codetex}{参考文献样式定制举例}{bib:style:customize}
+\ProvidesFile{studf.bbx}[2016/12/07 v1.0e biblatex bibliography style]
+略，详见源文件。
+\end{codetex}
+源代码见\href{run:./exampleandimage/studf.bbx}{studf.bbx}，
+测试文件见\href{run:./exampleandimage/egstylecustomize.tex}{egstylecustomize.tex}。
 
-\begin{codetex}{category和check筛选}{eg:bib:cgck}
-%category
-\DeclareBibliographyCategory{kindsofnameformats}
-\addtocategory{kindsofnameformats}{zhang2009china,xu2012role,wang2006another,
-calvo2006phoenix,bernanke1989agency,adam2011house,fazzari1993working}
+如果对于中文参考文献需要一些特殊的处置，那么可以基于gb7714-2015进行修改，如例\ref{style:customize:gb}给出的代码。
+其结果如图\ref{bib:style:gba}，\ref{bib:style:gbb}所示。
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[viewport=0cm 1.5cm 12cm 20.5cm,clip=true,scale=0.8,page=1]{egstylecustomizegb.pdf}}
+  \caption{国标风格的参考文献样式快速定制A}\label{bib:style:gba}
+\end{figure}
 
-\printbibliography[category=kindsofnameformats,title=五种不同的姓名格式]
-\printbibliography[notcategory=kindsofnameformats,title=某种期刊的姓名格式]
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[viewport=0cm 8cm 12cm 20.5cm,clip=true,scale=0.8,page=2]{egstylecustomizegb.pdf}}
+  \caption{国标风格的参考文献样式快速定制B}\label{bib:style:gbb}
+\end{figure}
 
-%check
-\defbibcheck{uppercase}{%
-\iffieldundef{nameformat}{}{\skipentry}}
+\begin{codetex}{参考文献样式定制举例-国标样式}{style:customize:gb}
+\ProvidesFile{gbudf.bbx}[2016/12/07 v1.0e biblatex bibliography style]
+略，详见源文件。
+\end{codetex}
+源代码见\href{run:./exampleandimage/gbudf.bbx}{gbudf.bbx}，
+测试文件见\href{run:./exampleandimage/egstylecustomizegb.tex}{egstylecustomizegb.tex}。
 
-\defbibcheck{lowercase}{%
-\iffieldequalstr{nameformat}{lowercase}{}{\skipentry}}
+\subsubsection{通过宏包选项改变样式}\label{sec:opt:def}
+在给定样式基础上，可以使用宏包选项来定制一些需要的样式，比如作者输出数量、文献表排序、文献标注排序、文献数据项的输出等等，宏包选项的详细说明可以参见\href{https://github.com/hushidong/biblatex-zh-cn/blob/master/biblatex-zh-cn.pdf}{biblatex 手册中文版}。
 
-\defbibcheck{givenahead}{%
-\iffieldequalstr{nameformat}{givenahead}{}{\skipentry}}
+\paragraph{作者输出数量} 文献表和标注中的作者的数量可以通过宏包选项maxnames和minnames控制。两者也可以分开进行控制，分别利用maxbibnames，minbibnames和maxcitenames，mincitenames 进行控制。
 
-\defbibcheck{familyahead}{%
-\iffieldequalstr{nameformat}{familyahead}{}{\skipentry}}
+\paragraph{文献表排序} 文献表排序可以使用sorting选项进行排序，有些样式中已经给出了sorting选项，如果用户想要另外的排序方式，那么可以自己选择合适sorting选项在biblatex宏包加载时给出。
 
-\defbibcheck{pinyin}{%
-\iffieldequalstr{nameformat}{pinyin}{}{\skipentry}}
+\paragraph{标注排序} 当一个引用命令中有多个参考文献引用关键字时，可以利用sortcites选项来控制是否自动排序。当sortcites=false时不进行排序，按给出的顺序排列。当sortcites=true时，则按文献表的顺序排列。如果希望标注排序排序与文献表的排序不同，可以利用新文境newrefcontext来实现。比如:希望文献表按nyt排，而标注用ynt排，可以采用如下方式:宏包加载时使用
+\lstinline!\usepackage[backend=biber,style=gb7714-2015ay,sortcite,sorting=ynt]{biblatex}!，然后在文献打印前加
+\lstinline!\newrefcontext[sorting=nyt]!
 
-\printbibliography[check=uppercase,title=国标风格-全大写]
-\printbibliography[check=lowercase,title=国标风格-大小写不变]
-\printbibliography[check=pinyin,title=中文常见风格-拼音]
-\printbibliography[check=givenahead,title=biblatex标准风格-名在前]
-\printbibliography[check=familyahead,title=biblatex标准风格-姓在前]
+\paragraph{文献数据项的输出} 如果要取消url，doi，isbn等信息项的输出，可以设置相应的选项为false。
+
+\paragraph{标注后面的标点控制} 在英文有时因为习惯问题会有标点的问题，比如句尾出现脚注的标签，需要把它放到句点后面。有时可能也需要把标注标签放到句点后面。这时需要用autopunct选项来扫描标注后面的标点。下面的例子给出了在句尾的脚注文献与标点的处理。
+
+\begin{codetex}{autopunct选项与脚注之后句点处理}{eg:autopunct}
+见文件：testautopunct.tex
 \end{codetex}
 
-\subsubsection{多个筛选文献表的顺序编码标签}
+\subsubsection{标注命令}
 
-biblatex与标准的 LaTeX 不同，默认情况下，biblatex宏包生成的顺序编码标签在文档正文开始处就分配给文献表的全体文献。因此当有多个筛选文献表时可能会出现文献表中的顺序编码不连续的情况，这可以利用宏包的defernumbers选项解决。
+传统方法中类似natbib，mcite这样的宏包提供了很多有特色的标注命令。比如:
+\begin{codetex}{natbib和mciteplus等宏包提供的标注名}{eg:cite:natbib}
+\citep{jon90} fora parenthetical citation(Jones et al.,1990),
+\citet{jon90} fora textual one, as Jones et al.(1990).
+\citealt{jon90} Jonesetal.1990
+\citealt*{jon90} Jones,Baker,andWilliams1990
+\citealp{jon90} Jones et al.,1990
+\citealp*{jon90} Jones,Baker,and Williams,1990
+\citealp{jon90,jam91}  Jones et al.,1990;James et al.,1991
+\citealp[pg.~32]{jon90}  Jones et al.,1990,pg.32
+\citenum{jon90}  11
+\citetext{priv.\comm.} (priv.comm.)
 
-但如果defernumbers选项被激活，各文献的顺序编码标签会在任意文献表中被打印时才会做第一次分配。
+\citeauthor{jon90} ) Jonesetal.
+\citeauthor*{jon90} ) Jones,Baker,andWilliams
+\citeyear{jon90} ) 1990
+\citeyearpar{jon90} ) (1990)
 
-该选项需要在后端将数据导出到 bbl文件后再运行两次 LaTeX （除由分页变化等要求的编译外）。需注意的一个要点是，如果你在文档中改变了该选项值（或者那些依赖于本选项的选项值，例如与 printbibliography 宏相关的选项，，那么很可能需要删除当前的辅助文件然后重新运行 \LaTeX 来获得正确的顺序编码。需要记住 defernumbers 选项只与顺序编码标签有关，而与文献表中文献的排序无关。主要用于解决做文献筛选后顺序编码不连续的问题。如例\ref{eg:print:defernumber}所示：
-
-\begin{codetex}{多个筛选文献表的顺序编码}{eg:print:defernumber}
-略，详见testdefernumber.tex文档
+\cite{Glashow,*Salam,*Weinberg,Smith,*Jones}%multiplegroupsOK
+\cite{Glashow,*Salam,*Weinberg}\cite{Glashow}%headcanberecitedanytime
+\cite{Glashow,*Salam,*Weinberg}\cite{Glashow,*Salam,*Weinberg}%restatepreviousdefinition
+\cite{Glashow,*Salam,*Weinberg}\cite{Glashow,*Weinberg}%restatepartofpreviousdefinition
+\cite[page580ofGlashow]{Glashow,*Salam}%optionalargumentissupported
+\nocite{*}%BibTeXwildcardOK,butusewithcaution
 \end{codetex}
 
-文档为：
-\href{run:exampleandimage/testdefernumber.tex}{testdefernumber.tex}
+biblatex通过相应的处理模块，给出功能相同语法相同的命令。
 
+此外，biblatex还提供更多标注命令，以及强大的标注命令定制功能，biblatex-gb7714-2015中的标注命令如例\ref{eg:cite:cmds}所示：
 
-\subsubsection{文献缩略信息打印}
+\begin{codetex}{常见的标注命令}{eg:cite:cmds}
+1. 不带页码的引用(上标，方括号包围):
+\cite{Peebles2001-100-100}
 
-缩略信息打印示例，如例\ref{eg:print:biblist}所示。
+2. 不带页码的引用(非上标，方括号包围):
+\parencite{Miroslav2004--}
 
-\begin{codetex}{论文集信息打印}{eg:print:biblist}
-\documentclass[twoside]{article}
-\usepackage{ctex}
-\usepackage{geometry}
-\geometry{paperwidth=21cm,paperheight=29cm,top=1.5cm, bottom=1.5cm, left=2.54cm,right=2.54cm}
-\usepackage{xcolor}
-\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
-%\usepackage[backend=biber,style=gb7714-2015,maxbibnames=5,minbibnames=5]{biblatex}
-\usepackage[backend=biber,style=gb7714-2015,gbpunctin=false]{biblatex}%align=gb7714-2015
+3. 带页码的引用:
+\cite[见][49页]{蔡敏2006--}  \parencite[见][49页]{Miroslav2004--}
+\pagescite{Peebles2001-100-100}  \pagescite[][201-301]{Peebles2001-100-100}
 
-\DefineBibliographyStrings{english}{in={}}
+4. 顺序编码制中同时输出作者和顺序编码标签，比如：
+（一）直接的方法：见\citeauthor{refb}\cite{refb},\citeauthor{refc}\cite{refc}
+（二）定义新的标注命令：见\authornumcite{refb,refc}
+（三）用textcite但没有上标：见\textcite{refb,refc}
 
-\DeclareBibliographyDriver{shortbooktitle}{%
-\printfield{booktitle}\par}
+5. 作者年制文中已有作者还需要年份和页码的情况，使用命令yearpagescite，比如:
+见赵耀东\yearpagescite[][205]{赵耀东1998--}和Simon\yearpagescite[][15]{Simon2001--}
 
-\defbibcheck{shortbooktitle}{%
-\iffieldundef{booktitle}{\skipentry}
-{\ifcsdef{\strfield{shortbooktitle}=\strfield{booktitle}}{\skipentry}
-{\savefieldcs{booktitle}{\strfield{shortbooktitle}=\strfield{booktitle}}}}%
-}
-%注意这里savefieldcs给命令拷贝booktitle域的信息是无关紧要的，
-%如果有其他定义命令的序列比如savecs{\strfield{shortbooktitle}=\strfield{booktitle}}也是一样的，
-%因为前面的ifcsdef判断只是判断命令是否存在，但因为biblatex中提供了savefieldcs命令所以应用它
+6. 作者年制文中已有作者只需要年份的情况，使用命令yearcite和手动方式，比如:
+见赵耀东\yearcite{赵耀东1998--}
+见赵耀东(\cite*{赵耀东1998--})
+见赵耀东(\citeyear{赵耀东1998--})
 
-
-\usepackage{filecontents}
-\begin{filecontents}{\jobname.bib}
-@Inproceedings{refa,
-  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
-  Address                  = {Chicago, IL},
-  Author                   = {AlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
-  editor={Name, B and Dome, C},
-  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
-  Date                     = {2008-10},
-  Pages                    = {1-5}
-}
-
-@Inproceedings{refb,
-  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
-  Address                  = {Chicago, IL},
-  editor={Name, B and Dome, C},
-  Author                   = {BlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
-  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
-  Date                     = {2008-10},
-  Pages                    = {1-5}
-}
-
-@Inproceedings{refc,
-  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
-  Address                  = {Chicago, IL},
-  bookauthor={Name, B and Dome, C},
-  Author                   = {ClayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
-  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
-  Date                     = {2008-10},
-  Pages                    = {1-5}
-}
-
-@Inproceedings{refd,
-  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
-  Address                  = {Chicago, IL},
-  bookauthor={Name, B and Dome, C},
-  Author                   = {MlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
-  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
-  Date                     = {2008-10},
-  Pages                    = {1-5}
-}
-
-@Inproceedings{FOURNEY1971-17-38,
-  Title                    = {Advances in holographic photoelasticity},
-  Author                   = {M E FOURNEY},
-  Booktitle                = {Symposium on Applications of Holography in Mechanics, August 23-25, 1971, University of Southern California, Los Angeles, California},
-  Date                     = {1971},
-  Pages                    = {17-38},
-  Publisher                = {ASME},
-  Location                 = {New York}
-}
-
-@Inproceedings{裴丽生1981-2-10,
-  Title                    = {在中国科协技术期刊编辑工作经验交流会上的讲话},
-  Author                   = {裴丽生},
-  Booktitle                = {中国科协学术期刊编辑工作经验交流会资料选},
-  Date                     = {1981},
-  Pages                    = {2-10},
-  Institution              = {中国科学技术协会学会工作部},
-  Location                 = {北京}
-}
-
-@Book{Simon2001--,
-  Title                    = {Spread Spectrum Communications Handbook},
-  Address                  = {New York City},
-  Author                   = {Simon, M. K. and Omura,J. K. and Scholtz,R. A. and Levitt,B. K.},
-  Publisher                = {McGraw-Hill, Inc.},
-  Year                     = {2001}
-}
-\end{filecontents}
-\addbibresource{\jobname.bib}
-
-
-\begin{document}
-编译信息:biblatex v\versionofbiblatex;gb7714-2015*.* version number \versionofgbtstyle.
-
-\section{文献表}
-文献
-\cite{refc}
-\cite{refa}
-\cite{refb}
-\cite{refd}
-\cite{FOURNEY1971-17-38}
-\cite{裴丽生1981-2-10}
-\cite{Simon2001--}
-
-\printbiblist[title={book Shorthands}]{shortbooktitle}
-
-\printbibliography%[heading=subbibintoc,title=【参考文献】]
-\end{document}
+7. 在页脚中引用和打印文献表:
+\footnote{在脚注中引用\footcite{赵学功2001--}}  \footfullcite{赵学功2001--}
 \end{codetex}
 
-\subsubsection{文献表和标注的排序}
 
-排序涉及到两个方面的内容，一是文献表中的排序，二是标注的排序。其中标注的排序通常是在同一位置标注多个标签时，这种情况往往是多个引用关键字（词）传递给一个标注（引用）命令。一般情况下标注是不进行排序的，而是以引用时给出的顺序进行排序，当需要进行标签排序时需要启用sortcites选项，这时biblatex会按照当前文献表中的顺序对标注标签进行排序。
-
-而文献表中的文献排序由sorting选项控制，常见的值包括：
-
-\begin{description}
-\item[nty] %Sort by name, title, year.
-按照姓名、标题、年份排序。
-\item[nyt] %Sort by name, year, title.
-按照姓名、年份、标题排序。
-\item[nyvt] %Sort by name, year, volume, title.
-按照姓名、年份、卷数、标题排序。
-\item[anyt] %Sort by alphabetic label, name, year, title.
-按照字母标签、姓名、年份、标题排序。
-\item[anyvt] %Sort by alphabetic label, name, year, volume, title.
-按照字母标签、姓名、年份、卷数、标题排序。
-\item[ynt] %Sort by year, name, title.
-按照年份、姓名、标题排序。
-\item[ydnt] %Sort by year (descending), name, title.
-按照年份（降序）、姓名、标题排序。
-\item[none] %Do not sort at all. All entries are processed in citation order.
-不进行排序。所有的条目按照引用顺序处理。
-\item[debug] %Sort by entry key. This is intended for debugging only.
-按照条目键值排列。该选项只用于程序调试。
-\item[name] %Use \prm{name}, as defined with \cmd{DeclareSortingTemplate} (\secref{aut:ctm:srt})
-使用由 \verb|DeclareSortingTemplate|定义的排序模板名 name。
-\end{description}
-注意：除非另加说明，文献条目总是按升序排列。
-
-通常情况下，在选择使用某种样式时，文献表的排序方式就已经设定。当需要调整排序时，就需要在加载biblatex宏包时显式地给出sorting选项，并可根据需要选择上述给出的选项值。
-
-另外，因为biber能充分利用perl的一些模块的功能，所以biblatex还能根据Unicode::Collation::locale模块提供不同语言的排序的本地化调整方案。对于中文，默认的排序规则是按照中文字符的unicode编码进行排序，但可以通过设置选项来进行调整，对于中文有如下调整方案：zh，zh\_\_pinyin，zh\_\_big5han，zh\_\_gb2312han，zh\_\_stroke，zh\_\_zhuyin。
-
-一般的，biblatex利用sortlocale选项将调整方案名传递给biber，biber利用 Unicode::Collation::locale 模块提供对应的排序。因此biblatex可以设置选项为：
-  \begin{itemize}
-    \item \verb|sortlocale=auto| 或者不设置该选项，为默认的unicode编码顺序
-    \item \verb|sortlocale=zh|，为unicode编码顺序
-    \item \verb|sortlocale=zh__pinyin|，为拼音顺序
-    \item \verb|sortlocale=zh__big5han|，为big5 编码顺序
-    \item \verb|sortlocale=zh__gb2312han|，为GB-2312 顺序
-    \item \verb|sortlocale=zh__stroke|，为笔划数顺序
-    \item \verb|sortlocale=zh__zhuyin|，为注音顺序
-  \end{itemize}
-中文排序本地化调整的测试文档见
-\href{run:exampleandimage/testlocale.tex}{testlocale.tex}
-
-当然这种调整可以直接利用在biber编译时设置相应的选项来实现，比如需要按拼音或字顺进行排序时，可使用biber选项，此时biblatex不需要设置sortlocale选项。
-
-\begin{codetex}{中文文献排序时的biber选项}{eg:sort:bibercmd}
-%按拼音排序，biber命令
-biber -l zh__pinyin jobname
-%按笔画排序，biber命令
-biber -l zh__stroke jobname
-\end{codetex}
-
-一个简单的中文作者排序示例见\href{https://github.com/hushidong/biblatex-gb7714-2015/wiki}{(八)如何对文献表中的参考文献进行排序？}
-
-有的时候，可能希望标注标签的排序和文献表中的顺序不同，操作方法，可以参考
-\href{https://github.com/hushidong/biblatex-gb7714-2015/issues/30}{citation的顺序和bibliography的顺序如何不关联}。其中使用了biblatex宏包提供参考文献文境的概念，即不同的文境下可以使用不同的排序方式。
-
-
-\subsubsection{文献信息索引}
-
-当需要对参考文献的信息进行索引时，可以使用indexing选项。启用indexing后，biblatex的标准样式默认会将作者和题名加入到索引中去，如果需要增加一些信息的索引则需要对样式文件做修改。另外，要生成索引还需要使用索引相关的宏包，如makeidx。宏包加载如例\ref{eg:print:index}所示：
-
-\begin{codetex}{文献信息索引}{eg:print:index}
-\documentclass[twoside]{article}
-\usepackage{ctex}
-\usepackage{geometry}
-\geometry{paperwidth=21cm,paperheight=29cm,top=1.5cm, bottom=1.5cm, left=2.54cm,right=2.54cm}
-\usepackage{xcolor}
-\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
-\usepackage[backend=biber,style=gb7714-2015,gbtype=true,block=none,indexing=true]{biblatex}%align=gb7714-2015
-\addbibresource[location=local]{example.bib}
-\usepackage{makeidx}
-\makeindex
-
-\begin{document}
-
-\section{文献表}
-文献
-\cite{张伯伟2002--}
-\cite{白书农1998-146-163}
-\cite{杨洪升2013-56-75}
-\cite{中华医学会湖北分会1984--}
-\cite{雷光春2012--}
-\cite{贾东琴2011-45-52}
-\cite{汤万金2013-09-30--}
-\cite{韩吉人1985-90-99}
-\cite{马欢2011-27-27}
-\cite{张凯军2012-04-05--}
-\cite{国家环境保护局科技标准司1996-2-3}
-\cite{中国职工教育研究会1985--}
-\cite{丁文祥2000--}
-\cite{李强2012-05-03--}
-
-\cite{OBRIEN1994--}
-\cite{FOURNEY1971-17-38}
-\cite{Park2010-696-715}
-\cite{Babu2014--}
-\cite{Calkin2011-8-9}
-\cite{CALMS1965--}
-\cite{KOSEKI2002--}
-\cite{standardinfoiso158}
-\cite{Dublin2012-06-14--}
-
-\printbibliography
-\printindex
-\end{document}
-\end{codetex}
 
 \subsection{参考文献标题格式}
 
@@ -1655,281 +1502,333 @@ biber -l zh__stroke jobname
 
 
 
+\subsection{专题：筛选、缩略信息、排序、索引}
 
-\subsection{参考文献著录和标注样式}\label{sec:bib:style}
+\subsubsection{文献分类筛选的不同方法}
+除了前述的分章节打印外参考文献可以分类筛选打印，主要基于printbibliography命令的选项来实现。主要包括:
+\begin{itemize}
+  \item type
+  \item nottype
+  \item keyword
+  \item notkeyword
+  \item category
+  \item notcategory
+  \item filter
+  \item check
+\end{itemize}
+其中category，filter，check是需要手动定义的。
 
-参考文献著录和标注样式是排版的主要内容之一，但对于普通用户来说只要学会选择使用即可，因为其格式已经由样式作者所设定。当然如果用户需要在某种样式的基础上有进一步的修改，那么完全可以开展这方面的工作。其中著录样式的在*.bbx文件中修改，而标注样式在*.cbx文件中修改。
+type，nottype 分别表示打印是和不是某种条目类型的文献，keyword，notkeyword 分别表示打印 keywords 域中包含或不包含某一个关键词的文献，category，notcategory分别表示是或不是某一设定的 category 的文献，filter 表示属于某一设定筛选器的文献。使用时注意，category 必须要在导言区定义。check则是更底层的命令，常用在自定义的文献表中。
 
-\subsubsection{标准样式}
-biblatex提供了一些标准的样式，比如numeric，authoryear，这两个样式是比较常用的，也是样式作者定制自定义样式的重要基础。biblatex还提供了更多著录样式，比如alphabetic，authortitle，verbose等，详见biblatex手册Bibliography Styles一节。标注样式也还有numeric-comp，numeric-verb，alphabetic，authortitle等，详见biblatex手册Citation Styles 一节。
+\subsubsection{筛选打印示例}
 
-\emph{特别需要强调的是numeric-comp，authoryear-comp是针对顺序编码和作者年制的两个标签压缩样式，顺序编码制的压缩样式主要针对多篇文献传递给一个标注命令的情况，而作者年制的压缩样式除了给一个标注命令传递多篇文献外，还需要连续引用文献具有相同作者，而要使相同作者的文献连续，可以通过手动方式给出，也可以通过自动排序方式实现}。
+例\ref{eg:bib:filter}给出了这些选项的测试，分别利用type 和 keyword 区分了图书等文献，定义了 collections 和 standard 两个筛选器用于打印论文集会议录和标准文献，定义了名为 reportandthesis 的 category 用于打印学位论文和报告。
+结果如图\ref{fig:eg:bibfilter}所示。
+测试文档见：\href{run:exampleandimage/egbibfilter.tex}{egbibfilter.tex}
 
-读者可以测试这些样式的效果，以便在需要的时候选择使用，而且著录和标注可以分别使用不同的样式，著录是一种，而标注则是另一种，实际使用的例子可以参考\href{https://github.com/sjtug/SJTUThesis/issues/300}{参考文献的顺序}。
+\begin{codetex}{分类筛选打印参考文献表}{eg:bib:filter}
+%file:egbibfilter
+\DeclareBibliographyCategory{reportandthesis}
+\addtocategory{reportandthesis}{汤万金2013-09-30--,Calkin2011-8-9,吴云芳2003--,CALMS1965--}
 
-需要注意: 还有一种情况是在同一种标注样式下有的标注需要是上标，有的则不需要，而且这种应用看来是比较常见的，网友海阔天空和xmtangjun都提出了这种需求，在标准样式下有supercite命令提供上标模式，而cite和parencite命令提供非上标模式。而在下一节的gb7714-2015样式中，xmtangjun提出把已经修改成上标模式parencite恢复成非上标模式，那么可以由cite命令提供上标模式，而parencite命令提供非上标模式，这种方法是可取的。
+\printbibliography[type=book,notkeyword=standard,title=【普通图书】]
 
-\subsubsection{gb7714-2015样式}
-本文的作者在学习GB/T 7714-2015标准的基础上，定制了符合该标准的gb7714-2015样式包，分顺序制和作者年制两类。其加载方式见例\ref{code:pkg:load}。
+\defbibfilter{collections}{%
+type=collection
+or type=proceedings
+or type=incollection
+or type=inproceedings
+}
+\printbibliography[filter=collections,title=【论文集、会议录】]
 
-样式包的主要特点包括:
-\begin{enumerate}
-  \item 实现了GB/T 7714-2015标准的完整功能，不仅包括两种编制方式下的各类型参考文献著录格式和标注格式等基本内容，还包括:双语文献格式，带页码的标注格式，作者年制下文献的自动排序和仅有年的标注格式，两种编码制方式下责任者缺省不同处理，其他信息缺省时的自动处理，一些信息如页码卷期等自动解析等特殊功能，而且增加了一个顺序编码制的标签对齐选项，提供右对齐、左对齐和项对齐三种方式。
-  \item 实现了用户文献数据录入优化，用户在录入参考文献数据的时候，只需要录入文献的实际信息即可，不需要录入文献标识符和载体标识符，不需要录入language或者其它域信息用来区分中英文文献，完全实现自动中英文判断并处理。仅需要针对报纸文章和标准文章在note域输入news和standard 用以区分。
-  \item 实现了对biblatex不同版本的兼容，能够应用于biblatex3.2以前的老版本，也能用于3.3以后姓名处理方式改变后的版本。即可以与texlive2014/2015/2016配合使用，无需升级biblatex情况下安装biblatex-gb7714-2015宏包即可使用。
-  \item 实现了常规文档类book/report/article以及beamer类下的样式文件测试，均能达到要求。文档详细介绍了各条目类型的著录格式及其在biblatex 中对应域的构成，以及域信息的录入方法和一些注意点，说明了样式文件的使用方法和注意事项，并严格按照GB/T 7714-2015 标准测试了各种类型的文献。
-\end{enumerate}
-
-关于参考文献数据录入准备、条目类型的域构成、样式包使用说明等更多的内容详见\cite{胡振震2016}。
-
-biblatex-gb7714-2015样式宏包可以使用tlmgr或离线方式安装。
-在texlive 2016及以上版本下，使用tlmgr比较方便，步骤如下:
-
-(a) 打开tlmgr-gui，在选项通用里面设置国内的ctan镜像源，比如\url{http://mirrors.ustc.edu.cn/CTAN/systems/texlive/tlnet}
-
-(b) 点击，加载缺省软件包仓库。加载完成后可能要求升级tlmgr，那么先升级tlmgr。
-
-(c) 在完成加载后，在匹配文本框填入biblatex-gb7714-2015，搜索安装即可。
-
-这与安装其他宏包原理是一样的。
-
-在texlive 2014 / texlive2015 下使用如下步骤:
-
-(a) 在ctan上面下载biblatex-gb7714-2015宏包，下载地址:https://www.ctan.org/pkg/biblatex-gb7714-2015
-
-(b) 解压压缩包，放到:texlive的texmf-dist/tex/latex或者texmf-local/tex/latex或者它们的子目录下面。(参考:文献\parencite{Berry2016--}的3.4.6节)
-
-(c) 运行texhash或者mktexlsr命令，刷新文件名数据库。
-
-texlive 2016及以上版本当然也可以用这种方式离线安装。
-
-\subsubsection{其他定制样式}
-在texlive安装包中或者ctan上面可以找到更多的定制样式，有针对某些期刊的文献样式比如nature，science，nejm等等，有些是作者自己兴趣所做比如:biblatex-caspervector样式包，该包作者本来是根据GB/T 7714-2005做的样式，后进一步形成了自己喜欢的风格。用户可以测试各样式包，并按需使用，进一步也可以参考其代码，修改自己需要的样式。
-
-总的来说，因为biblatex提供了参考文献数据的完全访问能力，所以定义任何需要的样式都是可能的。因此用户一定可以选择合适的样式或者定制合适的样式来满足自身需要。
-
-\subsubsection{快速定制/临时定制}\label{sec:style:def}
-
-有的时候对于参考文献格式会有一些特殊的需求，而且往往这些格式并没有一个对应能够满足其要求的参考文献样式包，这种情况下就需要进行定制，比如\parencite{olqa2016--}提出的问题。在latex传统方法中，当文献量较小时，这种临时定制采用thebibliography环境是比较方便的，因为thebibliography 环境显式的将其中的内容插入，因此需要什么样的格式，那么就在bibitem中输入指定格式的条目内容即可。但该环境存在一个问题即: 无论引用与否环境中的参考文献都会全部打印。该环境也可以用来生成多个参考文献表，当然文献量较大时采用这种手动输入方式毕竟是繁琐的。
-
-事实上利用biblatex可以实现快速的定制，biblatex宏包使用手册的Bibliography Style Files给出了样式文件定义的一般模式和方法。依据该模式是容易实现样式快速定制的，因为在一般情况下定制样式文件，其实并不需要处理太多的内容。总结起来，定制简单的参考文献格式需要处理的主要内容包括:
-\begin{enumerate}
-  \item 加载定制所需的基础样式比如标准样式或其它样式；
-  \item 设置宏包选项；
-  \item 设置单元或块的标点；
-  \item 设置域格式；
-  \item 设置驱动格式；
-\end{enumerate}
-
-当然对于一些复杂的参考文献样式(比如gb7714-2015)还需要处理更多的内容,包括:
-\begin{enumerate}
-  \item 增加和应用需要的判断和功能函数；
-  \item 增加一些域格式,增加修改应用本地化字符等；
-  \item 动态数据处理；
-  \item 增加宏包选项；
-  \item 等等。
-\end{enumerate}
-
-而标注样式的定制则更为简单，主要处理内容包括:
-\begin{enumerate}
-  \item 加载定制所需的基础样式比如标准样式或其它样式；
-  \item 设置宏包选项；
-  \item 定义或重定义引用命令；
-\end{enumerate}
-
-在上述ctex论坛上的提问中，参考文献著录格式主要需要修改的内容是分块、分块的标点、分块内容的格式。其中: 作者是一个块作为一行，标题是一个块作为一行，其它是一个块作为一行，那么把块标点设置为换行，就可以实现多行。同时各块的内容的字体不同，作者是粗体，标题是等宽，其它是斜体，那么把对应的块所构成域的格式改成需要的格式即可。这里给出该问题的一个简单解答，如图\ref{bib:style}所示。采用的样式文件代码如例\ref{bib:style:customize}所示，其中为了简化修改，把一些条目设置成了相同的格式。
+\defbibfilter{standard}{%
+( type=book or type=inbook )
+and keyword=standard
+}
+\printbibliography[filter=standard,title=【标准文献】]
+\printbibliography[type=inbook,notkeyword=standard,title=【专著中析出的文献】]
+\printbibliography[type=article,notkeyword=news,title=【期刊中析出的文献】]
+\printbibliography[type=article,keyword=news,title=【报纸析出的文献】]
+\printbibliography[category=reportandthesis,title=【报告和学位论文】]
+\printbibliography[notcategory=reportandthesis,title=【非报告和学位论文】]
+\end{codetex}
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics*[viewport=0cm 1cm 20cm 19cm,clip=true,scale=0.8,page=1]{egstylecustomize.pdf}}
-  \caption{参考文献样式快速定制}\label{bib:style}
+  \fbox{\includegraphics[width=0.8\textwidth,page=1]{egbibfilter.pdf}}
+  \caption{文献表筛选打印}\label{fig:eg:bibfilter}
 \end{figure}
 
-\begin{codetex}{参考文献样式定制举例}{bib:style:customize}
-\ProvidesFile{studf.bbx}[2016/12/07 v1.0e biblatex bibliography style]
-略，详见源文件。
-\end{codetex}
-源代码见\href{run:./exampleandimage/studf.bbx}{studf.bbx}，
-测试文件见\href{run:./exampleandimage/egstylecustomize.tex}{egstylecustomize.tex}。
+例\ref{eg:bib:cgck}则展示了 category 和 check 筛选，见测试文件：
+\href{run:exampleandimage/testfilterCategory.tex}{testfilterCategory.tex}，
+\href{run:exampleandimage/testfilterCheck.tex}{testfilterCheck.tex}。
 
-如果对于中文参考文献需要一些特殊的处置，那么可以基于gb7714-2015进行修改，如例\ref{style:customize:gb}给出的代码。
-其结果如图\ref{bib:style:gba}，\ref{bib:style:gbb}所示。
+\begin{codetex}{category和check筛选}{eg:bib:cgck}
+%category
+\DeclareBibliographyCategory{kindsofnameformats}
+\addtocategory{kindsofnameformats}{zhang2009china,xu2012role,wang2006another,
+calvo2006phoenix,bernanke1989agency,adam2011house,fazzari1993working}
+
+\printbibliography[category=kindsofnameformats,title=五种不同的姓名格式]
+\printbibliography[notcategory=kindsofnameformats,title=某种期刊的姓名格式]
+
+%check
+\defbibcheck{uppercase}{%
+\iffieldundef{nameformat}{}{\skipentry}}
+
+\defbibcheck{lowercase}{%
+\iffieldequalstr{nameformat}{lowercase}{}{\skipentry}}
+
+\defbibcheck{givenahead}{%
+\iffieldequalstr{nameformat}{givenahead}{}{\skipentry}}
+
+\defbibcheck{familyahead}{%
+\iffieldequalstr{nameformat}{familyahead}{}{\skipentry}}
+
+\defbibcheck{pinyin}{%
+\iffieldequalstr{nameformat}{pinyin}{}{\skipentry}}
+
+\printbibliography[check=uppercase,title=国标风格-全大写]
+\printbibliography[check=lowercase,title=国标风格-大小写不变]
+\printbibliography[check=pinyin,title=中文常见风格-拼音]
+\printbibliography[check=givenahead,title=biblatex标准风格-名在前]
+\printbibliography[check=familyahead,title=biblatex标准风格-姓在前]
+\end{codetex}
+
+\subsubsection{筛选的多个文献表的顺序编码标签}
+
+biblatex与标准的 LaTeX 不同，默认情况下，biblatex宏包生成的顺序编码标签在文档正文开始处就分配给文献表的全体文献。因此当有多个筛选文献表时可能会出现文献表中的顺序编码不连续的情况，这可以利用宏包的defernumbers选项解决。
+
+但如果defernumbers选项被激活，各文献的顺序编码标签会在任意文献表中被打印时才会做第一次分配。
+
+该选项需要在后端将数据导出到 bbl文件后再运行两次 LaTeX （除由分页变化等要求的编译外）。需注意的一个要点是，如果你在文档中改变了该选项值（或者那些依赖于本选项的选项值，例如与 printbibliography 宏相关的选项，，那么很可能需要删除当前的辅助文件然后重新运行 \LaTeX 来获得正确的顺序编码。需要记住 defernumbers 选项只与顺序编码标签有关，而与文献表中文献的排序无关。主要用于解决做文献筛选后顺序编码不连续的问题。如例\ref{eg:print:defernumber}所示：
+
+\begin{codetex}{多个筛选文献表的顺序编码}{eg:print:defernumber}
+略，详见testdefernumber.tex文档
+\end{codetex}
+
+文档为：
+\href{run:exampleandimage/testdefernumber.tex}{testdefernumber.tex}
+
+
+\subsubsection{文献缩略信息打印}
+
+参考文献处理中有不同的缩略信息可以打印，比如整篇文献的缩略词或者说是代替常规标签的缩略标签(shorthand)，集体作者的缩写形式(shortauthor/shorteditor)，期刊名的缩写形式或其首字母缩略语(shortjournal)，series的缩写形式或其首字母缩略语(shortseries)，标题的缩略形式(shortitle)等。
+
+这些信息可以通过printshorthands，printbiblist来输出。printshorthands一般用于存在shorthands域的情况。而printbiblist用于自定义输出信息的情况，可以使用short相关域也可以不使用。
+
+例\ref{eg:print:biblist}给出了输出booktitle域信息的示例。其中要使用printbiblist输出自定义信息，必须要定义对应的驱动。而相应的过滤器，著录环境，排序格式，标题格式等可以定义或不定义。结果如图\ref{fig:eg:biblist}所示。
+
+\begin{codetex}{论文集信息打印}{eg:print:biblist}
+%见文件：egtestshort.tex
+\end{codetex}
+
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[viewport=0cm 1.5cm 12cm 20.5cm,clip=true,scale=0.8,page=1]{egstylecustomizegb.pdf}}
-  \caption{国标风格的参考文献样式快速定制A}\label{bib:style:gba}
+  \fbox{\includegraphics[width=0.7\textwidth,page=1]{egtestshort.pdf}}
+  \caption{论文集信息打印}\label{fig:eg:biblist}
 \end{figure}
+
+例\ref{eg:print:biblista}给出了使用默认的short系列域的方式，主要输出title和journal域的信息。结果如图\ref{fig:eg:biblista}所示。
+
+\begin{codetex}{标题和期刊信息打印}{eg:print:biblista}
+%见文件：egtestshorta.tex
+\end{codetex}
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[viewport=0cm 8cm 12cm 20.5cm,clip=true,scale=0.8,page=2]{egstylecustomizegb.pdf}}
-  \caption{国标风格的参考文献样式快速定制B}\label{bib:style:gbb}
+  \fbox{\includegraphics[width=0.7\textwidth,page=1]{egtestshorta.pdf}}
+  \caption{标题和期刊信息打印}\label{fig:eg:biblista}
 \end{figure}
 
-\begin{codetex}{参考文献样式定制举例-国标样式}{style:customize:gb}
-\ProvidesFile{gbudf.bbx}[2016/12/07 v1.0e biblatex bibliography style]
-略，详见源文件。
-\end{codetex}
-源代码见\href{run:./exampleandimage/gbudf.bbx}{gbudf.bbx}，
-测试文件见\href{run:./exampleandimage/egstylecustomizegb.tex}{egstylecustomizegb.tex}。
+例\ref{eg:print:biblistb}给出了在一个表中同时输出shorthand和shortseries的方式，主要输出title和journal域的信息。结果如图\ref{fig:eg:biblistb}所示。
 
-\subsubsection{通过宏包选项改变样式}\label{sec:opt:def}
-在给定样式基础上，可以使用宏包选项来定制一些需要的样式，比如作者输出数量、文献表排序、文献标注排序、文献数据项的输出等等，宏包选项的详细说明可以参见\href{https://github.com/hushidong/biblatex-zh-cn/blob/master/biblatex-zh-cn.pdf}{biblatex 手册中文版}。
-
-\paragraph{作者输出数量} 文献表和标注中的作者的数量可以通过宏包选项maxnames和minnames控制。两者也可以分开进行控制，分别利用maxbibnames，minbibnames和maxcitenames，mincitenames 进行控制。
-
-\paragraph{文献表排序} 文献表排序可以使用sorting选项进行排序，有些样式中已经给出了sorting选项，如果用户想要另外的排序方式，那么可以自己选择合适sorting选项在biblatex宏包加载时给出。
-
-\paragraph{标注排序} 当一个引用命令中有多个参考文献引用关键字时，可以利用sortcites选项来控制是否自动排序。当sortcites=false时不进行排序，按给出的顺序排列。当sortcites=true时，则按文献表的顺序排列。如果希望标注排序排序与文献表的排序不同，可以利用新文境newrefcontext来实现。比如:希望文献表按nyt排，而标注用ynt排，可以采用如下方式:宏包加载时使用
-\lstinline!\usepackage[backend=biber,style=gb7714-2015ay,sortcite,sorting=ynt]{biblatex}!，然后在文献打印前加
-\lstinline!\newrefcontext[sorting=nyt]!
-
-\paragraph{文献数据项的输出} 如果要取消url，doi，isbn等信息项的输出，可以设置相应的选项为false。
-
-\paragraph{标注后面的标点控制} 在英文有时因为习惯问题会有标点的问题，比如句尾出现脚注的标签，需要把它放到句点后面。有时可能也需要把标注标签放到句点后面。这时需要用autopunct选项来扫描标注后面的标点。下面的例子给出了在句尾的脚注文献与标点的处理。
-
-\begin{codetex}{autopunct选项与脚注之后句点处理}{eg:autopunct}
-\documentclass[twoside]{article}
-\usepackage{ctex}
-\usepackage{geometry}
-\geometry{paperwidth=21cm,paperheight=29cm,top=1.5cm, bottom=1.5cm, left=2.54cm,right=2.54cm}
-\usepackage{xcolor}
-\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
-%\usepackage[backend=biber,style=gb7714-2015,maxbibnames=5,minbibnames=5]{biblatex}
-\usepackage[backend=biber,style=numeric,autocite=footnote,autopunct=true]{biblatex}%align=gb7714-2015
-\usepackage{filecontents}
-\begin{filecontents}{\jobname.bib}
-
-@Inproceedings{refa,
-  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
-  Address                  = {Chicago, IL},
-  Author                   = {AlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
-  editor={Name, B and Dome, C},
-  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
-  Date                     = {2008-10},
-  Pages                    = {1-5}
-}
-
-@Inproceedings{refb,
-  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
-  Address                  = {Chicago, IL},
-  editor={Name, B and Dome, C},
-  Author                   = {BlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
-  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
-  Date                     = {2008-10},
-  Pages                    = {1-5}
-}
-
-@Inproceedings{refc,
-  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
-  Address                  = {Chicago, IL},
-  bookauthor={Name, B and Dome, C},
-  Author                   = {ClayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
-  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
-  Date                     = {2008-10},
-  Pages                    = {1-5}
-}
-
-@Inproceedings{refd,
-  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
-  Address                  = {Chicago, IL},
-  bookauthor={Name, B and Dome, C},
-  Author                   = {MlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
-  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks (DySPAN)},
-  Date                     = {2008-10},
-  Pages                    = {1-5}
-}
-
-@Book{Simon2001--,
-  Title                    = {Spread Spectrum Communications Handbook},
-  Address                  = {New York City},
-  Author                   = {Simon, M. K. and Omura,J. K. and Scholtz,R. A. and Levitt,B. K.},
-  Publisher                = {McGraw-Hill, Inc.},
-  Year                     = {2001}
-}
-\end{filecontents}
-\addbibresource{\jobname.bib}
-
-
-\begin{document}
-%编译信息:biblatex v\versionofbiblatex;gb7714-2015*.* version number \versionofgbtstyle.
-
-\section{文献表}
-文献\cite{refc}.
-
-文献\autocite{refa}.
-
-文献\autocite{refb}。
-
-文献\cite{refd}.
-
-文献\cite{Simon2001--}.
-
-\printbibliography%[heading=subbibintoc,title=【参考文献】]
-\end{document}
+\begin{codetex}{不同缩略信息在一个表中打印}{eg:print:biblistb}
+%见文件：egtestshortb.tex
 \end{codetex}
 
-\subsubsection{标注命令}
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[width=0.7\textwidth,page=1]{egtestshortb.pdf}}
+  \caption{不同缩略信息在一个表中打印}\label{fig:eg:biblistb}
+\end{figure}
 
-传统方法中类似natbib，mcite这样的宏包提供了很多有特色的标注命令。比如:
-\begin{codetex}{natbib和mciteplus等宏包提供的标注名}{eg:cite:natbib}
-\citep{jon90} fora parenthetical citation(Jones et al.,1990),
-\citet{jon90} fora textual one, as Jones et al.(1990).
-\citealt{jon90} Jonesetal.1990
-\citealt*{jon90} Jones,Baker,andWilliams1990
-\citealp{jon90} Jones et al.,1990
-\citealp*{jon90} Jones,Baker,and Williams,1990
-\citealp{jon90,jam91}  Jones et al.,1990;James et al.,1991
-\citealp[pg.~32]{jon90}  Jones et al.,1990,pg.32
-\citenum{jon90}  11
-\citetext{priv.\comm.} (priv.comm.)
+\subsubsection{在标注和文献表中使用缩略信息}
 
-\citeauthor{jon90} ) Jonesetal.
-\citeauthor*{jon90} ) Jones,Baker,andWilliams
-\citeyear{jon90} ) 1990
-\citeyearpar{jon90} ) (1990)
+上一小节，讨论的时把缩略信息作为一个单独的部分来输出以强调这些内容。但有的时候可能需要在文献表或标注中使用缩略信息，而这又是另一个概念了。
 
-\cite{Glashow,*Salam,*Weinberg,Smith,*Jones}%multiplegroupsOK
-\cite{Glashow,*Salam,*Weinberg}\cite{Glashow}%headcanberecitedanytime
-\cite{Glashow,*Salam,*Weinberg}\cite{Glashow,*Salam,*Weinberg}%restatepreviousdefinition
-\cite{Glashow,*Salam,*Weinberg}\cite{Glashow,*Weinberg}%restatepartofpreviousdefinition
-\cite[page580ofGlashow]{Glashow,*Salam}%optionalargumentissupported
-\nocite{*}%BibTeXwildcardOK,butusewithcaution
+latex中的参考文献信息由bib文件提供，因此除非管理bib文件的软件有增加缩略信息域的功能，否则就需要手动的在bib文件中输入，比如有 title=\{world health oganization\}，那么要使用缩略信息，就要输入，shorttitle=\{WHO\}。
+
+如果我们要在文献表中使用缩略信息，有两种主要的方法：
+
+一是重定义使用相应信息的宏，比如\verb|\renewbibmacro*{journal}|，可以将其中的journaltitle域替换为shortjournal域。
+
+二是使用域信息的存储和恢复，比如：
+\begin{codetex}{域信息替换方法}{eg:field:save}
+\savefield{shortjournal}{\temptitle}%
+\restorefield{journaltitle}{\temptitle}%
 \end{codetex}
 
-biblatex通过相应的处理模块，给出功能相同语法相同的命令。
+如果要在不同的位置比如在标注中，或者在文献表中使用，那么利用biblatex的局部编组特性，可以利用钩子AtEveryCitekey等方式来实现。看下面一个具体的例子，结果如图\ref{fig:eg:biblistc}所示。
 
-此外，biblatex还提供更多标注命令，以及强大的标注命令定制功能，biblatex-gb7714-2015中的标注命令如例\ref{eg:cite:cmds}所示：
-
-\begin{codetex}{常见的标注命令}{eg:cite:cmds}
-1. 不带页码的引用(上标，方括号包围):
-\cite{Peebles2001-100-100}
-
-2. 不带页码的引用(非上标，方括号包围):
-\parencite{Miroslav2004--}
-
-3. 带页码的引用:
-\cite[见][49页]{蔡敏2006--}  \parencite[见][49页]{Miroslav2004--}
-\pagescite{Peebles2001-100-100}  \pagescite[][201-301]{Peebles2001-100-100}
-
-4. 顺序编码制中同时输出作者和顺序编码标签，比如：
-（一）直接的方法：见\citeauthor{refb}\cite{refb},\citeauthor{refc}\cite{refc}
-（二）定义新的标注命令：见\authornumcite{refb,refc}
-（三）用textcite但没有上标：见\textcite{refb,refc}
-
-5. 作者年制文中已有作者还需要年份和页码的情况，使用命令yearpagescite，比如:
-见赵耀东\yearpagescite[][205]{赵耀东1998--}和Simon\yearpagescite[][15]{Simon2001--}
-
-6. 作者年制文中已有作者只需要年份的情况，使用命令yearcite和手动方式，比如:
-见赵耀东\yearcite{赵耀东1998--}
-见赵耀东(\cite*{赵耀东1998--})
-见赵耀东(\citeyear{赵耀东1998--})
-
-7. 在页脚中引用和打印文献表:
-\footnote{在脚注中引用\footcite{赵学功2001--}}  \footfullcite{赵学功2001--}
+\begin{codetex}{在标注和著录表中使用缩略信息}{eg:print:biblistc}
+%见文件：egtestshortc.tex
 \end{codetex}
 
-\subsection{多语言文献}
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[width=0.7\textwidth,page=1]{egtestshortc.pdf}}
+  \caption{不同缩略信息在一个表中打印}\label{fig:eg:biblistc}
+\end{figure}
+
+\subsubsection{文献信息的动态/静态替换}
+
+上一节使用缩略信息的方法中，我们首先要给出缩略信息，使用和输入这一信息，还有一些方便的工具和方法，比如使用信息的动态/静态修改/替换。
+
+信息(除了域信息也包括条目信息)的处理包括替换方法，除了前一节介绍的savefield/restorefield外还包括：crossref、xref、xdata、\verb|@string|、sourcemap等，共6种方法。下面进行一一介绍：
+
+crossref 域用于指定要继承的父对象，当比如在一个 inbook 条目中给出一个 crossref 域指定一个book条目，那么该 inbook 条目就会从该 book 条目继承bookauthor，booktitle信息。而 xref 域用于指定条目的父子关系，当指定父对象的次数超过一定的阀值时，父条目会被加入到文献表中，这是一种条目处理方式。当然crossref 域指定的父对象也有根据阀值加入文献表的特性。使用方法可以参考手册第2.4.1节，继承的规则和机制也可以自定义，参考手册第4.5.11节。
+
+xdata 是一种条目类型，作为数据容器用，该类型定义的条目的可以被继承。利用 xdata 类型定义一个条目，其中包含要被继承的信息，然后在需要这些信息的条目中加入域 xdata，指定需要的xdata条目的关键词，就可以将信息继承过来。而且条目中的xdata 域支持分隔值列表，因此可以从多个条目继承信息。具体方法参考手册第3.13.6节。
+
+\verb|@string|方法是与 xdata 域有点类似的方法。%，它是传统的bibtex的方法。
+在bib文件中定义一个\verb|@string|，其内容包括一个字符串标签和字符串内容。
+在其它文献条目中可以把域指定为该字符串标签，用来继承该字符串内容。例\ref{eg:data:string}给出了一个例子。更多的内容详见Paul Stanley的教程
+\href{https://github.com/hushidong/biblatex-tutorial-cn}{（pdf文档）}。
+
+\begin{codetex}{string方法继承数据}{eg:data:string}
+@string{NYULSQ="NYUniversityLegalStudiesQ"}
+@Article{art1,
+title = {article title},
+journaltitle= NYULSQ,
+date = {1971},
+number = {36},
+pages = {8--9},
+}
+\end{codetex}
+
+最后一个是最重要，最常用，最强大的sourcemap，即biber的动态数据修改。biblatex 提供了4个层次的数据动态修改，常用的是用户层、样式层、驱动层这三层的sourcemap。sourcemap主要包括如下功能及其组合：
+
+\begin{itemize}
+  \item 将数据源条目类型映射为其它类型
+  \item 将数据源域映射为其它域
+  \item 给条目添加新域
+  \item 从条目移除域
+  \item 用标准的Perl正则表达式匹配和替换，修改域的内容。
+  \item 将上述操作限制在来自特定数据源的条目
+  \item 将上述操作限制在某些条目类型。
+  \item 将上述操作限制在某一特定的参考文献节。
+\end{itemize}
+
+根据这些功能描述，就可以知道对于bib文件中域的信息处理，对于sourcemap来说只是很自然的一件事情。例\ref{eg:data:map}给出了将期刊名用其缩略信息来代替的三种操作方式。其中第一种和第二种本质是一样的，就是将journaltitle设置为shortjournal的内容，只是写法不同。第三种操作，则做了匹配和替换，当匹配特定的目标时，才做替换。关于sourcemap的更多内容详见biblatex手册，第4.5.3节。
+
+\begin{codetex}{sourcemap处理域信息}{eg:data:map}
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map[overwrite]{ % Notice the overwrite: replace one field with another
+      \step[fieldsource=shortjournal,fieldtarget=journaltitle]
+    }
+  }
+}
+
+\DeclareSourcemap{%
+  \maps[datatype=bibtex]{
+    % Journal abbreviations
+    \map[overwrite]{
+      \step[fieldsource=shortjournal]
+      \step[fieldset=journaltitle,origfieldval]
+    }
+  }
+}
+
+\DeclareSourcemap{%
+  \maps[datatype=bibtex]{
+    % Journal abbreviations
+    \map{
+      \step[fieldsource=journaltitle, match={Physics Letters A},
+      replace={Phys. Lett. A}]%
+    }
+  }
+}
+\end{codetex}
+
+\subsubsection{文献表和标注的排序}
+
+排序涉及到两个方面的内容，一是文献表中的排序，二是标注的排序。其中标注的排序通常是在同一位置标注多个标签时，这种情况往往是多个引用关键字（词）传递给一个标注（引用）命令。一般情况下标注是不进行排序的，而是以引用时给出的顺序进行排序，当需要进行标签排序时需要启用sortcites选项，这时biblatex会按照当前文献表中的顺序对标注标签进行排序。
+
+而文献表中的文献排序由sorting选项控制，常见的值包括：
+
+\begin{description}
+\item[nty] %Sort by name, title, year.
+按照姓名、标题、年份排序。
+\item[nyt] %Sort by name, year, title.
+按照姓名、年份、标题排序。
+\item[nyvt] %Sort by name, year, volume, title.
+按照姓名、年份、卷数、标题排序。
+\item[anyt] %Sort by alphabetic label, name, year, title.
+按照字母标签、姓名、年份、标题排序。
+\item[anyvt] %Sort by alphabetic label, name, year, volume, title.
+按照字母标签、姓名、年份、卷数、标题排序。
+\item[ynt] %Sort by year, name, title.
+按照年份、姓名、标题排序。
+\item[ydnt] %Sort by year (descending), name, title.
+按照年份（降序）、姓名、标题排序。
+\item[none] %Do not sort at all. All entries are processed in citation order.
+不进行排序。所有的条目按照引用顺序处理。
+\item[debug] %Sort by entry key. This is intended for debugging only.
+按照条目键值排列。该选项只用于程序调试。
+\item[name] %Use \prm{name}, as defined with \cmd{DeclareSortingTemplate} (\secref{aut:ctm:srt})
+使用由 \verb|DeclareSortingTemplate|定义的排序模板名 name。
+\end{description}
+注意：除非另加说明，文献条目总是按升序排列。
+
+通常情况下，在选择使用某种样式时，文献表的排序方式就已经设定。当需要调整排序时，就需要在加载biblatex宏包时显式地给出sorting选项，并可根据需要选择上述给出的选项值。
+
+另外，因为biber能充分利用perl的一些模块的功能，所以biblatex还能根据Unicode::Collation::locale模块提供不同语言的排序的本地化调整方案。对于中文，默认的排序规则是按照中文字符的unicode编码进行排序，但可以通过设置选项来进行调整，对于中文有如下调整方案：zh，zh\_\_pinyin，zh\_\_big5han，zh\_\_gb2312han，zh\_\_stroke，zh\_\_zhuyin。
+
+一般的，biblatex利用sortlocale选项将调整方案名传递给biber，biber利用 Unicode::Collation::locale 模块提供对应的排序。因此biblatex可以设置选项为：
+  \begin{itemize}
+    \item \verb|sortlocale=auto| 或者不设置该选项，为默认的unicode编码顺序
+    \item \verb|sortlocale=zh|，为unicode编码顺序
+    \item \verb|sortlocale=zh__pinyin|，为拼音顺序
+    \item \verb|sortlocale=zh__big5han|，为big5 编码顺序
+    \item \verb|sortlocale=zh__gb2312han|，为GB-2312 顺序
+    \item \verb|sortlocale=zh__stroke|，为笔划数顺序
+    \item \verb|sortlocale=zh__zhuyin|，为注音顺序
+  \end{itemize}
+中文排序本地化调整的测试文档见
+\href{run:exampleandimage/testlocale.tex}{testlocale.tex}
+
+当然这种调整可以直接利用在biber编译时设置相应的选项来实现，比如需要按拼音或字顺进行排序时，可使用biber选项，此时biblatex不需要设置sortlocale选项。
+
+\begin{codetex}{中文文献排序时的biber选项}{eg:sort:bibercmd}
+%按拼音排序，biber命令
+biber -l zh__pinyin jobname
+%按笔画排序，biber命令
+biber -l zh__stroke jobname
+\end{codetex}
+
+一个简单的中文作者排序示例见\href{https://github.com/hushidong/biblatex-gb7714-2015/wiki}{(八)如何对文献表中的参考文献进行排序？}
+
+有的时候，可能希望标注标签的排序和文献表中的顺序不同，操作方法，可以参考
+\href{https://github.com/hushidong/biblatex-gb7714-2015/issues/30}{citation的顺序和bibliography的顺序如何不关联}。其中使用了biblatex宏包提供参考文献文境的概念，即不同的文境下可以使用不同的排序方式。
+
+
+\subsubsection{文献信息索引}
+
+当需要对参考文献的信息进行索引时，可以使用indexing选项。启用indexing后，biblatex的标准样式默认会将作者和题名加入到索引中去，如果需要增加一些信息的索引则需要对样式文件做修改。另外，要生成索引还需要使用索引相关的宏包，如makeidx。宏包加载如例\ref{eg:print:index}所示：
+
+\begin{codetex}{文献信息索引}{eg:print:index}
+见文件 testindexofbib.tex
+\end{codetex}
+
+
+
+
+
+
+
+\subsection{专题：多语言文献}
 
 不仅GB/T 7714-2015对于多语言文献提出了要求，某些期刊对于参考文献也有双语文献要求。这一问题可以通过两种方式解决，一是条目集类型(set)方式，二是关联文献（related）方式。两种方式都有静态和动态两种方法，这里只介绍利用条目集的方法。关于多语言文献的更详细介绍参见
 \href{https://github.com/hushidong/biblatex-gb7714-2015/blob/master/biblatex-gb7714-2015.pdf}%
@@ -1984,7 +1883,7 @@ entryset = {易仕和2013--,Yi2013--},
 当使用bibtex后端时，则需要进一步设置，具体参考biblatex宏包手册。
 
 
-\subsection{脚注题注小页环境中的引用}
+\subsection{专题：脚注题注等环境中的引用和文献表}
 
 文献不仅可以在正文中引用，也可以在脚注，题注，小页环境中引用，下面分别进行说明:
 
@@ -2097,11 +1996,9 @@ entryset = {易仕和2013--,Yi2013--},
 \end{figure}
 
 
-\subsection{脚注旁注中的文献表}
+\subsubsection{使用biblatex命令实现脚注文献表}
 
 前面说过，biblatex可以访问和利用参考文献源文件中的任何数据。其中，就可以利用这一特点形成一个相关功能即: 将参考文献表放到脚注中，这在某些需要的时候是很有用的。
-
-\subsubsection{使用biblatex命令实现脚注文献表}
 
 biblatex提供了一个footfullcite命令实现将文献表放到脚注中，看例\ref{eg:bib:infoot}给出的代码，3个footfullcite命令将3条文献放入脚注中，文献的著录格式仍然是指定的gb7714-2015ay样式。
 \begin{codetex}{脚注参考文献表}{eg:bib:infoot}
@@ -2256,7 +2153,7 @@ text text text text text text text text text
   \caption{脚注和旁注中参考文献表}\label{fig:eg:bibinfootmargin}
 \end{figure}
 
-\subsection{beamer类中的参考文献}\label{sec:bib:inbeamer}
+\subsection{专题：beamer类中的参考文献}\label{sec:bib:inbeamer}
 在beamer类中使用biblatex生成参考文献与一般文档类中大体上一致，略有差别，主要是refsection环境无法使用。在实际应用中，beamer 类有两种文献表是主要的，一是文末的文献表，二是脚注中的文献表。
 
 \subsubsection{文末文献表和脚注文献表}
@@ -5072,7 +4969,7 @@ article条目中，标题为正常字体，期刊名为斜体，卷为粗体，�
 
 biblatex 提供了很多接口可以在不同的位置使用一些代码，比如在AtEndPreamble、AtEveryCitekey、AtDataInput等处，进行一些内容检测、筛选、处理操作，比如：
 
-\begin{codetex}{排序格式中的宏重用}{eg:sort:scheme}
+\begin{codetex}{不同位置的代码处理}{eg:code:hooka}
 %导言区结束加代码：
 \AtEndPreamble{
   \ifundef{\bbx@manuscripts@sorting}{}%
@@ -5092,6 +4989,33 @@ biblatex 提供了很多接口可以在不同的位置使用一些代码，比�
 
 %条目引用开始处加代码：
 \AtEveryCitekey{\iffieldundef{prenote}{\blx@initunit}{}}
+\end{codetex}
+
+\begin{codetex}{引用位置的本地化字符串/空格处理}{eg:code:hookb}
+%本地化字符串：
+%在正文标注中，无论中文作者还是英文作者都使用“等”作为作者缩略时的标记
+%区别于文献表中，中文作者用等，而英文作者用et al.
+\AtEveryCite{%
+\renewbibmacro*{name:andothers}{%
+ \ifboolexpr{
+   test {\ifnumequal{\value{listcount}}{\value{liststop}}}
+   and
+   test \ifmorenames
+ }{\ifnumgreater{\value{liststop}}{1}
+      {\finalandcomma}%
+      {}%\finalandcomma
+\printdelim{andothersdelim}\bibstring{andotherscn}%
+}{}}}
+
+
+%空格处理：
+%引用每一篇文献时，局部定义andothersdelim分隔符
+\AtEveryCitekey{%
+\iffieldequalstr{userf}{cn}{\renewcommand*{\andothersdelim}{\addthinspace}}%\addthinspace
+  {\renewcommand*{\andothersdelim}{\addspace}}%
+}
+%而因为textcite命令中有专门的分隔符环境可以用，因此会覆盖andothersdelim的设置
+\DeclareDelimFormat[textcite]{andothersdelim}{\iffieldequalstr{userf}{cn}{\addthinspace}{\addspace}}%
 \end{codetex}
 
 
@@ -5118,7 +5042,7 @@ biblatex 提供了数据模型的高级定义功能，可以自定义条目类�
 
 \DeclareDatamodelFields[type=field, datatype=verbatim]{
   abstracturl}
-  
+
 \DeclareDatafieldSet{author}{
     \member[field=author]
 
@@ -5370,7 +5294,7 @@ biblatex 提供了数据模型的高级定义功能，可以自定义条目类�
     {\ExecuteBibliographyOptions{pagetracker}%
      \renewbibmacro*{bbx:savehash}{\savefield{fullhash}{\bbx@lasthash}}}
     {\renewbibmacro*{bbx:savehash}{}}}
-    
+
 \InitializeBibliographyStyle{\global\undef\bbx@lasthash}
 
 \newbibmacro*{bbx:savehash}{\savefield{fullhash}{\bbx@lasthash}}

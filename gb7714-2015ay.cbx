@@ -13,23 +13,25 @@
 %   加载标准样式
 %
 \RequireCitationStyle{authoryear}
-%\RequireCitationStyle{numeric}
 
 
+
+\ExecuteBibliographyOptions{
+  %autocite  = superscript ,
+  %autopunct = true       ,
+  %sorting   = none        ,
+  maxcitenames=1,
+  mincitenames=1,
+  uniquename=init,%因为使用了名字缩写选项，所以需要设置uniquename=init而不是full避免冲突
+  uniquelist=minyear
+}
 %
 %   选项设置，针对3.7以下版本
 %
 %   原理方法:labeldate用于控制是否给引用标签提供日期的成分
 \defversion{3.4}{cbxopt}{
     \ExecuteBibliographyOptions{
-      %autocite  = superscript ,
-      %autopunct = true       ,
-      %sorting   = none        ,
-      maxcitenames=1,
-      mincitenames=1,
-      uniquename=init,%因为使用了名字缩写选项，所以需要设置uniquename=init而不是full避免冲突
-      labeldate=true,
-      uniquelist=minyear
+      labeldate=true
     }
 }
 
@@ -39,15 +41,7 @@
 %   原理方法:labeldateparts用于控制是否给引用标签提供日期的成分
 \defversion{3.7}{cbxopt}{
     \ExecuteBibliographyOptions{
-      %autocite  = superscript ,
-      %autopunct = true       ,
-      %sorting   = none        ,
-      maxcitenames=1,
-      mincitenames=1,
-      uniquename=init,%因为使用了名字缩写选项，所以需要设置uniquename=init而不是full避免冲突
-      labeldateparts=true,
-      %labeldate=true,
-      uniquelist=minyear %minyear,
+      labeldateparts=true
     }
 }
 
@@ -66,9 +60,13 @@ or
 test {\iftoggle{iftlseven}}%3.7=biblatex
 }{\newbibmacro{cite:labeldate+extradate}{\usebibmacro{cite:labelyear+extrayear}}}{}%else: biblatex>3.7
 
-%textcite标注命令中的标点设置
+%textcite标注命令中的标点设置，注意只针对textcite命令。
 \DeclareDelimFormat[textcite]{nameyeardelim}{}%\addcomma\space
-\DeclareDelimFormat[textcite]{andothersdelim}{\addspace}%
+\DeclareDelimFormat[textcite]{andothersdelim}{\iffieldequalstr{userf}{cn}{\addthinspace}{\addspace}}%
+\AtEveryCitekey{%
+\iffieldequalstr{userf}{cn}{\renewcommand*{\andothersdelim}{\addthinspace}}%\addthinspace
+  {\renewcommand*{\andothersdelim}{\addspace}}%
+}
 
 
 

@@ -1,0 +1,136 @@
+\documentclass[twoside]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=15cm,paperheight=13.5cm,top=0.5cm, bottom=0.0cm, left=0.5cm,right=0.5cm}
+\usepackage{xcolor}
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
+%\usepackage[backend=biber,style=gb7714-2015,maxbibnames=5,minbibnames=5]{biblatex}
+\usepackage[backend=biber,style=gb7714-2015,gbpunctin=false]{biblatex}%align=gb7714-2015
+
+
+\DefineBibliographyStrings{english}{in={}}
+
+% printbiblist命令需要一个与其参数同名的文献输出驱动，详见92-bibliographylists.tex
+\DeclareBibliographyDriver{shortbooktitle}{%
+\printfield{booktitle}\par}
+\DeclareBibliographyDriver{booktitlelist}{%
+\printfield{booktitle}}
+
+
+% 给对应printbiblist参数的list设置一个默认的排序格式，当然排序格式也可以用sorting选项制定。这一排序格式设置是可选的。未制定排序格式时，则使用全局的排序。
+\DeclareSortingTemplate{shortbooktitle}{
+  \sort{
+    \field{booktitle}
+  }
+}
+
+
+% 给对应printbiblist参数的list设置一个默认的过滤器。这是可选的。
+%\defbibcheck{shortbooktitle}{%
+%\iffieldundef{booktitle}{\skipentry}
+%{\ifcsdef{\strfield{shortbooktitle}=\strfield{booktitle}}{\skipentry}
+%{\savefieldcs{booktitle}{\strfield{shortbooktitle}=\strfield{booktitle}}}}%
+%}
+%这一这里的处理是为了去除重复选项
+%注意这里savefieldcs给命令{\strfield{shortbooktitle}=\strfield{booktitle}}
+%拷贝booktitle域的信息只是一种选择而已。不拷贝信息，而直接使用csdef{\strfield{shortbooktitle}=\strfield{booktitle}}也是一样的，
+%因为前面的ifcsdef判断只是判断cs是否已定义，而不管它定义的什么内容，
+%但因为biblatex中提供了savefieldcs命令，为方便，直接应用它。
+
+
+% biblatex会为printbiblist参数的list自动创建一个著录表环境，并使用默认的biblist标题。
+%两者都可以重定义，或者使用env或heading选项制定一个自定义的环境和标题。
+%注意环境默认使用当前缩略信息的对应的short域作为标签，比如shorthands列表使用shorthand域，而shorttitle列表则使用shorttitle标签。但非biblatex默认支持的short域则没有这一默认设置，需要自定义环境来实现标签。
+%比如定义如下的环境：
+\defbibenvironment{envbooktitle}
+  {\list
+     {\printfield{shortbooktitle}}
+     {\setlength{\labelwidth}{\shorthandwidth}%
+      \setlength{\leftmargin}{\labelwidth}%
+      \setlength{\labelsep}{\biblabelsep}%
+      \addtolength{\leftmargin}{\labelsep}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}%
+      \renewcommand*{\makelabel}[1]{##1\hss}}}
+  {\endlist}
+  {\item}
+
+
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+@Inproceedings{refa,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  Author                   = {AlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  editor={Name, B and Dome, C},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks},
+  shortbooktitle ={DySPAN},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{refb,
+  Title                    = {Interference cartography for hierarchical dynamic spectrum access},
+  Address                  = {Chicago, IL},
+  editor={Name, B and Dome, C},
+  Author                   = {BlayaFeki, A. and B. Sayrac and S. Ben Jemaa and E. Moulines},
+  Booktitle                = {Proc. IEEE Symp. on New Frontiers in Dynamic Spectrum Access Networks},
+  shortbooktitle ={DySPAN},
+  Date                     = {2008-10},
+  Pages                    = {1-5}
+}
+
+@Inproceedings{FOURNEY1971-17-38,
+  Title                    = {Advances in holographic photoelasticity},
+  Author                   = {M E FOURNEY},
+  Booktitle                = {Symposium on Applications of Holography in Mechanics},
+  shortbooktitle ={AHM},
+  Date                     = {1971},
+  Pages                    = {17-38},
+  Publisher                = {ASME},
+  Location                 = {New York}
+}
+
+@Inproceedings{裴丽生1981-2-10,
+  Title                    = {在中国科协技术期刊编辑工作经验交流会上的讲话},
+  Author                   = {裴丽生},
+  Booktitle                = {中国科协学术期刊编辑工作经验交流会资料选},
+  shortbooktitle ={科协学术},
+  Date                     = {1981},
+  Pages                    = {2-10},
+  Institution              = {中国科学技术协会学会工作部},
+  Location                 = {北京}
+}
+
+@Book{Simon2001--,
+  Title                    = {Spread Spectrum Communications Handbook},
+  Address                  = {New York City},
+  Author                   = {Simon, M. K. and Omura,J. K. and Scholtz,R. A. and Levitt,B. K.},
+  Publisher                = {McGraw-Hill, Inc.},
+  Year                     = {2001}
+}
+\end{filecontents}
+\addbibresource{\jobname.bib}
+
+
+\begin{document}
+编译信息:biblatex v\versionofbiblatex;gb7714-2015*.* version number \versionofgbtstyle.
+
+\section{文献表}
+文献
+\cite{refa}
+\cite{refb}
+\cite{FOURNEY1971-17-38}
+\cite{裴丽生1981-2-10}
+\cite{Simon2001--}
+
+\printbiblist[title={文集名}]{shortbooktitle}
+
+\newrefcontext
+\printbiblist[title={文集名使用指定环境},env=envbooktitle]{shortbooktitle}
+%注意biblist可以用newrefcontext来使用同名的缩略表，
+%也可以用定义不同名的缩略表来实现，比如
+%\printbiblist[title={文集名使用指定环境},env=envbooktitle]{booktitlelist}
+
+%\printbibliography%[heading=subbibintoc,title=【参考文献】]
+\end{document} 

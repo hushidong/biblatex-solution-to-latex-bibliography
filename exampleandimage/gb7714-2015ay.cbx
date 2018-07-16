@@ -1,0 +1,165 @@
+%%
+%% ---------------------------------------------------------------
+%% biblatex-gb7714-2015 --- A biblatex implementation of the
+%% GBT7714-2015 citation style,author year sequence
+%% Maintained by huzhenzhen
+%% E-mail: hzzmail@163.com
+%% Released under the LaTeX Project Public License v1.3c or later
+%% ---------------------------------------------------------------
+%%
+\ProvidesFile{gb7714-2015ay.cbx}[2018/06/01 v1.0l biblatex citation style]
+
+%
+%   加载标准样式
+%
+\RequireCitationStyle{authoryear}
+
+
+
+\ExecuteBibliographyOptions{
+  %autocite  = superscript ,
+  %autopunct = true       ,
+  %sorting   = none        ,
+  maxcitenames=1,
+  mincitenames=1,
+  uniquename=init,%因为使用了名字缩写选项，所以需要设置uniquename=init而不是full避免冲突
+  uniquelist=minyear
+}
+%
+%   选项设置，针对3.7以下版本
+%
+%   原理方法:labeldate用于控制是否给引用标签提供日期的成分
+\defversion{3.4}{cbxopt}{
+    \ExecuteBibliographyOptions{
+      labeldate=true
+    }
+}
+
+%
+%   选项设置，针对3.7以上版本
+%
+%   原理方法:labeldateparts用于控制是否给引用标签提供日期的成分
+\defversion{3.7}{cbxopt}{
+    \ExecuteBibliographyOptions{
+      labeldateparts=true
+    }
+}
+
+\ifboolexpr{%选择选项设置
+test {\iftoggle{iftlfive}}%biblatex<=3.2
+or
+test {\iftoggle{iftlsix}}%3.3<=biblatex<=3.6
+}{\switchversion{3.4}{cbxopt}}{\switchversion{3.7}{cbxopt}}%else: biblatex>=3.7
+
+
+\ifboolexpr{%兼容cite:labelyear+extrayear
+test {\iftoggle{iftlfive}}%biblatex<=3.2
+or
+test {\iftoggle{iftlsix}}%3.3<=biblatex<=3.6
+or
+test {\iftoggle{iftlseven}}%3.7=biblatex
+}{\newbibmacro{cite:labeldate+extradate}{\usebibmacro{cite:labelyear+extrayear}}}{}%else: biblatex>3.7
+
+%textcite标注命令中的标点设置，注意只针对textcite命令。
+\DeclareDelimFormat[textcite]{nameyeardelim}{}%\addcomma\space
+\DeclareDelimFormat[textcite]{andothersdelim}{\iffieldequalstr{userf}{cn}{\addthinspace}{\addspace}}%
+\AtEveryCitekey{%
+\iffieldequalstr{userf}{cn}{\renewcommand*{\andothersdelim}{\addthinspace}}%\addthinspace
+  {\renewcommand*{\andothersdelim}{\addspace}}%
+}
+
+
+
+%
+%   重定义cite:label，针对biblatex3.8以上版本set条目集的标注(引用)标签
+%
+%   原理方法:当条目是set时，v3.8以上版本，都没有有用的信息(区别于3.7以下版本set复制第一个成员的信息)，
+%   于是利用entrykey来给出标签，那么就要set的条目关键字是需要的字符串，注意字符串中间不能有空格
+\renewbibmacro*{cite:label}{%
+  \iffieldundef{label}%
+    {\iffieldundef{labeltitle}{\printtext[bibhyperref]{\printfield{entrykey}}}%entrykey
+    {\printtext[bibhyperref]{\printfield[citetitle]{labeltitle}}}}%
+    {\printtext[bibhyperref]{\printfield{label}}}}
+
+%
+%   重定义cite命令
+%
+%   方法:\DeclareCiteCommand{\cite}[\mkbibparens]{precode}{loopcode}{sepcode}{postcode}
+\DeclareCiteCommand{\cite}[\mkbibparens]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+%
+%   定义upcite命令
+%   20180604，v1.0l，hzz
+%   方法:与yearcite命令相同
+\DeclareCiteCommand{\upcite}
+  {\printtext{(}\usebibmacro{prenote}}
+  {\usebibmacro{cite:labeldate+extradate}}%
+  {\multicitedelim}
+  {\printtext{)}}
+
+%
+%   重定义parencite命令
+%
+\DeclareCiteCommand{\parencite}[\mkbibparens]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+
+%
+%   新定义pagescite命令，以满足标签带页码的国标要求
+%
+%   原理方法:
+%   1.修改postnote的输出格式
+\newbibmacro*{postpages}{%
+  \iffieldundef{postnote}
+    {\printfield{pages}}
+    {\printfield{postnote}}}
+%   2.新增页码输出宏(括号外的页码格式)
+\DeclareFieldFormat{postnote}{#1}
+%   3.新增\pagescite引用命令
+\DeclareCiteCommand{\pagescite}
+  {\printtext{(}\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\printtext{)}\textsuperscript{\usebibmacro{postpages}}}
+
+%
+%   定义yearpagescite，用于当文中作者已经存在，需要页码和年份的情况
+%
+%   原理:增加一个命令yearpagescite
+%   参考biblatex.DEF中的\DeclareCiteCommand*{\citeyear}命令
+\DeclareCiteCommand{\yearpagescite}
+  {\printtext{(}\usebibmacro{prenote}}
+  {\usebibmacro{cite:labeldate+extradate}}%\printfield{year}\printfield{extrayear}
+  {\multicitedelim}
+  {\printtext{)}\textsuperscript{\usebibmacro{postpages}}}
+
+%
+%   定义yearcite，用于当文中作者已经存在，仅需要年份的情况
+%
+%   原理:增加一个命令yearcite
+\DeclareCiteCommand{\yearcite}%仅输出年份，不要页码
+  {\printtext{(}\usebibmacro{prenote}}
+  {\usebibmacro{cite:labeldate+extradate}}%\printfield{year}\printfield{extrayear}
+  {\multicitedelim}
+  {\printtext{)}}
+
+%
+%   定义\authornumcite命令，输出作者信息，然后在后面带上顺序编码
+%   20180427，v1.0k，增加，hzz
+%   为与顺序编码制兼容，增加了命令，定义与cite相同
+\DeclareCiteCommand{\authornumcite}[\mkbibparens]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
