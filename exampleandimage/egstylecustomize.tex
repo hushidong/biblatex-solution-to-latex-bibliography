@@ -2,10 +2,11 @@
 \documentclass{article}
 \usepackage{ctex}
 %定义版面
-\usepackage[paperwidth=200mm,paperheight=190mm,left=10mm,right=10mm,top=10mm, bottom=15mm]{geometry}
+\usepackage[paperwidth=120mm,paperheight=120mm,left=10mm,right=10mm,top=10mm, bottom=15mm]{geometry}
 %书签功能，选项去掉链接红色方框
 \usepackage[colorlinks=true,%
 pdfstartview=FitH,linkcolor=blue,anchorcolor=violet,citecolor=magenta]{hyperref}
+
 
 \usepackage{filecontents}
 \begin{filecontents}{eg.bib}
@@ -77,6 +78,7 @@ pdfstartview=FitH,linkcolor=blue,anchorcolor=violet,citecolor=magenta]{hyperref}
 bibstyle=studf,%citestyle=gb7714-2015,%backref=true
 ]{biblatex}
 \setlength{\bibitemsep}{2pt}
+\renewcommand{\bibfont}{\footnotesize}
 \defbibheading{bibliography}[\bibname]{%
 	\subsection*{#1}}%\centering
 \addbibresource[location=local]{eg.bib}
