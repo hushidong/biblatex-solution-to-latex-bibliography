@@ -519,11 +519,45 @@ backref=true%
 ]{biblatex}
 \end{codetex}
 
+需要注意的是，反向超链接主要是对页码进行链接，而对页码进行正确超链接需要一个前提，即当前链接的页码是唯一的。当有两页具有相同的页码时，超链接总是链接到第一个具有该页码的页面上。比如当封面页页码是1，正文第一页页码也是1，那么到正文第一页的反向超链接总会链接到封面页上。解决该问题就是要解决页码的唯一性问题。当页码的表示形式不同时，页码也能得到正确的区分。比如封面页用罗马字母I表示，而正文第一页用阿拉伯数字1表示，那么就能得到正确的反向超链接。
+
+测试文档见:
+\href{run:exampleandimage/test-backref.tex}{test-backref.tex}。
+
 
 \subsection{\LaTeX 文档的编译}
-文档的编译与\LaTeX 传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，准备参考文献数据用的命令为biber filename。编译命令可以利用软件调用，也可以自行在命令行输入，下面给出利用winedt、texstudio、命令行、和脚本等不同方式的具体操作过程。
+文档的编译与\LaTeX 传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，准备参考文献数据用的命令为biber filename。编译命令可以利用软件调用，也可以自行在命令行输入，后面给出利用winedt、texstudio、命令行、和脚本等不同方式的具体操作过程。
 
 需要注意，无论采用哪种方式编译，如果参考文献数据中存在一些特殊符号比如\&等，编译时会报错。对于这个问题除了手动修改bib文件中参考文献信息这一种方法外，还有两种自动处理方式，一是利用jabref，jabref有bibtex和biblatex两种模式，在biblatex模式下，对于一些特殊字符的输入，比如\&，jabref会自动将其转换为\textbackslash\&。二是使用gb7714-2015样式，在bib数据源不经任何处理的情况下，gb7714-2015样式也能自动处理一些特殊字符。
+
+\subsubsection{编译命令}
+
+一般情况下采用xelatex进行编译，命令为:
+\begin{codetex}{xelatex编译命令}{cmd:xelatex}
+    xelatex jobname.tex
+    biber jobname
+    xelatex jobname.tex
+    xelatex jobname.tex
+\end{codetex}
+
+当然也可以使用pdflatex进行编译，命令为:
+\begin{codetex}{pdflatex编译命令}{cmd:pdflatex}
+    pdflatex jobname.tex
+    biber jobname
+    pdflatex jobname.tex
+    pdflatex jobname.tex
+\end{codetex}
+
+但要注意的是使用pdflatex进行编译，可能因为某些样式比如authoryear，使用了xstring宏包中的一些命令，进而导致错误，但numeric类样式通常没有问题。这一问题在biblatex更新到3.12版本后取消xstring宏包后得以解决。
+
+中文用户编译还需要注意编码问题。utf-8编码的文档，采用xelatex编译没有任何注意事项，但使用pdflatex编译时，需要给ctex宏包加载UTF8选项，比如\verb|\usepackage[UTF8]{ctex}|，该选项在文档类加载时给出也可，比如\verb|\documentclass[[UTF8]{article}|，同时引用文献时使用的引用关键词应使用英文。当文档使用其他编码时，xelatex编译通常需要指定一个文档编码，比如windows环境下的GB2312编码的文档需要指定\verb|\XeTeXinputencoding "GBK"|，否则会显示乱码。使用pdflatex进行编译时，如果biblatex不能正确的处理编码问题，那么需要为其明确的指定texencoding和bibencoding选项。比如windows环境下的GB2312编码的文档，需要指定\verb|\usepackge[texencoding=GBK]{biblatex}|。
+
+参考测试文档:
+\href{run:exampleandimage/test-gbk-pdflatex.tex}{test-gbk-pdflatex.tex}，
+\href{run:exampleandimage/test-gbk-pdflatex.tex}{test-gbk-xelatex.tex}，
+\href{run:exampleandimage/test-gbk-pdflatex.tex}{test-utf8-pdflatex-cls.tex}，
+\href{run:exampleandimage/test-gbk-pdflatex.tex}{test-utf8-pdflatex-pkg.tex}。
+
 
 \subsubsection{利用winedt}
 当文档准备好之后，第一步点击winedt工具栏的xelatex按钮(\parbox{1.2cm}{\includegraphics[width=1.2cm]{button-compiler-winedt}}图中红框内的按钮)完成第一遍\LaTeX 编译；
@@ -2959,7 +2993,7 @@ biblatex的版本判断最初使用一个简单的字符流处理来解析
 
 在使用纯英文的文档中，不涉及到文件的编码问题。但在中文文档中可能涉及到文件编码的问题，因为默认情况下windows下创建的文件是cp 936编码即GBK编码，如果不将其转换为utf-8编码，那么就会涉及到该问题。
 
-我们知道gbk编码的tex文档，利用pdflatex/latex能正确编译，利用xelatex能编译，但中文会显示乱码，在源文档前面增加 XeTeX 原语：\verb|\XeTeXinputencoding "GBK"|  后，显示正常。而 utf-8编码的tex文档，利用xelatex能正确编译，而pdflatex/latex则不能编译。总的来说，使用GBK编码的情况现在已经大为减少，而遇到时通常是使用pdflatex/latex编译的。因此在参考文献样式中也将面临这一问题。
+我们知道gbk编码的tex文档，利用pdflatex/latex能正确编译，利用xelatex能编译，但中文会显示乱码，在源文档前面增加 XeTeX 原语：\verb|\XeTeXinputencoding "GBK"|  后，显示正常。而 utf-8 编码的tex文档，利用xelatex能正确编译，而pdflatex/latex则不能编译。总的来说，使用GBK编码的情况现在已经大为减少，而遇到时通常是使用pdflatex/latex编译的。因此在参考文献样式中也将面临这一问题。
 
 在biblatex中提供了texencoding和bibencoding选项，它是通过将输入的选项值传递给biber，然后biber利用perl的encode模块实现编码转换的。因此只要是perl的encode模块支持的编码转换，biblatex都是支持的。perl的encode模块的信息见
 \href{http://perldoc.perl.org/Encode.html}{encode}，中文的编码信息见

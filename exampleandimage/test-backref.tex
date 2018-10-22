@@ -1,0 +1,37 @@
+%测试反向超链接
+
+\documentclass[twoside]{article}
+\usepackage{ctex}
+\usepackage{xcolor}
+\usepackage[CJKbookmarks,colorlinks]{hyperref}
+\usepackage[backend=biber,style=gb7714-2015,backref]{biblatex}
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+@Book{易仕和2013--,
+  Title       = {超声速和高超声速喷管设计},
+  Address     = {北京},
+  Author      = {易仕和 and 赵玉新 and 何霖 and 张敏莉},
+  Publisher   = {国防工业出版社},
+  Year        = {2013}
+}
+\end{filecontents}
+\addbibresource[location=local]{\jobname.bib}
+
+
+\begin{document}
+
+
+%\pagenumbering{arabic} %会导致错误的反向超链接
+\pagenumbering{roman} %将封面页页码改为罗马字母就可以得到正确的反向超链接。
+\title{title}
+\maketitle
+\clearpage
+
+\pagenumbering{arabic}
+\section{文献表}
+
+文献\cite{易仕和2013--}
+
+\newpage
+\printbibliography
+\end{document} 
