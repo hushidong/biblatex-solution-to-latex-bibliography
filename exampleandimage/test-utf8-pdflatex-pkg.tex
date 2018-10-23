@@ -1,0 +1,29 @@
+%测试文档编码及其编译问题
+%中文utf8
+%使用pdflatex编译，需为ctex指定UTF8选项。
+
+\documentclass{article}
+\usepackage[UTF8]{ctex}
+\usepackage[backend=biber,style=numeric]{biblatex}
+
+
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+@Book{lorem,
+  Title                    = {宋论},
+  Author                   = {王夫之},
+  Edition                  = {刻本},
+  Publisher                = {曾氏},
+  Location                 = {金陵},
+  Year                     = {1845(清同治四年)}
+}
+\end{filecontents}
+
+\addbibresource{\jobname.bib}
+
+\begin{document}
+详\cite{lorem}
+见文献
+
+\printbibliography
+\end{document} 

@@ -20,6 +20,12 @@ xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
 xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
+cd exampleandimage
+
+del *.pdf /Q
+
+cd ..
+
 ::call makeclear
 
 
