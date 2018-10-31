@@ -1,0 +1,49 @@
+
+
+\documentclass{article}
+\usepackage{ctex}
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+%\usepackage[no-math]{fontspec}
+\usepackage{mathtools,amsthm,amsfonts,amssymb,bm}
+\usepackage[defaultsups]{newtxtext}
+\usepackage{newtxmath}
+\usepackage[opentype]{sourcecodepro}
+\usepackage{upgreek}
+\usepackage{wasysym}
+\usepackage{anyfontsize}
+\usepackage{metalogo,doc}
+
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+@Book{lorem,
+  Title                    = {宋论trademark\textregistered{}trademark\texttrademark{}},
+  Author                   = {王夫之},
+  Edition                  = {刻本},
+  Publisher                = {曾氏},
+  Location                 = {金陵},
+  Year                     = {1845(清同治四年)}
+}
+
+@Book{lorema,
+  Title                    = {宋论trademark{\textregistered{}}trademark{\texttrademark{}}},
+  Author                   = {王夫之},
+  Edition                  = {刻本},
+  Publisher                = {曾氏},
+  Location                 = {金陵},
+  Year                     = {1845(清同治四年)}
+}
+
+\end{filecontents}
+
+\addbibresource{\jobname.bib}
+
+\begin{document}
+trademark\textregistered{}
+
+trademark\texttrademark{}
+
+详\cite{lorem,lorema}
+见文献
+
+\printbibliography
+\end{document} 

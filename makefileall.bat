@@ -10,7 +10,9 @@ call compiler
 
 cd ..
 
-call makeclear
+del /q *.aux *.bbl *.blg *.log *.out *.toc *.bcf *.xml *.synctex *.nlo *.nls *.bak *.ind *.idx *.ilg *.lof *.lot *.ent-x *.tmp *.ltx *.los *.lol *.loc *.listing *.gz *.synctex(busy)
+
+del /q *.nav *.snm *.vrb *.fls *.xdv *.fdb_latexmk
 
 xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
@@ -20,11 +22,7 @@ xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
 xelatex.exe --synctex=-1 biblatex-solution-to-latex-bibliography.tex
 
-cd exampleandimage
 
-del *.pdf /Q
-
-cd ..
 
 ::call makeclear
 
