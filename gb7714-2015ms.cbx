@@ -54,8 +54,8 @@
 %   定义upcite命令
 %   20180604，v1.0l，hzz
 %   方法:对supercite增加[]
-\DeclareCiteCommand{\upcite}[\mkbibsuperbracket]%
-  {\usebibmacro{cite:init}%
+\DeclareCiteCommand{\upcite}[\mkbibsuperbracket]
+  {\usebibmacro{cite:init}
    \let\multicitedelim=\supercitedelim
    \iffieldundef{prenote}
      {}

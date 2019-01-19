@@ -10,9 +10,9 @@
 %
 %   版本和时间信息
 %
-\ProvidesFile{gb7714-2015ay.bbx}[2018/06/01 v1.0l biblatex bibliography style]
-\def\versionofgbtstyle{2018/06/01 v1.0l}
+\def\versionofgbtstyle{2018/12/22 v1.0o}
 \def\versionofbiblatex{\abx@version}
+\ProvidesFile{gb7714-2015ay.bbx}[\versionofgbtstyle biblatex bibliography style]
 \RequireBiber[3]%显式指定用biber后端
 
 %=====================================================================
@@ -28,38 +28,29 @@
     %
     %   biblatex版本判断
     %   20180405，v1.0k，为兼容biblatexv3.11增加toggle:iftlnine，HU zhenzhen
+    %   20181020，v1.0n，为不再使用xstring宏包做的修改，hzz
     %
     %   原理方法:当版本继续更新时，增加一个新的toggle用以处理新的旧版，最新版和未判断出来的版本永远用iftlatest
-    \providetoggle{iftlfive}%用于处理biblatex3.2之前的版本
-    \providetoggle{iftlsix}%用于处理biblatex3.3开始改变的新的姓名机制后版本
-    \providetoggle{iftlseven}%用于处理biblatex3.7的兼容性
-    \providetoggle{iftleight}%用于处理biblatex3.8到3.9的兼容性
-    \providetoggle{iftlnine}%用于处理biblatex10的兼容性
-    \providetoggle{iftlatest}%用于最新版biblatex，目前是biblatex3.11，20180402
-    \StrBefore{\abx@version}{.}[\numinteger]%以点区分整数和小数
-    \StrBehind{\abx@version}{.}[\numdigital]%小数部分可能带字母所以需将其去掉，见下一行代码
-    \IfInteger{\numdigital}{}{\StrGobbleRight{\numdigital}{1}[\numdigital]}
-    \togglefalse{iftlfive}
-    \togglefalse{iftlsix}
-    \togglefalse{iftlseven}
-    \togglefalse{iftleight}
-    \togglefalse{iftlnine}
-    \toggletrue{iftlatest}
-    \ifnumcomp{\numinteger}{=}{3}{
-        \ifnumcomp{\numdigital}{=}{10}{\toggletrue{iftlnine}\togglefalse{iftlatest}}{}%3.10版本
-        \ifnumcomp{\numdigital}{<}{10}{\ifnumcomp{\numdigital}{>}{7}{\toggletrue{iftleight}\togglefalse{iftlatest}}{}}{}%>3.8版本用iftleight=true表示
-        \ifnumcomp{\numdigital}{=}{7}{\toggletrue{iftlseven}\togglefalse{iftlatest}}{}%3.7版本用iftlseven=true表示
-        \ifnumcomp{\numdigital}{<}{7}{\ifnumcomp{\numdigital}{>}{2}{\toggletrue{iftlsix}\togglefalse{iftlatest}}{}}{}%3.3-3.6版本用iftlsix=true表示
-        \ifnumcomp{\numdigital}{<}{3}{\toggletrue{iftlfive}\togglefalse{iftlatest}}{}%3.0-3.2版本用iftlfive=true表示
-    }{\ifnumcomp{\numinteger}{>}{3}{
-       \blx@warning@noline{%
-       biblatex version is >= 4.x.\MessageBreak
-       if errors raised，Please contact biblatex-gb7714-2015 pkg author.}%
-    }{ \toggletrue{iftlfive}\togglefalse{iftlatest}%2.x版本统一用iftlfive=true表示
-       \blx@warning@noline{%
-       biblatex version is <= 2.x.\MessageBreak
-       if errors raised，Please contact biblatex-gb7714-2015 pkg author.}%
-    }}
+    \providetoggle{iftlfive}\togglefalse{iftlfive}  %处理biblatex3.2之前版本，时间2016-03-01前
+    \providetoggle{iftlsix}\togglefalse{iftlsix}    %处理biblatex3.3开始改变姓名机制后版本，时间2016-03-01及以后
+    \providetoggle{iftlseven}\togglefalse{iftlseven}%处理biblatex3.7的兼容性，时间2016-12-01后
+    \providetoggle{iftleight}\togglefalse{iftleight}%处理biblatex3.8到3.9的兼容性，时间2017-11-01后到2017-12-01前
+    \providetoggle{iftlnine}\togglefalse{iftlnine}  %处理biblatex10的兼容性，时间2017-12-01后
+    \providetoggle{iftlatest}\toggletrue{iftlatest} %假设是最新版biblatex
+    \@ifpackagelater{biblatex}{2014/04/01}{
+        \@ifpackagelater{biblatex}{2016/03/01}{
+        \@ifpackagelater{biblatex}{2016/12/01}{
+        \@ifpackagelater{biblatex}{2017/11/01}{
+        \@ifpackagelater{biblatex}{2017/12/01}{
+        \@ifpackagelater{biblatex}{2018/02/19}{}
+        {\toggletrue{iftlnine}\togglefalse{iftlatest}}}
+        {\toggletrue{iftleight}\togglefalse{iftlatest}}}
+        {\toggletrue{iftlseven}\togglefalse{iftlatest}}}
+        {\toggletrue{iftlsix}\togglefalse{iftlatest}}}
+        {\toggletrue{iftlfive}\togglefalse{iftlatest}}}
+        {\PackageError{biblatex}{Outdated 'biblatex' package}
+            {Please update biblatex, This is a fatal error.}}
+
     \newcommand\defversion[2]{\csdef{codeversion#1#2}}%定义不同版本的命令
     \newcommand\switchversion[2]{\csuse{codeversion#1#2}}%使用不同版本的命令
 
@@ -198,6 +189,7 @@
     %定义类型和载体标识，从gb内容看载体基本属于介质。
     %为与lee zeping的bst的样式统一，使用mark和medium这两域名
     %为单个条目的姓名格式控制增加nameformat和namefmtid两个域
+    %为缩略信息文献表增加了shortbooktitle域
     \DeclareDatamodelFields[type=field,datatype=literal]{mark,medium,nameformat}
     \DeclareDatamodelFields[type=field,datatype=integer]{namefmtid}
     \DeclareDatamodelFields[type=field,datatype=literal]{shortbooktitle}
@@ -245,6 +237,9 @@
     \def\str@noaddress{出版地不详}
     \def\str@nopublisher{出版者不详}
     \def\str@edition{版}
+    \def\str@volumecn{卷}
+    \def\str@numbercn{册}
+    \def\str@serialcn{第}
 
     \AtEndOfPackage{%
 	\iftoggle{bbx:codegbk}{%
@@ -342,7 +337,7 @@
       minbibnames=3,
       isbn=false,
       sorting=gb7714-2015,
-      sortlocale=zh__pinyin,
+      sortlocale=zh__pinyin,%zh__big5han,%zh__stroke,%zh__gb2312han,%zh__pinyin,
     }
 
     %
@@ -364,15 +359,47 @@
          \iffieldundef{#2#3day}{}{\hyphen\blx@imc@forcezerosmdt{\thefield{#2#3day}}}}
 
     %为姓名格式选择增加的计数器
-    \newcounter{namefmtcase}
-    \def\thenamefmtcase{\the\c@namefmtcase}
+    \newcounter{gbnamefmtcase}
+    \def\thegbnamefmtcase{\the\c@gbnamefmtcase}
+    %为引用标签标注/文献表中本地化字符串中英文选择增加的计数器/命令
+    \newcounter{gbcitelocalcase}
+    \newcounter{gbbiblocalcase}
+    \def\thegbcitelocalcase{\the\c@gbcitelocalcase}
+    \def\thegbbiblocalcase{\the\c@gbbiblocalcase}
 
 
 \@ifpackagelater{biblatex}{2016/03/27}
-  {
+  { % 针对biblatex>=3.3版本的选项设置
+    %   增加本地化字符串的中英文切换选项
+    %   gbcitelocal指标注中的本地化字符串
+    %   gbbiblocal 指文献表中的本地化字符串
+    %   gblocal 指设置文献表和标注中的本地化字符串
+    %   v1.0o，20190103，hzz
+    %
+    \DeclareBibliographyOption[string]{gbcitelocal}[gb7714-2015]{%
+        \ifstrequal{#1}{gb7714-2015}{\setcounter{gbcitelocalcase}{0}}{}%
+        \ifstrequal{#1}{chinese}{\setcounter{gbcitelocalcase}{1}}{}%
+        \ifstrequal{#1}{english}{\setcounter{gbcitelocalcase}{2}}{}%
+    }
+    \ExecuteBibliographyOptions{gbcitelocal}
+
+    \DeclareBibliographyOption[string]{gbbiblocal}[gb7714-2015]{%
+        \ifstrequal{#1}{gb7714-2015}{\setcounter{gbbiblocalcase}{0}}{}%
+        \ifstrequal{#1}{chinese}{\setcounter{gbbiblocalcase}{1}}{}%
+        \ifstrequal{#1}{english}{\setcounter{gbbiblocalcase}{2}}{}%
+    }
+    \ExecuteBibliographyOptions{gbbiblocal}
+
+    \DeclareBibliographyOption[string]{gblocal}[gb7714-2015]{%
+        \ExecuteBibliographyOptions{gbbiblocal=#1}%
+        \ExecuteBibliographyOptions{gbcitelocal=#1}%
+    }
+    %\ExecuteBibliographyOptions{gblocal} %默认值已经通过两个相关选项设置
+
+
     %
     %   增加序号标签格式处理选项，作者年制不做处理，给出只为兼容选项考虑
-    %   v1.0l，20180623，hzz
+    %   v1.0l,20180623,hzz
     %
     \DeclareBibliographyOption[string]{gbbiblabel}[bracket]{}
 
@@ -380,11 +407,11 @@
     %   增加姓名大小写格式处理选项
     %
     \DeclareBibliographyOption[string]{gbnamefmt}[uppercase]{%
-        \ifstrequal{#1}{uppercase}{\setcounter{namefmtcase}{0}}{}%
-        \ifstrequal{#1}{lowercase}{\setcounter{namefmtcase}{1}}{}%
-        \ifstrequal{#1}{givenahead}{\setcounter{namefmtcase}{2}}{}%given-family
-        \ifstrequal{#1}{familyahead}{\setcounter{namefmtcase}{3}}{}
-        \ifstrequal{#1}{pinyin}{\setcounter{namefmtcase}{4}}{}%family-given
+        \ifstrequal{#1}{uppercase}{\setcounter{gbnamefmtcase}{0}}{}%
+        \ifstrequal{#1}{lowercase}{\setcounter{gbnamefmtcase}{1}}{}%
+        \ifstrequal{#1}{givenahead}{\setcounter{gbnamefmtcase}{2}}{}%given-family
+        \ifstrequal{#1}{familyahead}{\setcounter{gbnamefmtcase}{3}}{}
+        \ifstrequal{#1}{pinyin}{\setcounter{gbnamefmtcase}{4}}{}%family-given
     }
     \ExecuteBibliographyOptions{gbnamefmt}
 
@@ -411,11 +438,11 @@
     %   增加姓名大小写格式处理选项
     %
     \DeclareBibliographyOption{gbnamefmt}[uppercase]{%
-        \ifstrequal{#1}{uppercase}{\setcounter{namefmtcase}{0}}{}%
-        \ifstrequal{#1}{lowercase}{\setcounter{namefmtcase}{1}}{}%
-        \ifstrequal{#1}{givenahead}{\setcounter{namefmtcase}{2}}{}%given-family
-        \ifstrequal{#1}{familyahead}{\setcounter{namefmtcase}{3}}{}
-        \ifstrequal{#1}{pinyin}{\setcounter{namefmtcase}{4}}{}%family-given
+        \ifstrequal{#1}{uppercase}{\setcounter{gbnamefmtcase}{0}}{}%
+        \ifstrequal{#1}{lowercase}{\setcounter{gbnamefmtcase}{1}}{}%
+        \ifstrequal{#1}{givenahead}{\setcounter{gbnamefmtcase}{2}}{}%given-family
+        \ifstrequal{#1}{familyahead}{\setcounter{gbnamefmtcase}{3}}{}
+        \ifstrequal{#1}{pinyin}{\setcounter{gbnamefmtcase}{4}}{}%family-given
     }
     \ExecuteBibliographyOptions{gbnamefmt}
 
@@ -486,9 +513,17 @@
 %设置本地化字符串
 %=====================================================================
     %
-    %   新建当地化字符串，用来记录“等”字符
+    %   新建当地化字符串，用来记录“等”字符、“和”字符
     %
     \NewBibliographyString{andotherscn}
+    \NewBibliographyString{andothersincitecn}
+    \NewBibliographyString{andothersincite}
+    \NewBibliographyString{andcn}
+    \NewBibliographyString{andincitecn}
+    \NewBibliographyString{andincite}
+    \NewBibliographyString{volumecn}
+    \NewBibliographyString{numbercn}
+    \NewBibliographyString{serialcn}
 
     %
     %   修改一些当地化字符串
@@ -501,11 +536,19 @@
         references       = {\str@references},
         bytranslator= {\addcomma\ \str@bytranslator\adddot}, %将trans. by 改成 译
         and         = {\addcomma},%将第2和3人名见的and符号改成 逗号，用\finalnamedelim命令也可以定义，参见3.9.1节
+        andcn       = {\addcomma},%\str@andcn\ and本地化字符串的中文对应词
+        andincitecn = {\addcomma},%将标注中的分开，便于与文献表中的区分
+        andincite   = {\addcomma},
         %andothers   = {et al.},        %将超过3个人名的省略，et al.改成为 等
-        andotherscn   = {\str@andotherscn},     %将超过3个人名的省略，et al.改成为 等
+        andotherscn   = {\str@andotherscn},%将超过3个人名的省略，et al.改成为 等
+        andothersincitecn={\str@andotherscn},%将标注中的分开，便于与文献表中的区分
+        andothersincite={et al.},
         backrefpage = {\str@backrefpage:},
         backrefpages = {\str@backrefpages:},
         in={in\intitlepunct},
+        volumecn={\str@volumecn},
+        numbercn={\str@numbercn},
+        serialcn={\str@serialcn}
 }
 
 
@@ -566,22 +609,37 @@
         \map{
             \pertype{database}%对应增加的一个数据库类型database
             \step[fieldset=usera, fieldvalue={DB}]%没有专门的驱动，定义一个usera域，方便映射后使用
+            \step[fieldsource=publisher] %有时会把publisher和institution混淆，处理后避免该问题
+            \step[fieldset=institution, origfieldval]
             }
         \map{
             \pertype{dataset}%对应增加的一个数据集类型dataset
             \step[fieldset=usera, fieldvalue={DS}]%没有专门的驱动，定义一个usera域，方便映射后使用
+            \step[fieldsource=publisher] %有时会把publisher和institution混淆，处理后避免该问题
+            \step[fieldset=institution, origfieldval]
             }
         \map{
             \pertype{software}%对应增加的一个软件类型software
             \step[fieldset=usera, fieldvalue={CP}]%没有专门的驱动，定义一个usera域，方便映射后使用
+            \step[fieldsource=publisher] %有时会把publisher和institution混淆，处理后避免该问题
+            \step[fieldset=institution, origfieldval]
             }
         \map{
             \pertype{map}%对应增加的一个舆图类型map
             \step[fieldset=usera, fieldvalue={CM}]%没有专门的驱动，定义一个usera域，方便映射后使用
+            \step[fieldsource=publisher] %有时会把publisher和institution混淆，处理后避免该问题
+            \step[fieldset=institution, origfieldval]
             }
         \map{
             \pertype{archive}%对应增加的一个档案类型archive
             \step[fieldset=usera, fieldvalue={A}]%没有专门的驱动，定义一个usera域，方便映射后使用
+            \step[fieldsource=publisher] %有时会把publisher和institution混淆，处理后避免该问题
+            \step[fieldset=institution, origfieldval]
+            }
+        \map{
+            \pertype{misc}%当misc类型带有网址时，将其转换为online类型
+            \step[fieldsource=url,final]
+            \step[typesource=misc,typetarget=online]
             }
         \map{
             \pertype{misc}%对应增加的一个备选类型misc
@@ -632,6 +690,8 @@
             \pertype{mastersthesis}%兼容老的mastersthesis和phdthesis类型
             \pertype{phdthesis}
             \step[fieldset=usera, fieldvalue={D}]
+            \step[fieldsource=publisher] %有时会把publisher和institution混淆，处理后避免该问题
+            \step[fieldset=institution, origfieldval]
             }
         \map{
             \pertype{online}
@@ -646,10 +706,14 @@
             \step[fieldset=version, origfieldval]
             \step[fieldsource=organization]%因为用的report的驱动，所以需要institution域，把organization转成它以增强兼容性
             \step[fieldset=institution, origfieldval]
+            \step[fieldsource=publisher] %有时会把publisher和institution混淆，处理后避免该问题
+            \step[fieldset=institution, origfieldval]
             }
         \map{
             \pertype{incollection}
             \step[fieldset=usera, fieldvalue={G}]
+            \step[fieldsource=editor] %%有的时候可能只填写了编者，没有author，把它复制一下
+            \step[fieldset=bookauthor, origfieldval]
             }
         \map{
             \pertype{collection}
@@ -831,11 +895,11 @@
         \DeclareStyleSourcemap{
             \maps[datatype=bibtex]{
                 \map{%默认情况下将空缺作者设置为佚名
-                    \step[fieldsource=userb,match={cn},final]
+                    \step[fieldsource=language,match={chinese},final]
                     \step[fieldset=author, fieldvalue={佚名}]
                 }
                 \map{%默认情况下将空缺作者设置为佚名
-                    \step[fieldsource=userb,match={en},final]
+                    \step[fieldsource=language,match={english},final]
                     \step[fieldset=author, fieldvalue={A{non}}]%noauthor换成Anon，同时为避免大写还加了{}
                 }
             }
@@ -881,12 +945,111 @@
         \literal{0000}%3.7版是\literal{0}
       }
     }
+
+    %降序的nyt
+    \DeclareSortingScheme{gbnytd}{
+      \sort{
+        \field{presort}
+      }
+      \sort[final]{
+        \field{sortkey}
+      }
+      \sort{
+    	\field{language}
+    	}
+      \sort[direction=descending]{
+        \field{sortname}
+        \field{author}
+        \field{editor}
+        \field{translator}
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field{sortyear}
+        \field{year}
+      }
+      \sort{
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field[padside=left,padwidth=4,padchar=0]{volume}%3.7版是\field{volume}
+        \literal{0000}%3.7版是\literal{0}
+      }
+    }
+
+    %降序的ynt
+    \DeclareSortingScheme{gbyntd}{
+      \sort{
+        \field{presort}
+      }
+      \sort[final]{
+        \field{sortkey}
+      }
+      \sort{
+    	\field{language}
+    	}
+      \sort[direction=descending]{
+        \field{sortyear}
+        \field{year}
+      }
+      \sort{
+        \field{sortname}
+        \field{author}
+        \field{editor}
+        \field{translator}
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field[padside=left,padwidth=4,padchar=0]{volume}%3.7版是\field{volume}
+        \literal{0000}%3.7版是\literal{0}
+      }
+    }
+
+    %升序的ynt
+    \DeclareSortingScheme{gbynta}{
+      \sort{
+        \field{presort}
+      }
+      \sort[final]{
+        \field{sortkey}
+      }
+      \sort{
+    	\field{language}
+    	}
+      \sort{
+        \field{sortyear}
+        \field{year}
+      }
+      \sort{
+        \field{sortname}
+        \field{author}
+        \field{editor}
+        \field{translator}
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field[padside=left,padwidth=4,padchar=0]{volume}%3.7版是\field{volume}
+        \literal{0000}%3.7版是\literal{0}
+      }
+    }
 }
-\DeclareBibliographyAlias{unpublished}{misc}
-\DeclareBibliographyAlias{database}{misc}
-\DeclareBibliographyAlias{dataset}{misc}
-\DeclareBibliographyAlias{software}{misc}
-\DeclareBibliographyAlias{map}{misc}
+\DeclareBibliographyAlias{unpublished}{manual}
+\DeclareBibliographyAlias{database}{manual}
+\DeclareBibliographyAlias{dataset}{manual}
+\DeclareBibliographyAlias{software}{manual}
+\DeclareBibliographyAlias{map}{manual}
 \DeclareBibliographyAlias{archive}{manual}
 
 %
@@ -914,6 +1077,105 @@
       \sort{
         \field{sortyear}
         \field{year}
+      }
+      \sort{
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field{volume}
+        \literal{0}
+      }
+    }
+
+    %降序的nyt
+    \DeclareSortingTemplate{gbnytd}{
+      \sort{
+        \field{presort}
+      }
+      \sort[final]{
+        \field{sortkey}
+      }
+      \sort{
+    	\field{language}
+    	}
+      \sort[direction=descending]{%
+        \field{sortname}
+        \field{author}
+        \field{editor}
+        \field{translator}
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field{sortyear}
+        \field{year}
+      }
+      \sort{
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field{volume}
+        \literal{0}
+      }
+    }
+
+    %降序的ynt
+    \DeclareSortingTemplate{gbyntd}{
+      \sort{
+        \field{presort}
+      }
+      \sort[final]{
+        \field{sortkey}
+      }
+      \sort{
+    	\field{language}
+    	}
+      \sort[direction=descending]{
+        \field{sortyear}
+        \field{year}
+      }
+      \sort{%
+        \field{sortname}
+        \field{author}
+        \field{editor}
+        \field{translator}
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field{sorttitle}
+        \field{title}
+      }
+      \sort{
+        \field{volume}
+        \literal{0}
+      }
+    }
+
+    %升序的ynt
+    \DeclareSortingTemplate{gbynta}{
+      \sort{
+        \field{presort}
+      }
+      \sort[final]{
+        \field{sortkey}
+      }
+      \sort{
+    	\field{language}
+    	}
+      \sort{%[direction=ascending]
+        \field{sortyear}
+        \field{year}
+      }
+      \sort{%
+        \field{sortname}
+        \field{author}
+        \field{editor}
+        \field{translator}
+        \field{sorttitle}
+        \field{title}
       }
       \sort{
         \field{sorttitle}
@@ -1121,22 +1383,81 @@ test {\iftoggle{iftlseven}}%biblatex<=3.7
 
 %
 %   修改作者数量超过限定值，做省略时的处理格式
+%   v1.0,20160701,hzz
+%   v1.0O,20190103,hzz,修改利用新定义的一个分隔符strandothersdelim
 %
-%   原理方法:判断作者或译者是否中文，若中文用字符等，否则用etcl。
+%   原理方法:判断作者或译者是否中文，若中文用字符等，否则用et al. 。
 \renewbibmacro*{name:andothers}{%
   \ifboolexpr{
     test {\ifnumequal{\value{listcount}}{\value{liststop}}}
     and
     test \ifmorenames
-  }{%这里做一个判断是在处理author还是translator用于两者是不同语言的情况
-   \ifcurrentname{translator}{\testCJKfirst{usere}}{\testCJKfirst{userf}}%
-    %这句判断如果放到\andothersdelim后面会在等或etc.前增加一个空格，所以放前面
-    \ifnumgreater{\value{liststop}}{1}
+  }{\ifnumgreater{\value{liststop}}{1}%
        {\finalandcomma}%
        {}%\finalandcomma
-\printdelim{andothersdelim}\iftoggle{ifCJKforgbt}{\bibstring{andotherscn}}{\bibstring{andothers}}
-%\andothersdelim\bibstring{andotherscn}
+\printdelim{andothersdelim}\printdelim{strandothersdelim}%
 }{}}
+
+%   修改省略作者后的本地化字符串，比如et al.
+%   v1.0o,20190103,hzz
+%
+%   原理方法:默认情况下判断作者或译者是否中文，若中文用字符andotherscn=“等”，否则用andothers=“et al.”。
+%   非默认情况，根据选项信息，选择选择强制中文或英文
+%   首先设置全局的，然后设置文献表中的，这一等价于将所有的cite命令环境都设置过了
+%   而不用对每一个引用命令单独设置，比如cite，parancite，textcite都设置
+\DeclareDelimFormat{strandothersdelim}{%
+  \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
+  \addspace%%做一个判断是在处理author还是translator，用于两者是不同语言的情况
+  \ifcurrentname{translator}{\testCJKfirst{usere}}{\testCJKfirst{userf}}%
+  \ifcase\value{gbcitelocalcase}%
+  \iftoggle{ifCJKforgbt}{\bibstring{andothersincitecn}}{\bibstring{andothersincite}}\space%
+  \or%
+  \bibstring{andothersincitecn}\space%
+  \or%
+  \bibstring{andothersincite}\space%
+  \fi}
+\DeclareDelimFormat[bib,biblist]{strandothersdelim}{%
+  \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
+  \addspace%
+  \ifcurrentname{translator}{\testCJKfirst{usere}}{\testCJKfirst{userf}}%
+  \ifcase\value{gbbiblocalcase}%
+  \iftoggle{ifCJKforgbt}{\bibstring{andotherscn}}{\bibstring{andothers}}\space%
+  \or%
+  \bibstring{andotherscn}\space%
+  \or%
+  \bibstring{andothers}\space%
+  \fi}
+
+%
+%   修改最后一个作者前的字符串，比如 and
+%   v1.0o,20190103,hzz
+%
+%   原理方法:默认情况下判断作者或译者是否中文，若中文用字符andcn=“和”，否则用and=“and”。
+%   非默认情况，根据选项信息，选择选择强制中文或英文
+%   首先设置全局的，然后设置文献表中的，这一等价于将所有的cite命令环境都设置过了
+%   而不用对每一个引用命令单独设置，比如cite，parancite，textcite都设置
+\DeclareDelimFormat{finalnamedelim}{%
+  \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
+  \addspace%
+  \ifcurrentname{translator}{\testCJKfirst{usere}}{\testCJKfirst{userf}}%
+  \ifcase\value{gbcitelocalcase}%
+  \iftoggle{ifCJKforgbt}{\bibstring{andincitecn}}{\bibstring{andincite}}\space%
+  \or%
+  \bibstring{andincitecn}\space%
+  \or%
+  \bibstring{andincite}\space%
+  \fi}
+\DeclareDelimFormat[bib,biblist]{finalnamedelim}{%
+  \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
+  \addspace%
+  \ifcurrentname{translator}{\testCJKfirst{usere}}{\testCJKfirst{userf}}%
+  \ifcase\value{gbbiblocalcase}%
+  \iftoggle{ifCJKforgbt}{\bibstring{andcn}}{\bibstring{and}}\space%
+  \or%
+  \bibstring{andcn}\space%
+  \or%
+  \bibstring{and}\space%
+  \fi}
 
 
 %   重设title的输出
@@ -1177,8 +1498,8 @@ test {\iftoggle{iftlseven}}%biblatex<=3.7
 %   20180603，v1.0l，增加使用nameformat域来选择姓名格式
 \DeclareNameFormat{namefmtselected}{%
 \iffieldundef{namefmtid}{}%
-{\defcounter{namefmtcase}{\thefield{namefmtid}}}%
-\ifcase\value{namefmtcase}%
+{\defcounter{gbnamefmtcase}{\thefield{namefmtid}}}%
+\ifcase\value{gbnamefmtcase}%
   \ifgiveninits
     {\usebibmacro{name:gbuppercase}
       {\namepartfamily}
@@ -1421,8 +1742,8 @@ test {\iftoggle{iftlseven}}%biblatex<=3.7
   %%biblatex<3.2版的情况，姓名的处理格式带参数
   \DeclareNameFormat{namefmtselected}{%
     \iffieldundef{namefmtid}{}%
-    {\defcounter{namefmtcase}{\thefield{namefmtid}}}%
-    \ifcase\value{namefmtcase}%
+    {\defcounter{gbnamefmtcase}{\thefield{namefmtid}}}%
+    \ifcase\value{gbnamefmtcase}%
        \iffirstinits
        {\usebibmacro{name:gbuppercase}{#1}{#4}{#5}{#7}}
        {\usebibmacro{name:gbuppercase}{#1}{#3}{#5}{#7}}%
@@ -1680,18 +2001,18 @@ test{\iftoggle{iftlnine}}
 %   新增一个样式用于输出连续出版物的地址，单位，时间，%类似\newbibmacro*{publisher+location+date}
 \newbibmacro*{location+institution+date}{\bibpubfont%
 \iftoggle{bbx:gbpub}%
-{\testCJKfirst{userd}
+{\testCJKfirst{userd}%
+\ifboolexpr{%
+test {\iflistundef{location}} and test {\iflistundef{institution}}%
+}{\iftoggle{ifCJKforgbt}{\printtext{[\str@noaddress}\space :\space\str@nopublisher]}%
+{\printtext{[S.l.\space :\space s.n.\adddot]}}%
+}{%
 \iflistundef{location}{\iftoggle{ifCJKforgbt}{\printtext{[\str@noaddress]}}{\printtext{[S.l.\adddot]}}}%
   {\printlist{location}}%
-%  \iflistundef{institution}
-%    {\setunit*{\addcomma\space}}
-%    {\setunit*{\addcolon\space}}%
-%  \printlist{institution}%
-%  \setunit*{\addcomma\space}%
 \addcolon\addspace%
 \iflistundef{institution}{%
 \iftoggle{ifCJKforgbt}{\printtext{[\str@nopublisher]}}{\printtext{\mkbibbrackets{s.n.}}}}% \bibstring{nopublisher}%[s.n.\adddot]
-{\printlist{institution}}%
+{\printlist{institution}}}%
 \setunit{\addcomma\addspace}%
   %\usebibmacro{date}%
   \printfield{year}%
@@ -1712,6 +2033,11 @@ test{\iftoggle{iftlnine}}
 \renewbibmacro*{publisher+location+date}{\bibpubfont%
 \iftoggle{bbx:gbpub}%
 {\testCJKfirst{userd}%
+\ifboolexpr{%
+test {\iflistundef{location}} and test {\iflistundef{publisher}}%
+}{\iftoggle{ifCJKforgbt}{\printtext{[\str@noaddress}\space :\space\str@nopublisher]}%
+{\printtext{[S.l.\space :\space s.n.\adddot]}}%
+}{%
 \iflistundef{location}{%\adddot
 \iffieldequalstr{note}{standard}{}{%从gbt7714-2015标准第19页看到，标准存在出版项时输出，没有时完全省略。
 \iftoggle{ifCJKforgbt}{\printtext{[\str@noaddress]}\addcolon\addspace}{\printtext{[S.l.\adddot]}\addcolon\addspace}%
@@ -1723,8 +2049,8 @@ test{\iftoggle{iftlnine}}
 \iftoggle{ifCJKforgbt}{\printtext{[\str@nopublisher]}\setunit{\adddot\addspace}\setunit*{\addcomma\addspace}}%
 {\printtext{\mkbibbrackets{s.n.}}\setunit{\adddot\addspace}\setunit*{\addcomma\addspace}}%
 }}%
-{\printlist{publisher}\setunit*{\addcomma\addspace}}%
-%\addcomma\addspace%
+{\printlist{publisher}}}%
+\setunit*{\addcomma\addspace}%\addcomma\addspace%
 \usebibmacro{date}%
 %\newunit %去掉这个标点
 }%
@@ -1739,6 +2065,31 @@ test{\iftoggle{iftlnine}}
   }%
 }
 
+
+%
+%   对volume卷信息格式做出修改
+%   v1.0o,20190105,hzz
+%
+\DeclareFieldFormat{volume}{%
+\testCJKfirst{userd}%
+\iftoggle{ifCJKforgbt}%
+{\bibstring{serialcn}#1\bibstring{volumecn}}%
+{\bibstring{volume}~#1}%
+}% volume of a book
+\DeclareFieldFormat[article,periodical]{volume}{#1}% volume of a journal
+
+%
+%   对number册信息格式做出修改
+%   v1.0o,20190105,hzz
+%
+\DeclareFieldFormat{number}{#1}%
+\DeclareFieldFormat[book,collection,inbook,%
+incollection,proceedings,inproceedings]{number}{%
+\testCJKfirst{userd}%
+\iftoggle{ifCJKforgbt}%
+{\bibstring{serialcn}#1\bibstring{numbercn}}%
+{#1}%
+}%
 
 %
 %   对edition版本信息格式做出修改
@@ -2131,7 +2482,7 @@ test{\iftoggle{iftlnine}}
 %
 %   原理方法:使用bibmacro{in:}改变了以前在driver中直接输出//的方式，同时也简化了标点控制。
 \renewbibmacro*{in:}{%
- \iftoggle{bbx:gbpunctin}{\printtext{\texttt{//}\addthinspace}}%
+ \iftoggle{bbx:gbpunctin}{\printtext{\texttt{//}\allowbreak}}%\addthinspace
                          {\setunit{\adddot\addspace}\printtext{\bibstring{in}}}}%\newunit\newblock\intitlepunct
 
 
@@ -2154,9 +2505,9 @@ test{\iftoggle{iftlnine}}
 \usebibmacro{byauthor}%
 \newunit\newblock}%
 \usebibmacro{byeditor+others}%
-\newunit\newblock
-\printfield{edition}%
 \newunit
+\printfield{edition}%
+\newunit\newblock
 \iffieldundef{maintitle}
 {\printfield{volume}%
 \printfield{part}}
@@ -2209,20 +2560,22 @@ test{\iftoggle{iftlnine}}
   \ifnameundef{bookauthor}{}{\newunit}%替换下一句
   %\newunit\newblock
   \usebibmacro{maintitle+booktitle}%
+  \setunit{\addcolon}\printfield{volume}\printfield{number}%增加卷和册信息
   \newunit\newblock
 %  \usebibmacro{byeditor+others}%
 %  \newunit\newblock
   \printfield{edition}%
   \newunit
-  \iffieldundef{maintitle}
-    {\printfield{volume}%
-     \printfield{part}}
-    {}%
-  \newunit
+  \iftoggle{bbx:gbstrict}{}{%
+%  \iffieldundef{maintitle}
+%    {\printfield{volume}%
+%     \printfield{part}}
+%    {}%
+%  \newunit
   \printfield{volumes}%
   \newunit\newblock
   \usebibmacro{series+number}%
-  \newunit\newblock
+  \newunit\newblock}
   %\printfield{note}%
   %\newunit\newblock
   \usebibmacro{publisher+location+date}%
@@ -2562,40 +2915,34 @@ test{\iftoggle{iftlnine}}
 %
 %   备选类型驱动
 %
-%   直接利用report做misc
+%   利用biblatex的misc驱动
 \DeclareBibliographyDriver{misc}{%
   \usebibmacro{bibindex}%
   \usebibmacro{begentry}%
-  \usebibmacro{author}%
-  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{author/editor+others/translator+others}%
+  \setunit{\printdelim{nametitledelim}}\newblock
   \usebibmacro{title}%
-  \iftoggle{bbx:gbstrict}{}{%
-  \newunit%
+\iftoggle{bbx:gbstrict}{}{%
+  \newunit
   \printlist{language}%
   \newunit\newblock
-  \usebibmacro{byauthor}}%
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}}%
+  \newunit\newblock
+  \printfield{howpublished}%
   \newunit\newblock
   \printfield{type}%
-  \setunit*{\addspace}%
-  \printfield{number}%
-  \newunit\newblock
+  \newunit
   \printfield{version}%
   \newunit
   \printfield{note}%
   \newunit\newblock
   \usebibmacro{institution+location+date}%
+  %\usebibmacro{organization+location+date}%
   %\newunit\newblock
-  \usebibmacro{chapter+pages}%
   \usebibmacro{doi+eprint+url}%
-  \newunit
-  \printfield{pagetotal}%
   \newunit\newblock
-  \iftoggle{bbx:isbn}
-    {\printfield{isrn}}
-    {}%
-  \newunit\newblock
-%  \usebibmacro{doi+eprint+url}%
-%  \newunit\newblock
   \usebibmacro{addendum+pubstate}%
   \setunit{\bibpagerefpunct}\newblock
   \usebibmacro{pageref}%
@@ -2622,19 +2969,20 @@ test{\iftoggle{iftlnine}}
   \ifnameundef{bookauthor}{}{\newunit}%替换下一句
   %\newunit\newblock
   \usebibmacro{maintitle+booktitle}%
+  \setunit{\addcolon}\printfield{volume}\printfield{number}%增加卷和册信息
   \newunit\newblock
   \usebibmacro{event+venue+date}%
   \newunit\newblock
 %  \usebibmacro{byeditor+others}%
 %  \newunit\newblock
-  \iffieldundef{maintitle}
-    {\printfield{volume}%
-     \printfield{part}}
-    {}%
-  \newunit
+\iftoggle{bbx:gbstrict}{}{%
+%  \iffieldundef{maintitle}
+%    {\printfield{volume}%
+%     \printfield{part}}
+%    {}%
+%  \newunit
   \printfield{volumes}%
   \newunit\newblock
-  \iftoggle{bbx:gbstrict}{}{%
   \usebibmacro{series+number}%
   \newunit\newblock
   \printfield{note}%
@@ -2732,17 +3080,18 @@ test{\iftoggle{iftlnine}}
   \ifnameundef{bookauthor}{}{\newunit}%替换下一句
   %\newunit\newblock
   \usebibmacro{maintitle+booktitle}%
+  \setunit{\addcolon}\printfield{volume}\printfield{number}%增加卷和册信息
   \newunit\newblock%
 %  \usebibmacro{byeditor+others}%
 %  \newunit\newblock
   \printfield{edition}%
   \newunit
-  \iffieldundef{maintitle}
-    {\printfield{volume}%
-     \printfield{part}}
-    {}%
   \iftoggle{bbx:gbstrict}{}{%
-  \newunit
+%  \iffieldundef{maintitle}
+%    {\printfield{volume}%
+%     \printfield{part}}
+%    {}%
+%  \newunit
   \printfield{volumes}%
   \newunit\newblock
   \usebibmacro{series+number}}%

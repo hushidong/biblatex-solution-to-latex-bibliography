@@ -2,6 +2,8 @@
 
 @echo off
 
+title %date% %time% makefileall
+
 :: compile the tex file
 
 cd exampleandimage
