@@ -34,12 +34,14 @@
                                      %一位作者的多个所属单位用英文逗号隔开
 
                                                 %摘要,abstract
-\zhaiyao{针对\LaTeX 文档的参考文献相关问题，分析了参考文献生成的一般需求，给出基于biblatex宏包全套解决方案。从文献数据源文件准备，tex源文档的组成，tex/bib文件的编译，分章参考文献和书后文献表，文献表标题和内容格式，参考文献著录和标注样式，多语言文献，脚注题注小页环境中的引用，脚注旁注中的文献表，文献表分类筛选打印，beamer 类中的参考文献等方面详实地介绍了biblatex参考文献生成方法，并提供所有示例代码，为用户提供参考。介绍了biblatex-gb7714-2015样式包的设计思路和实现方法，给出了一个参考文献样式定制项目示例，介绍了bbx和cbx文件开发的方法、步骤和过程，揭示了基于biblatex标准样式定制参考文献的一般原理，为定制参考文献样式提供完整示范。}
+\zhaiyao{针对中文\LaTeX{} 环境的参考文献生成问题，以入门教程为出发点，介绍了文档源代码、bib数据库、编译方法、文献表生成、格式修改、多语言、筛选和排序等大量细节问题，为国内用户提供了一套基于biblatex宏包的完整参考文献解决方案。
+介绍了biblatex-gb7714-2015样式包和一个样式定制示例的设计思路和实现过程，揭示了基于biblatex标准样式定制样式的一般原理和开发方法，为biblatex参考文献样式定制提供了完整示范。}
+%old-bak-20190127针对\LaTeX 文档的参考文献相关问题，分析了参考文献生成的一般需求，给出基于biblatex宏包全套解决方案。从文献数据源文件准备，tex源文档的组成，tex/bib文件的编译，分章参考文献和书后文献表，文献表标题和内容格式，参考文献著录和标注样式，多语言文献，脚注题注小页环境中的引用，脚注旁注中的文献表，文献表分类筛选打印，beamer 类中的参考文献等方面详实地介绍了biblatex参考文献生成方法，并提供所有示例代码，为用户提供参考。介绍了biblatex-gb7714-2015样式包的设计思路和实现方法，给出了一个参考文献样式定制项目示例，介绍了bbx和cbx文件开发的方法、步骤和过程，揭示了基于biblatex标准样式定制参考文献的一般原理，为定制参考文献样式提供完整示范。
 %old-bak-20171031:针对\LaTeX 文档的中文参考文献问题，对其需求展开分析，提出利用biblatex宏包的解决思路，并针对性地给出了各项需求的解决方案(包括示例代码)，为\LaTeX 文档参考文献生成提供便利。
 
                                                 %关键词,keywords
                                                 %多个关键词用\kongge隔开
-\guanjianci{\LaTeX \kongge 参考文献 \kongge biblatex}
+\guanjianci{\LaTeX{} \kongge 参考文献 \kongge biblatex}
                                                 %use \kongge as separation
 
                                           %收稿等时间,第一/通信作者简介,
@@ -47,7 +49,7 @@
 
 \def\versionnumber{v1.0g}    %版本和修改时间信息
 \def\versiondate{2018-08-12}
-\diyizuozhe{The files have version number \versionnumber, last revised \versiondate.\\ 第一作者简介：}
+\diyizuozhe{The files have version number \versionnumber, last revised \today.\\ 第一作者简介：}
                                           %introduction of corresponding author
 \zuozhejianjie{HU ZHENZHEN，A \LaTeX ~LOVER，Email: hzzmail@163.com。}
 
@@ -58,25 +60,31 @@
 %----------------------------------------------------------------------
 \section{引言}
 
-参考文献是科技文档写作中的重要组成部分。在写作中常碰到这样的问题，比如：怎么在文档合适位置插入满足格式要求的参考文献标注？怎么生成满足格式要求的参考文献表？怎么实现分章文献等一些特殊的功能？等等。这些问题尽管不会成为困扰，但的确会牵扯文档作者不少精力。为使\LaTeX 文档作者能够更方便地生成参考文献，有必要对各种参考文献问题进行梳理总结，并给出解决方案，以便随时参考、移植和应用。
+参考文献是科技文档写作中的重要内容，在写作中常碰到这样的问题，比如：怎么生成满足格式要求的参考文献表？正文中的文献引用如何能够产生满足格式要求的标注标签？怎么生成分章文献表和统一的全书文献表？等等。这些问题尽管不会成为困扰，但可能牵扯文档作者不少精力。为使\LaTeX{} 文档作者能更便捷地生成参考文献，有必要对相关问题进行总结梳理，并给出简单解决方案，以便随时参考和应用。 %移植和
 
-对于一般的参考文献生成而言，利用传统的\LaTeX 参考文献生成方法\cite{Oetiker--,刘海洋2013--,胡伟2011--}配合相关的文献样式(bst文件)大体能够满足要求。但如果要实现一些扩展功能，就需要应用一些辅助宏包，
-比如chapterbib(用于分章文献表)\cite{Daly2010--}，multibib(用于单文档内生成多文献表)\cite{Hansen2008--}，natbib(用于标注并提供著录样式)\cite{Arseneau2010--}，mcitesplus(用于标注)\cite{Shell2013--}，inlinebib(用于文献表置于脚注中)\cite{Seindal1994--}等。尽管这些工具提供了不少有用功能，但仍然存在一些局限。此外，由于使用bibtex/bibtex8程序的原因，非utf-8编码的bib文件无法使用中文的引用关键字，文献排序也存在局限，甚至当参考文献量足够大时可能出现内存不足的情况。
+对于一般需求而言，利用传统的\LaTeX{} 参考文献生成方法\cite{Oetiker--,刘海洋2013--,胡伟2011--}配合相关的bst 样式文件基本能够满足要求。但如果要实现一些特殊格式或要求，就需要应用一些辅助宏包，
+比如 chapterbib(用于分章文献表)\cite{Daly2010--}，
+multibib(用于单文档内生成多文献表)\cite{Hansen2008--}，
+natbib(用于标注并提供著录样式)\cite{Arseneau2010--}，
+mcitesplus(用于标注)\cite{Shell2013--}，
+inlinebib(用于文献表置于脚注中)\cite{Seindal1994--}等。这些工具从多个方面提供了需求功能，但多个宏包同时使用可能不兼容等局限。另外，由于使用bibtex/bibtex8程序本身的原因，非utf-8编码的bib文件无法使用中文的引用关键字，中文文献排序往往也需要附加很多特殊处理，甚至当参考文献量足够大时可能出现内存不足的问题。
 
-而biblatex宏包\cite{Lehman2015}提供了一套完整的方案，它即能替代传统的\LaTeX 参考文献生成方法，也能覆盖如natbib等所有辅助宏包的功能，除此之外更提供了如动态数据修改等大量新功能，越使用越会觉得biblatex宏包的完善和强大，它是\LaTeX 参考文献生成的一个绝佳选择。由于基于传统方法的大量参考文献样式仍然在用，基于biblatex的参考文献生成还没有完全替代传统方法，但已经呈现流行态势，目前CTAN 上面已经有包括APA、MLA、science、ieee、nature、iso690、gb7714-2015 等数十种样式可以选用，加上biblatex的强大定制功能，利用biblatex一个宏包完全可以简单而直接地生成满足需求的参考文献。
+而biblatex宏包\cite{Lehman2015}旨在提供了一套完整的方案，既解决传统方法的一些局限，也覆盖大量辅助宏包的功能，更提供如动态数据修改等大量新功能。biblatex的强大和完善使它成为\LaTeX{} 参考文献生成的一个绝佳选择。由于使用习惯及存量bst广泛应用，传统方法无法完全取代，但由于biblatex的大量优点，基于biblatex的方法呈逐渐流行态势，目前CTAN 上面已经有包括APA、MLA、science、ieee、nature、iso690、gb7714-2015 等数十种第三方样式可以选用，结合biblatex的强大定制功能，利用biblatex一个宏包完全可以简单而直接满足所有可能需求。
 
-然而正是由于biblatex的完整性，biblatex宏包相当的庞大，其说明文档(\href{https://github.com/hushidong/biblatex-zh-cn}{中译版})长达300页。对于初学者或者无深度需求的使用者来说，biblatex手册更像是一个技术说明书，尽管它详实的说明了宏包功能，但却没有提供一个像lshort这样的简单教程，显得过于复杂。类似biblatex-gb7714-2015这样的样式包\cite{胡振震2016}，虽然也介绍了一些biblatex的使用方法，但其重点主要还在样式包的设计、实现和使用上。总的来说，目前对于biblatex参考文献生成还没有较为系统的入门手册
+然而正是由于biblatex的完整性，biblatex宏包相当的庞大，其说明文档(\href{https://github.com/hushidong/biblatex-zh-cn}{中译版})长达300页。对于初学者或者无深度需求的使用者来说，biblatex手册就像一个技术说明书，详实的介绍宏包功能和接口，但却没有提供一个像lshort这样的简单入门教程。类似biblatex-gb7714-2015这样的样式包\cite{胡振震2016}，虽然也介绍了一些biblatex的使用方法但并不详细。%其重点主要还在样式包的设计、实现和使用上。
+
+总的来说，对于biblatex参考文献生成目前还没有较为系统的入门手册
 \footnote{准确的说是中文入门手册，因为：\par
 biblatex 3.12版以后，宏包作者提供了一个简单的
 \href{https://github.com/plk/biblatex/blob/dev/doc/latex/biblatex/biblatex-quickstart.tex}{入门教程}\href{run:exampleandimage/biblatex-quickstart.pdf}{（见pdf文档）}\par
 另外Paul Stanley也提供了一个
 \href{https://github.com/PaulStanley/biblatex-tutorial}{入门教程}
 \href{https://github.com/hushidong/biblatex-tutorial-cn}{（见pdf文档）}，该教程对基本概念介绍相当清晰，感兴趣的读者可以细看。}。
-本文正是出于这样的考虑，希望从不同层级用户的角度，面向应用，以示范的形式，形成一个简易但全面的使用说明书，为用户提供帮助。
+本文正是出于这样的现状考虑，希望从初级用户的角度，面向应用，以示范的形式，给出一个简易但全面的使用说明书，为用户入门提供帮助。
 
 %事实上随着biblatex宏包及其biber后端程序的完善，利用它可以满足对于参考文献的绝大多数功能需求。如果利用一个宏包就能完成以前多个宏包才能实现的功能，那么问题实际上就简化了，这正是用户所期待的。利用biblatex宏包“简单化、便利化”地满足\LaTeX 文档写作中的各种中文参考文献需求正是本文写作的初衷所在。
 
-需要提示的是: 本文所有的示例和测试都基于texlive平台，2014/2015/2016/2017/2018均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装和使用可以参考texlive安装手册\cite{Berry2016--}
+需要提示的是: 本文所有的示例和测试都基于texlive发行版，2014/2015/2016/2017/2018均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装和使用可以参考texlive安装手册\cite{Berry2016--}
 以及\href{http://bbs.ctex.org/forum.php}{ctex论坛ctex论坛}
 或\href{http://www.latexstudio.net/}{latex sudio}上分享的各种方法。
 
@@ -84,53 +92,58 @@ biblatex 3.12版以后，宏包作者提供了一个简单的
 \section{为什么使用biblatex}
 
 
-
 \subsection{latex参考文献基本原理}
 
-latex 中参考文献生成主要借助于\verb|thebibliography|环境。这个环境可以手工在latex源文档中输入，也可以利用外部程序bibtex程序生成。
+\LaTeX{} 中参考文献生成主要借助于\verb|thebibliography|环境。这个环境可以手工在tex 源文档中输入，也可以利用外部程序 bibtex 程序生成。
 
-首先我们看一下手工写\verb|thebibliography|环境的方法。在环境中每一条文献用bibitem命令组织，第一遍编译的时候，由于bibitem命令的宏替换，文献latex将在aux文件中写入对应bibcite命令。第二遍编译的时候latex会读入aux文件并根据bibcite命令生成对应引用关键词的标签，编译过程中当遇到cite命令，则调用对应引用关键词的标签用于输出，以生成引用标签。
+首先我们看一下手工写 \verb|thebibliography| 环境的方法。在环境中每一条文献用\verb|\bibitem| 命令组织，第一遍编译时，由于\verb|\bibitem| 命令的宏替换，文献latex编译程序将在 aux 文件中写入对应标签生成命令\verb|\bibcite| 。第二遍编译时，latex会读入 aux 文件并根据\verb|\bibcite| 命令生成对应引用关键词的标签，编译过程中当遇到\verb|\cite|命令，则调用对应引用关键词的标签，以生成引用标签。
 
-基于bibtex的参考文献生成方法，本质上是类似的，只是利用了外部程序bibtex生成\verb|thebibliography|环境。在tex源文档中，利用命令bibliographystyle命令指定bibtex程序需要依赖的bst文件，利用命令bibliography命令指定bibtex需要处理的bib文件，在第一步latex编译中，latex将这两个文件信息写入到aux文件中。接着运行bibtex程序，该程序会读取aux文件中的两个指定文件，并处理生成一个bbl文件，该文件生包含了\verb|thebibliography|环境。第二遍latex编译时，latex读取bbl文件，并利用bibitem命令将标签生成命令bibcite写入到aux文件中。第三遍latex编译时，latex再次读取aux文件并依据cite命令将标签输出。
+基于bibtex的参考文献生成方法，本质上是类似的，只是利用了外部程序bibtex
+生成\verb|thebibliography|环境。在tex源文档中，利用命令\verb|\bibliographystyle|命令指定bibtex程序需要使用的bst文件，利用命令\verb|\bibliography|命令指定bibtex需要处理的bib文件，在第一步latex编译中，编译程序将这两个文件信息写入到aux文件中。接着运行bibtex程序，该程序会读取 aux 文件中的两个指定文件，并处理生成一个bbl 文件，该文件中包含\verb|\thebibliography| 环境。第二遍latex编译时，latex读取bbl 文件，并利用\verb|\bibitem|命令将标签生成命令\verb|\bibcite|写入到aux文件中。第三遍latex编译时，latex再次读取aux文件并依据\verb|\cite|命令将标签输出。
 
-其中参考文献的著录格式由\verb|thebibliography|环境的bibitem命令后跟着的文献内容决定，因此可以手动输入来实现需要的格式，或者由bst样式文件决定。而引用文献的标注标签格式则由bibcite命令的定义及其参数决定。该命令的定义在latex中有原始的定义，一些红包比如natbib，jurabib等会对其重新定义以生成满足某种要求的格式。然而除此之外，如果该命令的输入参数中如果没有足够的信息，那么该命令也就巧妇难为无米之炊了。因此要实现一些特殊的格式就需要为其提供足够的文献信息。而这一信息又来源于bibitem命令的写入aux操作，bibitem命令通常会把在其后跟着的可选参数[]中的内容当做bibcite的参数，因此需要在bibitem后面的[]内写入足够的信息，这也可以手动完成，也可以利用样式文件bst来写。对于natbib来说，通常需要在bibitem命令后的[]中写入三个信息，作者的缩写信息，由()包围的年份信息，以及作者的详细信息。其中()作为定界符来读取这三个信息。因此利用natbib宏包生成标注标签时，通常就在bibitem后面的[]内做文章，无论是通过手动写的方法还是通过不是他、样式文件生成。jurabib宏包也是类似的，只是其解析方式更为复杂，可以写入更多的信息，以便在标签生成时生成更多的内容，比如文献的题名等。
+其中参考文献的著录格式由\verb|\thebibliography|环境的\verb|\bibitem|命令后跟着的文献内容决定，因此可以采用手动输入方式来实现需要的格式，或者由满足要求的bst样式文件来生成。而引用文献的标注标签格式则由\verb|\bibcite|命令的定义及其参数决定。该命令的定义在latex中有原始的定义，一些宏包比如natbib，jurabib等会对其重新定义以生成满足某种要求的格式。但如果该命令的输入参数中如果没有足够的信息，那么再多的格式要求也会巧妇难为无米之炊。因此要实现一些特殊的格式就需要为其提供足够的文献信息。而这一信息又来源于\verb|\bibitem|命令的写入aux操作，
+\verb|\bibitem| 命令通常会把其后跟着的[]中的可选参数内容当做\verb|\bibcite|命令的参数，因此标签生成的重点之一是在\verb|\bibitem| 后面的[]内写入足够文献信息，同样这也可以手工写入，也可以利用样式文件bst完成。对于natbib宏包来说，通常需要在\verb|\bibitem| 命令后的[]中写入三个信息：作者的缩写信息、由()包围的年份信息、以及作者的详细信息，其中()作为定界符来读取这三个信息。因此利用natbib宏包生成标注标签时，通常要对\verb|\bibitem| 后面[]的内容做文章，无论是通过手工写的方法还是通过bst样式文件生成。jurabib宏包也有类似情况，只是其解析方式更为复杂，需要写入更多的信息，以便在标签生成时生成更多的内容，比如文献的题名等。
 
-总结起来，latex参考文献的基本方法时利用\verb|thebibliography|环境写参考文献的著录格式，并利用bibitem命令将其可选参数信息输出作为引用标签处理的基础来生成正文中参考文献引用标签。其中如果要采用非手工方式生成该环境，那么就要利用外部程序bibtex和参考文献样式bst文件以及参考文献的数据源bib文件。其中bib文件时以BibTeX格式统一规范的文本文件，该格式简单又通用是默认的参考文献数据源标准，bib文件作为文本文件也非常容易生成，关于该格式在节还有详细介绍。而bst则时与bibtex程序配合使用的样式文件，以一种给你bibtex程序能识别的语法实现，这种语法与tex基本语法迥异，因此一般用户学习起来不太容易，因此要设计某种样式的bst文件也相对较为困难。而bibtex程序则是由发明的处理bib文件的程序，通常由tex发行版附带。
+总结起来，\LaTeX{} 参考文献生成的基本方法是利用\verb|\thebibliography|环境写参考文献的著录格式，并利用\verb|\bibitem| 命令将其可选参数信息输出作为引用标签处理的基础来生成正文中的参考文献引用标签。其中如果要采用非手工方式生成该环境，那么就要利用外部程序bibtex和参考文献样式bst文件以及参考文献的数据源bib文件。其中bib文件是以BibTeX格式统一规范的文本文件，该格式简单且通用，是默认的参考文献数据源标准，bib文件作为文本文件也非常容易生成，
+关于该格式在第\ref{sec:bib:file}节还有详细介绍。而bst则是与bibtex程序配合使用的样式文件，以一种能被bibtex程序识别的语法实现，该语法与tex基本语法迥异，因此一般用户学习起来不太容易，因此要设计某种样式的bst文件也相对困难。而bibtex程序则是用于处理bib文件生成bbl文件的程序，通常由tex发行版附带。
 
 
 \subsection{biblatex参考文献生成的基本原理}
 
-基于biblatex的参考文献生成方法，从根子上就不再利用\verb|thebibliography|环境，但操作方式有点类似于基于bibtex的方法，相似点在于利用外部程序处理参考文献数据源，也同样需要利用辅助文件。但biblatex的设计出发点就是要解决两个问题，一是避免传统latex方法过度的读写辅助文件，二是
-要利用tex命令实现对参考文献信息实现完全的控制.
+基于biblatex的参考文献生成方法，从根子上就不再利用\verb|thebibliography|环境，但操作方式有点类似于基于bibtex的方法，相似点在于同样利用外部程序处理参考文献数据源，也同样需要利用辅助文件。
+biblatex 的设计出发点就是要达成两个主要目的，
+一是要避免传统参考文献生成方法过度的读写辅助文件，
+二是要利用tex命令实现对参考文献信息和格式的完全控制。
 
-基于bibtex的方法总共由四遍编译，第一遍latex将信息写入aux、文件，第二部遍bibtex读取aux文件将信息写入bbl文件，第三遍latex读取bbl文件将信息写入aux文件，第四遍编译latex再次读取aux文件。这在biblatex设计者看来是没有必要的，既然要处理对参考文献信息进行完全的控制，那么将参考文献信息放在内存中时最好的方式，也没有必要进行过多的读写文件。如果参考文献信息能够以一种合适的方式读入内存，并能在tex宏中应用，那么就可以解决问题。因此biblatex设计并实现了这种新的方式,在第一遍latex编译时，将需要的信息写入到bcf文件中，然后利用外部程序biber读取该文件，并处理bib文件得到一个bbl文件，其内包含biblatex宏包设计的能被tex宏读取并利用的固定格式的信息，这一信息包含了所有的参考文献信息，可以方便的用于参考文献著录表和参考文献引用标注标签的输出。第二遍编译的时候，latex读取bbl文件，biblatex识别并利用其中的信息然后输出引用标签和文献表。这种新的方式借用一次编译过程中的aux文件写入，一次外部程序编译，和第二次的latex编译实现了参考文献生成,比传统的基于bibtex的方法少了一次编译，同时也实现了对全部参考文献信息的读取，以便进一步控制。
+基于bibtex的方法总共有四遍编译，第一遍latex将信息写入aux、文件，第二遍bibtex读取aux文件将信息写入bbl文件，第三遍latex读取bbl文件将信息写入aux文件，第四遍编译latex再次读取aux文件。
+这在biblatex设计者看来是没有必要的，既然要实现对参考文献信息的完全控制，那么将参考文献信息放在内存中是最好的方式，也没有必要过多的读写文件。如果参考文献信息能够以一种合适的方式读入内存，并能在tex宏中应用，那么就可以解决问题。
+因此biblatex设计并实现了这种新的方式，在第一遍latex编译时，将需要的信息写入到bcf文件中，然后利用外部程序biber读取该文件，并处理bib文件得到一个bbl文件，其内包含biblatex宏包设计的能被tex宏读取并利用的固定格式的信息，这一信息包含了所有的参考文献信息，可以很方便地用于参考文献著录表和参考文献引用标注的输出。第二遍编译时，latex读取bbl文件，biblatex识别并利用其中的信息输出引用标签和文献表。这种新的方式仅用一次latex编译过程中的aux文件写入，一次外部程序编译，和第二次的latex编译就实现了参考文献生成，相比传统的基于bibtex的方法少了一次latex 编译，同时也实现了将全部参考文献信息保存到内存中以便进一步利用的目的。
 
-如前所述，参考文献生成包含两个部分，一个是著录文献表，一个是正文中的引用标注。对于latex传统方法，前者以手动写或者bibtex结合bst文件生成，后者则由标注宏包如natbib读取手动写或者bibtex结合bst文件写的标签信息生成。而biblatex由于已经把全部的参考文献信息读取到内存中，因此可以由tex宏完全控制，而biblatex提供了所有这些参考文献信息的控制接口。著录表格式由一系列宏进行控制，标注格式也由一系列宏进行控制，通常前者放在bbx文件中，后者放在cbx文件中，一些通用的宏则放在biblatex.sty，biblatex.def文件中。
+如前所述，参考文献生成包含两个部分，一个是著录文献表，一个是正文中的引用标注。对于latex传统方法，前者以手工写或者bibtex结合bst文件生成，后者则由标注宏包如natbib读取手动写或者bibtex结合bst文件给出的标签信息生成。而biblatex由于已经把全部参考文献信息读取到内存中，因此可以由tex宏完全控制。biblatex提供了所有这些参考文献信息的控制接口，著录表格式由一系列宏进行控制，标注格式也由一系列宏进行控制，前者通常放在bbx文件中，后者则放在cbx文件中，一些通用的宏则放在biblatex.sty 和 biblatex.def 文件中。
 
-简单来说，对于著录文献表，biblatex通过driver控制条目中的项和顺序，通过fieldformat控制各个项的格式，其中利用一套异步标点控制机制和一套本地化字符串系统辅助。对于标注标签，则通过各类cite命令及其内部接口进行控制，同样使用标点控制和本地化字符串机制。此外，biblatex充分利用tex的局部化机制，提供各种局部化设置方式，比如利用文境refcontext区分不同的数据和排序机制，利用各cite命令和bibliography和biblist环境区分各种分隔符的输出格式，利用各类条目类型的驱动环境设置域的不同输出格式。可以说，biblatex因为解决了参考文献信息的全部控制功能，为利用tex宏控制参考文献和引用标签提供了无限可能，只有想不到，没有做不到。
+简单来说，对于著录文献表，biblatex通过driver控制条目中的域(项)和顺序，通过fieldformat 控制各个项的格式，其中利用一套异步标点控制机制和一套本地化字符串系统辅助。对于标注标签，则通过各类cite命令及其内部接口进行控制，同样使用标点控制和本地化字符串机制。此外，biblatex充分利用tex的局部化机制，提供各种局部化设置方式，比如利用文境refcontext区分不同的数据和排序机制，利用各cite命令和bibliography和biblist环境区分各种分隔符的输出格式，利用各类条目类型的驱动环境设置域的不同输出格式。可以说，biblatex 因为解决了参考文献全部信息的控制问题，为利用tex宏控制参考文献和引用标签提供了无限可能，只有想不到，没有做不到。
 
 
 \subsection{biblatex参考文献生成的优缺点}
 
-如前所述，biblatex通过写bcf文件格式(实际为xml)的为biber提供处理信息，biber根据这些信息处理bib文件中相关条目，完成筛选、排序等操作，并将处理数据写入bbl文件中，接着biblatex再次读取bbl中的完整数据以进一步处理输出。biblatex基于这样一种新的机制实现了更简化的文献编译，实现了参考文献信息的完全的tex控制，还实现了大量辅助功能以覆盖类似的其它宏包。这有赖于biblatex宏包的全面设计以及后端程序biber的强大支持。总结起来biblatex加上其后端程序biber具有如下主要特点:
+如前所述，biblatex通过写bcf文件(格式实际为xml)为biber提供处理信息，biber根据这些信息处理bib文件中相关条目，完成筛选、排序等操作，并将处理结果写入bbl文件中，接着biblatex再次读取bbl中的完整数据以进一步处理输出。biblatex基于这样一种新的机制实现了更简化的文献编译，实现了参考文献信息的完全tex宏控制，还实现了大量功能以覆盖其它辅助宏包。这有赖于biblatex宏包的全面设计以及后端程序biber的强大支持。总结起来biblatex加上其后端程序biber具有如下主要特点:
 
 \begin{itemize}
-  \item biblatex 包含许多用于人文社科类的样式，用于生成人文社科类的文献表和标注标签。而基于bibtex的方法则引用标注主要包括作者年制和数字顺序编码制缺乏人文社科类文献常用作者标题制或者脚注样式，需要利用类似jurabib这样的宏包以及专门的bst文件。
+  \item biblatex 包含许多用于人文社科类的样式，用于生成人文社科类的文献表和标注标签。而基于bibtex的方法引用标注主要包括作者年制和数字顺序编码制，缺乏人文社科类文献常用的作者标题制或者脚注样式，需要利用类似jurabib这样的宏包以及专门的bst文件。
 
-  \item biblatex 兼容BIBTEX格式外，还支持更多更广泛的条目类型和域。也支持除BIBTEX格式外的更多格式的文献数据库文件，也支持其他格式的文献数据的输出。
-
-  \item biblatex 提供便捷的参考文献格式控制机制，包括友好的宏包选项控制和简单的tex宏格式修改，非常易学。而传统的方法则要么手工改写文献表内容，要么修改bst样式文件的内容，而学习不同于tex语言的bst文件的bibtex语法是比较困难的。
-
-  \item biblatex 提供参考文献文献分节、分类筛选等功能。在文档中打印多各文献表非常方法，而不用再使用其它宏包，比如chapterbib等。
+  \item biblatex 提供便捷的参考文献格式控制机制，包括友好的宏包选项控制和简单的tex宏格式修改，非常易学。而传统的方法则要么手工改写文献表内容，要么修改bst样式文件，而学习bst文件采用的与tex语法迥异的语法并不是一件轻松的事情。
 
   \item biblatex 提供完全的unicode支持，提供自动的编码转换，提供自动的姓名和姓名列表非模糊处理，支持可定制的数据继承规则，提供非常灵活的数据映射(动态处理)。
 
   \item biblatex 提供强大排序功能，支持排序定制，支持unicode字符的排序，更支持本地语言的排序调整，比如中文的按笔画数排序等，可以实现丰富的效果。而基于bibtex的方法能支持utf-8编码的bib 文件，但不支持非ASCII字符的排序。
 
-  \item biblatex 使用的后端biber，具有处理大文献两的能力，不用担心bibtex可能存在的内存问题。biber还支持远程的参考文献数据库。
+  \item biblatex 使用的后端biber，具有处理大文献量的能力，不用担心bibtex可能存在的内存问题。biber还支持远程的参考文献数据库。
 
-
-  \item biblatex 是包含biber程序的一个大型宏包。biblatex 提供了覆盖natbib、jurabib、chapterbib、multibib、mcite、inlinecite 等宏包的完整参考文献功能体系。
+  \item biblatex 兼容 BibTeX 格式外，还支持更多更广泛的条目类型和域。也支持除BibTeX 外的更多格式的文献数据库，也支持其他格式的文献数据的输出和转换。
+      
+  \item biblatex 提供参考文献分节、分类筛选等功能。在文档中打印多个文献表非常方便，而不再需要使用其它宏包，比如chapterbib等。
+      
+  \item biblatex 是包含biber程序的一个大型宏包。biblatex 提供了覆盖natbib、jurabib、chapterbib、multibib、mcite、inlinecite 等宏包的完整功能体系。
 
 \end{itemize}
 
@@ -139,14 +152,14 @@ latex 中参考文献生成主要借助于\verb|thebibliography|环境。这个�
 \begin{itemize}
  \item 虽然biblatex已经取得了广泛应用，但一些期刊和出版商长期维护使用专门设计的bibtex样式bst文件，因此可能不接收使用biblatex的文档。
 
- \item biblatex 生成处理完的参考文献信息，不是thebibliography环境，而是biblatex预设的格式，因此其列表代码并不能像thebibliography环境中的内容一般可以直接拷贝进文档使用。
+ \item biblatex 生成处理完的参考文献信息，不是thebibliography环境，而是biblatex预设的格式，因此其代码并不能像thebibliography环境中的内容一般可以直接拷贝进文档使用。
 
- \item biblatex 还在不断更新和升级，尽管已经基本稳定，但可能存在后向兼容问题。比如随着biblatex的升级，一些基于老版本biblatex的第三方样式可能会无法使用，而基于新版本biblatex样式可能无法应用使用老版本biblatex的环境，这需样式作者不断维护。
+ \item biblatex 还在不断更新和升级，尽管已经基本稳定，但可能存在后向兼容问题。比如随着biblatex的升级，一些基于老版本biblatex的第三方样式可能会无法使用，而基于新版本biblatex的样式可能无法应用于老版本biblatex的环境，这需样式作者持续维护。
 
- \item biblatex 因为功能强大且全面，说明文档也很大很全，有点类似技术说明书，但作为初级用户的入门却并不合适，而对于宏包作者这一类的用户biblatex 宏包的代码实现和解析说明相对较少，也不利于这类用于深入学习和参与维护。
+ \item biblatex 因为功能强大且全面，说明文档很大很全，有点类似技术说明书，但作为初级用户的入门却并不合适，而对于宏包作者这一类的用户，biblatex 宏包的代码实现和解析说明相对较少，也不利于这类人员深入学习和参与维护。
 \end{itemize}
 
-从前述的优缺点可以看到，虽然biblatex宏包还并不完美，但基于biblatex生成参考文献的确可以获得很多优势，因此对于各类用户来说，使用biblatex不失为一种好的选择。
+从前述的优缺点可以看到，虽然biblatex宏包还并不完美，但基于biblatex生成参考文献的确可以获得很多优势，因此对于一般用户来说，使用biblatex不失为一种好的选择。
 
 \section{参考文献常见需求与解决方案}
 
@@ -173,7 +186,7 @@ latex 中参考文献生成主要借助于\verb|thebibliography|环境。这个�
 
 下面针对前述提出的需求，一一进行解答。解决方案主要应用于一般文档类(book，report，article)，beamer类的问题放到最后一小节中专门介绍。
 
-\subsection{参考文献数据文件准备}
+\subsection{参考文献数据文件准备}\label{sec:bib:file}
 \LaTeX 文档中生成参考文献除了利用 thebibliography 环境手工输入参考文献条目信息这一简单方式外，bibliography+bibliographystyle+bibtex 方式或者 biblatex方式都需要准备一个参考文献数据源文件即bib文件。这一文件内保存有各条参考文献的信息，每一条参考文献记录都是一个bibtex item(bibtex项)，一条参考文献记录基本格式如下:
 \begin{codetex}{参考文献信息基本格式即bibtex格式}{fmt:bibtex}
 @ARTICLE{entrykey,
