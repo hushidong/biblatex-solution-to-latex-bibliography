@@ -94,17 +94,29 @@ biblatex 3.12版以后，宏包作者提供了一个简单的
 
 \subsection{latex参考文献基本原理}
 
-\LaTeX{} 中参考文献生成主要借助于\verb|thebibliography|环境。这个环境可以手工在tex 源文档中输入，也可以利用外部程序 bibtex 程序生成。
+\LaTeX{} 中参考文献生成主要借助于\verb|\thebibliography|环境。这个环境可以手工在tex 源文档中输入，也可以利用外部程序 bibtex 程序生成。
 
-首先我们看一下手工写 \verb|thebibliography| 环境的方法。在环境中每一条文献用\verb|\bibitem| 命令组织，第一遍编译时，由于\verb|\bibitem| 命令的宏替换，文献latex编译程序将在 aux 文件中写入对应标签生成命令\verb|\bibcite| 。第二遍编译时，latex会读入 aux 文件并根据\verb|\bibcite| 命令生成对应引用关键词的标签，编译过程中当遇到\verb|\cite|命令，则调用对应引用关键词的标签，以生成引用标签。
+首先我们看一下手工写 \verb|\thebibliography| 环境的方法。在环境中每一条文献用\verb|\bibitem| 命令组织，典型的 \verb|\thebibliography| 环境
+如例\ref{eg:env:biblio}所示。
 
-基于bibtex的参考文献生成方法，本质上是类似的，只是利用了外部程序bibtex
-生成\verb|thebibliography|环境。在tex源文档中，利用命令\verb|\bibliographystyle|命令指定bibtex程序需要使用的bst文件，利用命令\verb|\bibliography|命令指定bibtex需要处理的bib文件，在第一步latex编译中，编译程序将这两个文件信息写入到aux文件中。接着运行bibtex程序，该程序会读取 aux 文件中的两个指定文件，并处理生成一个bbl 文件，该文件中包含\verb|\thebibliography| 环境。第二遍latex编译时，latex读取bbl 文件，并利用\verb|\bibitem|命令将标签生成命令\verb|\bibcite|写入到aux文件中。第三遍latex编译时，latex再次读取aux文件并依据\verb|\cite|命令将标签输出。
+\begin{codetex}{典型的thebibliography环境}{eg:env:biblio}
+\begin{thebibliography}{2}
+\bibitem[{Baker et~al.(1995)Baker and Jackson}]{baker}BAKER~S~K, JACKSON~M~E. \newblock The future of resource sharing\allowbreak[M]. \newblock New York: The Haworth Press, 1995.
 
-其中参考文献的著录格式由\verb|\thebibliography|环境的\verb|\bibitem|命令后跟着的文献内容决定，因此可以采用手动输入方式来实现需要的格式，或者由满足要求的bst样式文件来生成。而引用文献的标注标签格式则由\verb|\bibcite|命令的定义及其参数决定。该命令的定义在latex中有原始的定义，一些宏包比如natbib，jurabib等会对其重新定义以生成满足某种要求的格式。但如果该命令的输入参数中如果没有足够的信息，那么再多的格式要求也会巧妇难为无米之炊。因此要实现一些特殊的格式就需要为其提供足够的文献信息。而这一信息又来源于\verb|\bibitem|命令的写入aux操作，
+\bibitem[{Chernik(1982)}]{chernik}CHERNIK~B~E. \newblock Introduction to library services for library technicians\allowbreak[M]. \newblock Littleton, Colo.: Libraries Unlimited, Inc., 1982.
+\end{thebibliography}
+\end{codetex}
+
+第一遍编译时，由于\verb|\bibitem| 命令的宏替换，文献latex编译程序将在 aux 文件中写入对应的标签生成命令\verb|\bibcite| 。第二遍编译时，latex会读入 aux 文件并根据\verb|\bibcite| 命令生成对应引用关键词的标签，编译过程中当遇到\verb|\cite|命令，则调用对应引用关键词的标签，以生成引用标签。
+
+基于bibtex的参考文献生成方法，本质上是类似的，只是利用了外部程序bibtex生成\verb|\thebibliography|环境。
+在tex源文档中，利用命令\verb|\bibliographystyle|命令指定bibtex程序需要使用的bst文件，
+利用命令\verb|\bibliography|命令指定bibtex需要处理的bib文件，在第一步latex编译中，编译程序将这两个文件信息写入到aux文件中。接着运行bibtex程序，该程序会读取 aux 文件中的两个指定文件，并处理生成一个bbl 文件，该文件中包含\verb|\thebibliography| 环境。第二遍latex编译时，latex读取bbl 文件，并利用\verb|\bibitem|命令将标签生成命令\verb|\bibcite|写入到aux文件中。第三遍latex编译时，latex再次读取aux文件并依据\verb|\cite|命令将标签输出。
+
+其中参考文献的著录格式由\verb|\thebibliography|环境的\verb|\bibitem|命令必选参数后跟着的文献内容决定，比如例\ref{eg:env:biblio}中的第一条参考文献的格式是\{baker\}之后的内容决定的，因此可以采用手动输入方式来实现需要的格式，或者由满足要求的bst样式文件来生成。而引用文献的标注标签格式则由\verb|\bibcite|命令的定义及其参数决定。该命令的定义在latex中有原始的定义，一些宏包比如natbib，jurabib等会对其重新定义以生成满足某种要求的格式。但如果该命令的输入参数中如果没有足够的信息，那么再多的格式要求也会巧妇难为无米之炊。因此要实现一些特殊的格式就需要为其提供足够的文献信息。而这一信息又来源于\verb|\bibitem|命令的写入aux操作，
 \verb|\bibitem| 命令通常会把其后跟着的[]中的可选参数内容当做\verb|\bibcite|命令的参数，因此标签生成的重点之一是在\verb|\bibitem| 后面的[]内写入足够文献信息，同样这也可以手工写入，也可以利用样式文件bst完成。对于natbib宏包来说，通常需要在\verb|\bibitem| 命令后的[]中写入三个信息：作者的缩写信息、由()包围的年份信息、以及作者的详细信息，其中()作为定界符来读取这三个信息。因此利用natbib宏包生成标注标签时，通常要对\verb|\bibitem| 后面[]的内容做文章，无论是通过手工写的方法还是通过bst样式文件生成。jurabib宏包也有类似情况，只是其解析方式更为复杂，需要写入更多的信息，以便在标签生成时生成更多的内容，比如文献的题名等。
 
-总结起来，\LaTeX{} 参考文献生成的基本方法是利用\verb|\thebibliography|环境写参考文献的著录格式，并利用\verb|\bibitem| 命令将其可选参数信息输出作为引用标签处理的基础来生成正文中的参考文献引用标签。其中如果要采用非手工方式生成该环境，那么就要利用外部程序bibtex和参考文献样式bst文件以及参考文献的数据源bib文件。其中bib文件是以BibTeX格式统一规范的文本文件，该格式简单且通用，是默认的参考文献数据源标准，bib文件作为文本文件也非常容易生成，
+总结起来，\LaTeX{} 参考文献生成的基本方法是利用\verb|\thebibliography|环境写参考文献的著录格式，并利用\verb|\bibitem| 命令将其可选参数信息输出作为引用标签处理的基础来生成正文中的参考文献引用标签。其中如果要采用非手工方式生成该环境，那么就要利用外部程序bibtex和参考文献样式bst文件以及参考文献的数据源bib文件。其中bib文件是以BibTeX格式统一规范的文本文件，该格式简单且通用，是默认的参考文献数据源标准，bib文件作为文本文件也非常容易编辑，
 关于该格式在第\ref{sec:bib:file}节还有详细介绍。而bst则是与bibtex程序配合使用的样式文件，以一种能被bibtex程序识别的语法实现，该语法与tex基本语法迥异，因此一般用户学习起来不太容易，因此要设计某种样式的bst文件也相对困难。而bibtex程序则是用于处理bib文件生成bbl文件的程序，通常由tex发行版附带。
 
 
@@ -140,9 +152,9 @@ biblatex 的设计出发点就是要达成两个主要目的，
   \item biblatex 使用的后端biber，具有处理大文献量的能力，不用担心bibtex可能存在的内存问题。biber还支持远程的参考文献数据库。
 
   \item biblatex 兼容 BibTeX 格式外，还支持更多更广泛的条目类型和域。也支持除BibTeX 外的更多格式的文献数据库，也支持其他格式的文献数据的输出和转换。
-      
+
   \item biblatex 提供参考文献分节、分类筛选等功能。在文档中打印多个文献表非常方便，而不再需要使用其它宏包，比如chapterbib等。
-      
+
   \item biblatex 是包含biber程序的一个大型宏包。biblatex 提供了覆盖natbib、jurabib、chapterbib、multibib、mcite、inlinecite 等宏包的完整功能体系。
 
 \end{itemize}
@@ -626,7 +638,7 @@ backref=true%
 
 
 \subsection{\LaTeX 文档的编译}
-文档的编译与\LaTeX 传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，准备参考文献数据用的命令为biber filename。编译命令可以利用软件调用，也可以自行在命令行输入，后面给出利用winedt、texstudio、命令行、和脚本等不同方式的具体操作过程。
+文档的编译与\LaTeX 传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，准备参考文献数据用的命令为biber filename。 编译命令可以利用软件调用，也可以自行在命令行输入，后面给出利用winedt、texstudio、命令行、和脚本等不同方式的具体操作过程。
 
 需要注意，无论采用哪种方式编译，如果参考文献数据中存在一些特殊符号比如\&等，编译时会报错。对于这个问题除了手动修改bib文件中参考文献信息这一种方法外，还有两种自动处理方式，一是利用jabref，jabref有bibtex和biblatex两种模式，在biblatex模式下，对于一些特殊字符的输入，比如\&，jabref会自动将其转换为\textbackslash\&。二是使用gb7714-2015样式，在bib数据源不经任何处理的情况下，gb7714-2015样式也能自动处理一些特殊字符。
 
