@@ -479,6 +479,14 @@ perl gb7714texttobib.pl in=textfilename out=bibfilename
 biber --output-format=bibtex jobname.bcf
 \end{codetex}
 
+\subsubsection{利用biblatex-map修改bib文件}
+
+对于bib文件经常会有批量处理需求，一是从一个大的bib数据库，提取少量的要引用的文献；二是对bib文件中的条目内容进行修改。
+对于这两个需求，笔者利用python重写了bib文件解析器，并借鉴biblatex的动态数据修改的模式，实现了一套bib文件快速修改的工具。
+因为数据修改的基本逻辑与biblatex的类似，
+所以命名为\href{https://github.com/hushidong/biblatex-map}{biblatex-map}。具体使用方法见其说明文档。
+
+
 
 
 \subsection{\LaTeX 文档的组成}
@@ -662,7 +670,7 @@ backref=true%
 
 但要注意的是使用pdflatex进行编译，可能因为某些样式比如authoryear，使用了xstring宏包中的一些命令，进而导致错误，但numeric类样式通常没有问题。这一问题在biblatex更新到3.12版本后取消xstring宏包后得以解决。
 
-中文用户编译还需要注意编码问题。utf-8编码的文档，采用xelatex编译没有任何注意事项，但使用pdflatex编译时，需要给ctex宏包加载UTF8选项，比如\verb|\usepackage[UTF8]{ctex}|，该选项在文档类加载时给出也可，比如\verb|\documentclass[[UTF8]{article}|，同时引用文献时使用的引用关键词应使用英文。当文档使用其他编码时，xelatex编译通常需要指定一个文档编码，比如windows环境下的GB2312编码的文档需要指定\verb|\XeTeXinputencoding "GBK"|，否则会显示乱码。使用pdflatex进行编译时，如果biblatex不能正确的处理编码问题，那么需要为其明确的指定texencoding和bibencoding选项。比如windows环境下的GB2312编码的文档，需要指定\verb|\usepackge[texencoding=GBK]{biblatex}|。
+中文用户编译还需要注意编码问题。utf-8编码的文档，采用xelatex编译没有任何注意事项，但使用pdflatex编译时，需要给ctex宏包加载UTF8选项，比如\verb|\usepackage[UTF8]{ctex}|，该选项在文档类加载时给出也可，比如\verb|\documentclass[[UTF8]{article}|，同时\emph{引用文献时使用的引用关键词必须是英文}，若使用中文将报错。当文档使用其他编码时，xelatex编译通常需要指定一个文档编码，比如windows环境下的GB2312编码的文档需要指定\verb|\XeTeXinputencoding "GBK"|，否则会显示乱码。使用pdflatex进行编译时，如果biblatex不能正确的处理编码问题，那么需要为其明确的指定texencoding和bibencoding选项。比如windows环境下的GB2312编码的文档，需要指定\verb|\usepackge[texencoding=GBK]{biblatex}|。
 
 参考测试文档:
 \href{run:exampleandimage/test-gbk-pdflatex.tex}{test-gbk-pdflatex.tex}，
@@ -1609,6 +1617,46 @@ biblatex通过相应的处理模块，给出功能相同语法相同的命令。
 \setcounter{biburllcpenalty}{100}
 }
 \end{codetex}
+
+\subsubsection{英文文献中字符串的字母大小写问题}
+
+修改参考文献的各域的格式通常使用域格式进行控制，因此英文文献条目各著录项的字母大小写转换也是类似。
+英文习惯的大小写方式主要有5种，包括
+Sentence case	句子模式（一个句子中除首字母大写外其它全部小写）；
+Title case	标题模式（一个句子各单词首字母均大写）；
+All caps	全大写（一个句子全部大写）；
+All lowercase	全小写（一个句子全部小写）；
+Small caps	小大写字母模式（一个句子中除首字母大写外其它全部用smallcap字母）。
+
+目前这五种方式都有可用的实现，主要来自于latex核心代码，biblatex宏包，mfirstuc宏包。为了方便使用，笔者做了梳理，并采用规范的接口命令。
+包括：
+
+\verb|\MakeCapital{a small book of {SUN} rhyme}	|实现一个句子中首字母大写，其字母不变的Sentence case模式；
+
+\verb|\MakeSentenceCase{a small book of {SUN} rhyme}|	实现一个句子中除首字母大写外其它全部小写的Sentence case模式；
+
+\verb|\MakeTitlecase{a small book of {SUN} rhyme}|实现一个句子各单词首字母均大写的Title case模式；
+
+\verb|\MakeUppercase{a small book of {SUN} rhyme}}|实现一个句子全部大写的All caps模式；
+
+\verb|\MakeLowercase{a small book of {SUN} rhyme}|实现	一个句子全部小写的All lowercase模式；
+
+\verb|\MakeSmallcaps{a small book of {SUN} rhyme}	|实现一个句子中除首字母大写外其它全部用smallcap字母的Small caps模式。
+
+具体实现方式详见\href{https://blog.csdn.net/xenonhu/article/details/88927875}{latex中英文字母大小写变换再讨论}。
+
+需要注意的是在域格式使用中字母大小写转换的命令，应在直接针对字符串的域格式中设置，具体问题见：
+\href{https://github.com/plk/biblatex/issues/651}{Make the first letter of each word uppercase in sentence}。
+
+\subsubsection{英文文献中期刊名的缩写问题}
+
+有时某些出版物可能会要求在参考文献中使用期刊名的缩写。最直接的方式是在bib文件中输入期刊的缩写名，但有时不希望去改bib文件，只是在生成文献表的时候形成缩写。这时我们我们通常不采用类似jabref直接修改bib文件的方法。而采用动态修改的方式，主要有:
+
+1. 利用biblatex的动态数据修改，在biblatex处理时将期刊全名替换为缩写名。
+ 
+2. 增加新的域存放缩写名，然后再biblatex的域输出时，利用新的域替换需要缩写的域。
+
+具体的实现见笔者之前写的文章：\href{https://blog.csdn.net/xenonhu/article/details/88070986}{biblatex中参考文献期刊名缩写的实现}。
 
 \subsection{专题：参考文献格式的修改}
 
