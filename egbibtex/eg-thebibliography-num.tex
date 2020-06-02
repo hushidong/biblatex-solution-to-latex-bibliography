@@ -1,0 +1,53 @@
+\documentclass[twoside]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=21cm,paperheight=29cm,top=1.5cm, bottom=1.5cm, left=2.54cm,right=2.54cm}
+\usepackage{xcolor}
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
+\usepackage[numbers]{natbib}
+%\bibliographystyle{unsrt}%GBT7714−2005AYLang−UTF8,acm,amsplain,siam,unsrt,ieeetr
+
+\begin{document}
+
+%%%测试bibliography方式生成参考文献，使用中文的bibtex键。
+
+\section{章节一}
+文献\cite{Meta_CN,zhubajie}
+
+\begin{thebibliography}{99}
+\bibitem[崔万照\ 等(2008)崔万照, 马伟, 邱乐德, and
+  张洪太]{Meta_CN}
+崔万照, 马伟, 邱乐德, 等.
+\newblock 电磁超介质及其应用\allowbreak[M].
+\newblock 北京: 国防工业出版社, 2008.
+
+\bibitem[猪八戒(2005)]{zhubajie}
+猪八戒.
+\newblock 论流体食物的持久保存\allowbreak[Z].
+\newblock 北京: 广寒宫大学, 2005.
+
+\bibitem[白云芬(2008)]{bai2008}
+白云芬.
+\newblock 信用风险传染模型和信用衍生品的定价\allowbreak[D].
+\newblock 上海: 上海交通大学, 2008.
+\end{thebibliography}
+
+\section{章节二}
+
+文献\cite{cnproceed,shaheshang}
+
+\begin{thebibliography}{99}
+\bibitem[王重阳\ 等(2006)王重阳, 黄药师, 欧阳峰, 洪七公, and
+  段皇帝]{cnproceed}
+王重阳, 黄药师, 欧阳峰, 等.
+\newblock 武林高手论文集\allowbreak[C]//\allowbreak
+第~$N$~次华山论剑.
+\newblock 西安, 中国: 中国古籍出版社, 2006.
+
+\bibitem[沙和尚(2005)]{shaheshang}
+沙和尚.
+\newblock 论流沙河的综合治理\allowbreak[Z].
+\newblock 北京: 清华大学, 2005.
+\end{thebibliography}
+
+\end{document} 

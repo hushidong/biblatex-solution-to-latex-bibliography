@@ -1,0 +1,83 @@
+\documentclass[twoside]{article}
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{paperwidth=21cm,paperheight=29cm,top=1.5cm, bottom=1.5cm, left=2.54cm,right=2.54cm}
+\usepackage{xcolor}
+\usepackage[CJKbookmarks,colorlinks,bookmarksnumbered=true,pdfstartview=FitH,linkcolor=blue]{hyperref}
+\usepackage[super]{natbib}
+\bibliographystyle{unsrt}%GBT7714−2005AYLang−UTF8,acm,amsplain,siam,unsrt,ieeetr
+
+\usepackage{filecontents}
+\begin{filecontents}{egtest.bib}
+
+@Online{中文a,
+  author ={Namea},
+  Title                    = {Dublin Core metadata element set: version 1.1},
+  Url                      = {http://dublincore.org},
+  Urldate                  = {2014-06-11},
+  Year                     = {2010-06-14}
+}
+
+@Online{中文b,
+  author ={Namea},
+  Title                    = {Dublin Core metadata element set: version 1.1},
+  Url                      = {http://dublincore.org},
+  Urldate                  = {2014-06-11},
+  Year                     = {2015-06-14}
+}
+
+@Book{中文c,
+  Title                    = {康熙字典:已集上:水部},
+  Address                  = {北京},
+  Edition                  = {同文书局影印本},
+  Pages                    = {50},
+  Publisher                = {中华书局},
+  Year                     = {1962}
+}
+
+@Proceedings{中文d,
+  Title                    = {Proceedings of the Fifth Canadian Mathematical Congress, University of Montreal, 1961},
+  Date                     = {1963},
+  Publisher                = {University of Toronto Press},
+  Editor                   = {E M ROSENTHALL},
+  Location                 = {Toronto}
+}
+
+@Thesis{中文e,
+  Title                    = {Infrared spectroscopic studies on solid oxygen},
+  Author                   = {R B CALMS},
+  Date                     = {1965},
+  Institution              = {Univ. of California},
+  Location                 = {Berkeley}
+}
+
+
+@Online{olc,
+  author ={Nameb},
+  Title                    = {Dublin Core metadata element set: version 1.1},
+  Url                      = {http://dublincore.org},
+  Urldate                  = {2014-06-11},
+  Year                     = {2008-06-14}
+}
+
+@Online{old,
+  author ={Namec},
+  Title                    = {Dublin Core metadata element set: version 1.1},
+  Url                      = {http://dublincore.org},
+  Urldate                  = {2014-06-11},
+  Year                     = {2014-06-14}
+}
+
+\end{filecontents}
+
+\begin{document}
+
+%%%测试bibliography方式生成参考文献，使用中文的bibtex键。
+
+\section{文献表}
+文献
+\cite{中文c,中文d,中文e,olc,old,中文a,中文b}
+
+\bibliography{egtest.bib}
+
+\end{document} 
