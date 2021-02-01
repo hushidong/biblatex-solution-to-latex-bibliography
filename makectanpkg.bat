@@ -8,11 +8,15 @@ cd biblatex-solution-to-latex-bibliography
 
 mkdir exampleandimage
 
+mkdir egbibtex
+
 cd ..
 
 copy biblatex-solution-to-latex-bibliography-master\*.* biblatex-solution-to-latex-bibliography\*.* /Y
 
 copy biblatex-solution-to-latex-bibliography-master\exampleandimage\*.* biblatex-solution-to-latex-bibliography\exampleandimage\*.* /Y
+
+copy biblatex-solution-to-latex-bibliography-master\egbibtex\*.* biblatex-solution-to-latex-bibliography\egbibtex\*.* /Y
 
 cd biblatex-solution-to-latex-bibliography
 

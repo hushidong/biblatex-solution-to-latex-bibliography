@@ -683,11 +683,20 @@ backref=true%
 \href{run:exampleandimage/test-gbk-pdflatex.tex}{test-utf8-pdflatex-cls.tex}，
 \href{run:exampleandimage/test-gbk-pdflatex.tex}{test-utf8-pdflatex-pkg.tex}。
 
+另外也可以利用latexmk宏包实现一步编译，即使用一条命令即可完成整个编译过程，因为latexmk会根据文档的内容自动的设置编译步骤并调用相应的命令进行编译，因此编译命令也可以写为：
+\begin{codetex}{latexmk编译命令}{cmd:latexmk}
+    latexmk -xelatex jobname.tex
+\end{codetex}
+
 
 \subsubsection{利用winedt}
 当文档准备好之后，第一步点击winedt工具栏的xelatex按钮(\parbox{1.2cm}{\includegraphics[width=1.2cm]{button-compiler-winedt}}图中红框内的按钮)完成第一遍\LaTeX 编译；
 第二步，打开命令行(可以用winedt菜单accessories下command prompt项)输入命令biber filename完成参考文献数据准备；
 第三步，再次点击xelatex编译按钮，完成编译，如果存在反向超链接，那么再次用xelatex编译一遍可以得到正确结果。
+
+由于可以使用latexmk进行一步编译，因此如果在winedt操作界面上增加一个功能按钮，该按钮对应的命令为latexmk，那么只要点击一下按钮就可以实现一键编译
+\footnote{https://blog.csdn.net/xenonhu/article/details/80010659}，具体参见：
+\href{https://blog.csdn.net/xenonhu/article/details/80010659}{Winedt 一键编译 LaTeX 文档}。
 
 \subsubsection{利用texstudio}
 texstudio可以多平台使用，在windows和linux下均可。texstudio可以通过利用元命令构建编译命令实现一键编译，进入选项菜单的设置texstudio项，首先在常规选项卡下设置语言为zh\_cn将texstudio界面语言转变为中文，然后在构建选项卡设置默认的编译器为xelatex，设置默认文献工具为biber(图\ref{texstudio:defaulttool})，然后点击构建并查看的配置按钮(\parbox{0.5cm}{\includegraphics[width=0.5cm]{texstudio-cmd-set}})，设置工具栏构建并查看按钮(\parbox{0.5cm}{\includegraphics[width=0.5cm]{texstudio-cmd-build}})对应的命令由5个元命令构成(图\ref{texstudio:compilerchain})。这样点击构建并查看按钮即可完成一键编译功能。其编译的过程提示信息如例\ref{texstudio:onekeycompile}所示(环境为windows 7 x64+texlive 2016+tex studio 2.10.8)。
@@ -749,15 +758,16 @@ linux(以deepin linux x64 v15+texlive 2016+texsudio为例)下texstudio的设置�
 
 \subsubsection{命令行或脚本}
 
-命令行编译本质上是在命令行手动输入命令，命令过程仍然是一遍xelatex编译，biber编译，两边xelatex编译，命令如下:
+命令行编译本质上是在命令行手动输入命令，命令过程仍然是一遍xelatex编译，biber编译，两遍xelatex编译，命令如下:
 
 \begin{codetex}{命令行手动输入的命令}{cmd:prompt}
-xelatex.exe -synctex=1 -interaction=nonstopmode "test".tex
+xelatex.exe -no-pdf -interaction=nonstopmode "test".tex
 biber.exe "test"
-xelatex.exe -synctex=1 -interaction=nonstopmode "test".tex
+xelatex.exe -no-pdf -interaction=nonstopmode "test".tex
 xelatex.exe -synctex=1 -interaction=nonstopmode "test".tex
 \end{codetex}
 
+注意其中的-no-pdf选项表示不生成pdf文档，-interaction=nonstopmode选项表示出现错误不中断编译，-synctex=1选项表示pdf文档与tex源文档进行跳转关联。
 
 利用脚本编译原理是一样的，只是利用编译脚本文件进行自动编译，注意:linux下的脚本文件需要添加一下路径。比如:
 \begin{codetex}{window下的bat脚本文件}{bat:file:cmd}
@@ -791,20 +801,14 @@ xelatex --synctex=-1 "test".tex
 rm -r *.aux *.bbl *.blg *.log *.out *.toc *.bcf *.xml *.synctex *.nlo *.nls *.bak *.ind *.idx *.ilg *.lof *.lot *.ent-x *.tmp *.ltx *.los *.lol *.loc *.listing *.gz
 \end{codetex}
 
-\subsubsection{利用latexmk宏包}
-利用latexmk宏包可以实现一键编译，即使用一条命令即可完成整个编译过程。
-\begin{codetex}{latexmk编译命令}{cmd:latexmk}
-latexmk -xelatex "test.tex"
-\end{codetex}
 
-利用latexmk进行编译的方式也可以在winedt中实现，即定制winedt的工具按钮以实现一键编译功能。具体参见：
-\href{https://blog.csdn.net/xenonhu/article/details/80010659}{Winedt 一键编译 LaTeX 文档}
+
 
 \subsection{分章参考文献和书后参考文献}
 
-分章参考文献在书籍写作中是一种比较常见的需求。在 LateX 传统方法中，利用thebibliography 环境可是实现，但其格式只能在 bibitem 内输入，对于文献量较大时是不适合的。
+分章参考文献在书籍写作中是一种比较常见的需求。在 LaTeX 传统方法中，利用thebibliography 环境是可实现的，但所有文献内容都需要手动输入，且格式只能在 bibitem 内设置，对于文献量较大时这是不适合的。
 
-而利用 bibliographystyle 和 bibliography 命令生成的参考文献可以与thebibliography 环境同时存在，生成多个不同的文献表，可以插入多个文献表但却是相同的，这是因为编译文档时，所有的信息都是写入一个 aux 文件中的。所以要实现分章参考文献表，需要使用 chapterbib 或 multibib 宏包，使用 chapterbib 时要把需要生成文献表的章放到单独的 tex 文件中，然后用 include 命令包含进主文件，这样可以生成多个 aux 文件以便生成分章参考文献表。而使用 biblatex 宏包可以很方便的在一个 \LaTeX 文档中实现多种形式的参考文献划分，其中分章参考文献可以利用refsection环境或者宏包选项来实现。
+而利用 bibliographystyle 和 bibliography 命令生成的参考文献可以与thebibliography 环境同时存在，生成多个不同的文献表，可以插入多个文献表但却是相同的，这是因为编译文档时，所有的信息都是写入一个 aux 文件中的。所以要实现分章参考文献表，需要使用 chapterbib 或 multibib 宏包，使用 chapterbib 时要把需要生成文献表的章放到单独的 tex 子文档中，然后用 include 命令包含进主文档，这样可以生成多个 aux 文件以便生成分章参考文献表。而使用 biblatex 宏包可以很方便的在一个 \LaTeX 文档中实现多种形式的参考文献划分，其中分章参考文献可以利用refsection环境或者宏包选项来实现。
 
 \subsubsection{利用 refsection 环境分章}
 
@@ -915,10 +919,10 @@ refsegment 与 refsection 作用很像，也用于划分，但其内部的文献
 
 注意: refsection 内部不可以有 refsection ，即 refsection 不可嵌套，但其内部可以使用 refsegment。printbibliography 命令也可以对 refsection 内的所有refsegment 遍历打印，也可以指定 refsection 内的某一个 refsegment 中的文献，只要给出 segment 参数，当 printbibliography 在 refsection 外打印其内 refsegment 中的文献，则还需指定 section 参数。
 
-例\ref{eg:global:complex}给出一个测试代码，
+例\ref{eg:global:complex}给出一个示例代码，
 其结果如图\ref{fig:eg:global:complex}所示。其中“文献全局”命令遍历打印了所有不在 refsection 内的文献，包括 refSegment A，refSegment B，以及不在其内的Gradshteyn 文献和附录的 Section E 中的 Parsons 文献。
 
-注意到，其中全局文献表的顺序编码是正常的全局顺序，但对于每一分段(segment 内)该编码就不是当前段内的编码顺序。如果使用 defernumbers 选项，那么可以将每个segment 内的编码改为第一次打印该文献时的编码，当因为 segment 内的文献编码都是全局的，所以无法在一个 segment 内从1开始编码。
+注意到，其中全局文献表的顺序编码是正常的全局顺序，但对于每一分段(segment 内)该编码就不是当前段内的编码顺序。如果使用 defernumbers 选项，那么可以将每个segment 内的编码改为第一次打印该文献时的编码，但因为 segment 内的文献编码都是全局的，所以无法在一个 segment 内从1开始编码。
 
 另外，如果不使用refsegment来实现全局的文献表，那么完全可以利用nocite命令在文档末尾引入需要出现在全局文献表中的文献，但此时文献表中文献的顺序可能与各章出现的顺序不一致，但从显示文献表的角度，这是完全没有问题的。
 
@@ -947,12 +951,12 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
 \emph{特别需要强调的是numeric-comp，authoryear-comp是针对顺序编码和作者年制的两个标签压缩样式，顺序编码制的压缩样式主要针对多篇文献传递给一个标注命令的情况，而作者年制的压缩样式除了给一个标注命令传递多篇文献外，还需要连续引用文献具有相同作者，而要使相同作者的文献连续，可以通过手动方式给出，也可以通过自动排序方式实现}。
 
 读者可以参考biblatex附带的96个示例文件，也可以测试这些样式的效果，以便在需要的时候选择使用。而且著录和标注可以分别使用不同的样式，著录是一种，而标注则是另一种，实际使用的例子
-可以参考\href{https://github.com/sjtug/SJTUThesis/issues/300}{参考文献的顺序}。
+可以参考：\href{https://github.com/sjtug/SJTUThesis/issues/300}{参考文献的顺序}。
 
 
 \subsubsection{常用样式}
 
-除标准样式外，在texlive安装目录中或者ctan上面可以找到更多的常用样式，比如符合国外的APA，MLA，国内的GB/T 7714-2015等标准的样式，也有一些针对某些期刊的文献样式，比如nature，science，nejm等等，也有一些是作者自己兴趣所做形成了自己喜欢的风格，比如:biblatex-caspervector样式包。用户可以测试各样式包，并按需使用，进一步也可以参考其代码，修改自己需要的样式。表\ref{tab:styles:blx}列出了这些常用的样式。
+除标准样式外，在texlive安装目录中或者ctan上面可以找到更多的常用样式，比如符合国外的APA、MLA标准，国内的GB/T 7714-2015等标准的样式，也有一些针对某些期刊的文献样式，比如nature，science，nejm等等，也有一些是作者自己兴趣所做形成了自己喜欢的风格，比如:biblatex-caspervector样式包。用户可以测试各样式包，并按需使用，进一步也可以参考其代码，修改自己需要的样式。表\ref{tab:styles:blx}列出了这些常用的样式。
 
 % Table generated by Excel2LaTeX from sheet 'Sheet1'
 \begin{table}[!htb]
@@ -971,8 +975,8 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
     Chicago & Chicago & David Fussner & for the Chicago Manual of Style \\
     iso-numeric &       & Michal Hoftich & ISO690 international standard numeric system \\
     iso-iso-authoryear &       & Michal Hoftich & ISO690 international standard nameanddate system,so-called Harvard style \\
-    gb7714-2015 & gbt7714-unsrt.bst by zepinglee & hushidong & 中文文献著录标准 GB/T 7714-2015 顺序编码制 \\
-    gb7714-2015ay & gbt7714-plain.bst by zepinglee & hushidong & 中文文献著录标准 GB/T 7714-2015 著者年份制 \\
+    gb7714-2015 & gbt7714-numeric  & hushidong & 中文文献著录标准 GB/T 7714-2015 顺序编码制 \\
+    gb7714-2015ay & gbt7714-authoryear & hushidong & 中文文献著录标准 GB/T 7714-2015 著者年份制 \\
     caspervector &       & Casper vector & 一种中文文献格式 \\
     nature &       & Joseph Wright & for Nature \\
     science &       & Joseph Wright & for Science \\
@@ -990,8 +994,8 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
 
 
 
-\subsubsection{gb7714-2015}
-目前符合GB/T 7714-2015标准的 biblatex 样式，是本文作者制作的 gb7714-2015 样式包，分顺序制和作者年制两类。其加载方式见例\ref{code:pkg:load}。
+\subsubsection{biblatex-gb7714-2015样式包}
+目前符合GB/T 7714-2015标准的 biblatex 样式，是本文作者制作的 biblatex-gb7714-2015 样式包，分顺序制和作者年制两类。其加载方式见例\ref{code:pkg:load}。
 
 该样式包，实现了GB/T 7714-2015标准的完整要求，包括两种编制方式下的各类型参考文献著录格式和标注格式等基本内容，还包括:自动判断文献类型和载体、自动并判断区分文献语言、双语对照文献，带页码的标注格式，作者年制下文献的自动排序和仅有年的标注格式，两种编码制方式下责任者缺省不同处理，其他信息缺省时的自动处理，一些信息如页码卷期自动解析等功能。
 
@@ -1081,7 +1085,10 @@ biblatex通过相应的处理模块，给出功能相同语法相同的命令。
 \subsubsection{参考文献文境}
 
 参考文献文境是biblatex 高度可定制性可扩展性的体现。biblatex 认为文献的引用和打印都是在一个文境中的，因此在不同的文境中就可以有不同的设置，这些设置包括：
-排序模板、构建姓名排序关键字的模板、使用字母或数值标签的标注格式的前缀字符串、计算姓名唯一性信息的模板、构造姓名的字母顺序标签的模板。因此要在一个文档中使用不同的这些设置，那么可以利用参考文境文境。文境会用于设置影响参考表打印的选项；设置的选项还可以影响标注命令输出的数据。biblatex手册中给出了几个典型的应用场景，包括：(1)打印多个文献表，不同的文献表使用不同的排序。(2)打印多个文献表，不同的文献表使用不同的排序模板，进而导致排序使用的数据也是不同的。(3)打印多个文献表，不同的文献表使用不同的排序，不同的文献表使用不同的标签。
+排序模板、构建姓名排序关键字的模板、使用字母或数值标签的标注格式的前缀字符串、计算姓名唯一性(非歧义性)信息的模板、构造姓名的字母顺序标签的模板。因此要在一个文档中使用不同的这些设置，那么可以利用参考文献文境。文境除了用于设置影响文献表打印的选项，设置的选项还可以影响标注命令输出的数据。biblatex手册中给出了几个典型的应用场景，包括：
+(1)打印多个文献表，不同的文献表使用不同的排序。
+(2)打印多个文献表，不同的文献表使用不同的排序模板，进而导致排序使用的数据也是不同的。
+(3)打印多个文献表，不同的文献表使用不同的排序，不同的文献表使用不同的标签。
 
 另外一个应用场景是第\ref{sec:sort:bibandcite}节提到的示例，标注和文献表使用不同的排序。比如要求标注排序使用ynt，而文献表排序使用nyt。
 
@@ -1092,7 +1099,7 @@ biblatex通过相应的处理模块，给出功能相同语法相同的命令。
 \subsection{参考文献标题格式}
 
 期刊文章经常需要设置某种格式的参考文献标题，包括字号，大小，段落格式等。在书籍等写作中有时还需要将参考文献加入目录中，以便实现超链接。
-\subsubsection{加入目录链接}
+\subsubsection{加入目录超链接}
 
 加入目录的命令是addcontentsline，在printbibliography命令前使用该命令即可将参考文献加入目录中，同时为了能够超链接正确可以加入hyperref宏包提供的phantomsection命令。例\ref{bib:inserttoc}给出了代码。
 \begin{codetex}{手动加入目录链接}{bib:inserttoc}
@@ -1398,7 +1405,7 @@ biblatex通过相应的处理模块，给出功能相同语法相同的命令。
 \end{figure}
 
 
-\subsection{参考文献内容格式}\label{sec:bib:content:md}
+\subsection{参考文献表内容格式}\label{sec:bib:content:md}
 
 参考文献内容的字体、字号、间距等格式可以重定义biblatex宏包提供的命令来实现。
 
@@ -5790,7 +5797,7 @@ thebibliography 环境显式的将其中的内容插入，而不管其中的参�
 
 基于bibtex的方法是一种将参考文献信息和源文档分开管理的方法。应用过程中涉及到三类要素：源文档（Tex文件）、参考文献数据库（bib文件）、参考文献样式（bst文件）。参考文献数据库是参考文献的数据基础，参考文献信息以条目形式录入其中，由于参考文献数据库文件是纯文本的文件，可以利用winedt等文本编辑器直接写，也可以利用各种工具获取。参考文献样式有latex及各类第三方宏包或提供，用户只需要选择使用即可。在源文档中，用户引用相关文献的关键字后，可利用 bibliographystyle 和 bibliography 命令生成参考文献。
 
-基于bibtex程序，利用 bibliographystyle 和 bibliography 命令生成的参考文献可以与 thebibliography 环境的参考文献同时存在，但是 bibliographystyle 和 bibliography 命令生成的参考文献无法利用一个 bib 文件生成多个文献（可以插入多个但却是相同的），而利用多个 bib 文件也不行，因为编译文档时，所有的信息都是写入一个 aux 文件中的。因此分章参考文献需使用 chapterbib 等宏包，而且有一些预设条件比如要用 include 命令来引入不同的章几，以产生多个aux文件，到达生成多个文献表的目的。
+基于bibtex程序，利用 bibliographystyle 和 bibliography 命令生成的参考文献可以与 thebibliography 环境的参考文献同时存在，但是 bibliographystyle 和 bibliography 命令生成的参考文献无法利用一个 bib 文件生成多个文献（可以插入多个但却是相同的），而利用多个 bib 文件也不行，因为编译文档时，所有的信息都是写入一个 aux 文件中的。因此分章参考文献需使用 chapterbib 等宏包，而且有一些预设条件比如要用 include 命令来引入不同的章节，以产生多个aux文件，到达生成多个文献表的目的。
 
 
 \subsubsection{文档编译}
@@ -5800,15 +5807,15 @@ thebibliography 环境显式的将其中的内容插入，而不管其中的参�
 \begin{enumerate}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
 \item 调用xelatex对tex源文档做第一次编译，扫描文中引用的参考文献，将参考文献引用信息写入辅助(aux) 文件。
 \item 调用bibtex，以参考文献数据库文件、参考文献格式文件和辅助文件为输入，生成格式化以后的参考文献著录和引用信息，写入bbl文件。
-\item 再次调用xelatex编译模板，将格式化以后的参考文献条目插入正文。
-\item 再次调用xelatex编译模板，生成参考文献引用标签插入正文。
+\item 再次调用xelatex编译tex源文档，将格式化以后的参考文献条目插入正文。
+\item 再次调用xelatex编译tex源文档，生成参考文献引用标签插入正文。
 \end{enumerate}
 
 而biblatex完成相同任务一般仅需三次编译，xelatex、biber、xelatex。若还需要反向超链接，则也需要进行四次编译。
 
 \subsubsection{常用著录样式}
 
-BIBTEX 提供了几个预定义的样式，如 plain, unsrt, alpha 等，第三方宏包、论文模板等也会提供一些文献样式，比如natbib宏包提供的样式。国内最常用是实现国标GB/T 7714要求的样式，包括胡海星开发的2005样式，以及leezeping开发的2015样式。
+BIBTEX 提供了几个预定义的样式，如 plain, unsrt, alpha 等，第三方宏包、论文模板等也会提供一些文献样式，比如natbib宏包提供的样式。国内最常用是实现国标GB/T 7714要求的样式，包括胡海星开发的2005样式\cite{胡海星2012--}，以及Lee Zeping开发的2015样式\cite{ZepingLee2016--}。
 
 参考文献表的所有格式、逻辑细节都由著录样式实现，比如各个域（字段）的著录格式，文献条目见得排序逻辑等等。
 
@@ -5952,7 +5959,7 @@ chapterbib也提供了cbunit和\verb|\cbinput|命令，可以不基于include方
 1. 在book和report类中，参考文献的标题会被当做是一个chapter*的标题，但若要使得参考文献的标题降一个层级，比如降到section*。那么可以使用sectionbib选项，但与natbib连用时，该选项会失效，替代的方法是给natbib设置这个选项。
 
 
-2. 要在主文档中使用一个完全不同的参考文献，那么不能再使用\verb|\bibliography|命令，因为主文档bbl会包含值文档的。所以只能使用手写的thebibliography环境。
+2. 要在主文档中使用一个完全不同的参考文献，那么不能再使用\verb|\bibliography|命令，因为主文档bbl会包含子文档的。所以只能使用手写的thebibliography环境。
 
 3. 要在主文档生成一个包含所有子文档文献的文献表，那么可以使用\verb|\bibliography|命令。而要避免报错，\verb|\bibliographystyle| 必须要放在所有的include之前。或者也可以在不同的编译步使用或不使用[rootbib]选项来实现。
 
@@ -5960,6 +5967,17 @@ chapterbib也提供了cbunit和\verb|\cbinput|命令，可以不基于include方
 \verb|bibliography|命令。也可以通过定义\verb|\StartFinalBibs|来重定义文献表的标题。
 
 5. 如果文献表不仅要收集起来，也需要在各章显示，那么可以使用[duplicate]选项。
+
+
+\subsection{multibib宏包用法简介}
+
+multibib包用于在一个文档中生产多个参考文献，这不同于在多个不同的子文档中生成多个参考文献（类似于bibunits、chapterbib宏包的基本功能）。
+
+宏包使用\verb|\newcites|来为每个文献表生成自定义的标注和文献表生成命令，这些命令的语法和意义与标准的latex命令类似，所以很容易使用。
+
+每个文献表可以使用各自的样式和文献数据库。引用信息创建在单独的辅助文件中，用于bibtex程序读取。
+
+该宏包与cite, inlinebib, jurabib (to be loaded before multibib), natbib等宏包兼容。
 
 
 \section{结论}
