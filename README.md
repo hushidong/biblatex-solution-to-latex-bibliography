@@ -32,14 +32,17 @@ latex中文参考文献解决方案-
 * 针对每个条目的选项
 * 引号的问题，csquote/其它
 * excute域
-
 * verbose样式下的一些标注缩略机制ibid等，mancite的作用，一般用不着。
-* 数据注解，不同于annotation域。通用域如 abstract 、 annotation 、 label 和 shorthand 独立于条目类型，用的概率较低。
+
 
 
 
 ---------------------------------------------------------------
 ## history:
+
+%% 2021-10-19 v1.0h 增加利用数据注解：修改指定作者格式以及给期刊添加缩写信息的方法（数据注解，不同于annotation域。通用域如 abstract 、 annotation 、 label 和 shorthand 独立于条目类型，用的概率较低。）。
+
+%% 2021-10-19 v1.0h 增加bibunits介绍、文献条目分页控制解释、增加shortbooktitle的使用示例
 
 %% 2021-02-02 v1.0h 增加常见编译错误的解决方法。
 
