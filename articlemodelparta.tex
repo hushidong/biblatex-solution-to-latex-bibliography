@@ -96,7 +96,7 @@
 %使用宏包{美国数学协会数学}，有个功能可以将章节和方程号联系起来。
 \usepackage{amssymb} %使用宏包{美国数学协会符号}
 %----------------页面布局、双栏----------------
-\usepackage[a4paper,top=3cm, bottom=1.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage[a4paper,top=3cm, bottom=1.5cm, left=3cm, right=3cm]{geometry}
 \renewcommand{\baselinestretch}{1.35}
 \setlength{\headsep}{\baselineskip}%设置页面起始行与页眉间距
 \usepackage{multicol}
@@ -347,7 +347,7 @@
 \titleformat{\section}{\zihao{4}\heiti}{\thesection}{1em}{}
 \titlespacing*{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
 \titleformat{\subsection}{\zihao{5}\heiti}{\thesubsection}{1em}{}
-\titlespacing*{\subsection}{0pt}{0pt}{0pt}[0pt]
+\titlespacing*{\subsection}{0pt}{3mm}{0pt}[0pt]
 %\titleformat{\subsubsection}{\zihao{5}\songti}{\thesubsubsection}{1em}{}
 \titleformat{\subsubsection}{\zihao{5}\heiti}{\thesubsubsection}{1em}{}
 \titlespacing*{\subsubsection}{0pt}{0pt}{0pt}[0pt]
@@ -567,8 +567,8 @@ showstringspaces=false}% no special string spaces
 
 
 \usepackage[inline]{enumitem} %重设list环境
-\setlist[itemize]{label=\color{blue}$\blacktriangleright$,topsep=2pt,partopsep=0pt,parsep=0pt,%
-itemsep=0pt,leftmargin=2em}%label=$\triangleright$
+\setlist[itemize]{topsep=2pt,partopsep=0pt,parsep=0pt,%
+itemsep=0pt,leftmargin=2em}%label=$\triangleright$ label=\color{blue}$\blacktriangleright$,
 %\setlist[itemize]{topsep=2pt,partopsep=0pt,parsep=0pt,%
 %itemsep=0pt,leftmargin=4em}%label=$\triangleright$
 \setlist[enumerate]{label=\bfseries\textcolor{teal}{(\arabic*)},topsep=2pt,partopsep=0pt,parsep=0pt,%

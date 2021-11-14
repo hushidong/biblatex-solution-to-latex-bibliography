@@ -6,6 +6,11 @@
 \addbibresource[location=local]{./exampleandimage/example.bib}
 %论文1的参考文献的bib文件
 
+\setCJKmainfont[BoldFont = Adobe Heiti Std,
+    ItalicFont = Adobe Kaiti Std] {Adobe Song Std}
+\setCJKsansfont {Adobe Heiti Std}%注意空格不能用~代替
+\setCJKmonofont {Adobe Fangsong Std}
+
 %%----------------------------------------------------------------------
 %%                  正文
 \begin{document}
@@ -25,24 +30,24 @@
 \zhongtu{（V211.751）}                          %中图分类号
 \wenxianbiaozhi{A}                              %文献标志码
 
-\biaoti{\LaTeX 文档中文参考文献的biblatex解决方案}                     %标题,title
+\biaoti{\LaTeX 文档中文参考文献的BibLaTeX解决方案}                     %标题,title
 \fubiaoti{}                               %副标题,subtitle
 
 \authorinput{胡振震} %作者间用英文分号隔开
-\schoolinput{~LEETC~~CHINA~~100000~}                        %单位间用英文分号隔开
+\schoolinput{~UNIT~~CHINA~~100000~}                        %单位间用英文分号隔开
 \includinput{1}              %各作者所属单位用英文分号隔开，
                                      %一位作者的多个所属单位用英文逗号隔开
 
                                                 %摘要,abstract
-\zhaiyao{针对中文\LaTeX{} 环境的参考文献生成问题，以入门教程为出发点，介绍了文档源代码、bib数据库、编译方法、文献表生成、格式修改、多语言、筛选和排序等大量细节问题，为国内用户提供了一套基于biblatex宏包的完整参考文献解决方案。
-介绍了biblatex-gb7714-2015样式包和一个样式定制示例的设计思路和实现过程，揭示了基于biblatex标准样式定制样式的一般原理和开发方法，为biblatex参考文献样式定制提供了完整示范。
+\zhaiyao{针对中文\LaTeX{} 环境的参考文献生成问题，以入门教程为出发点，介绍了文档源代码、bib数据库、编译方法、文献表生成、格式修改、多语言、筛选和排序等大量细节问题，为国内用户提供了一套基于BibLaTeX宏包的完整参考文献解决方案。
+介绍了biblatex-gb7714-2015样式包和一个样式定制示例的设计思路和实现过程，揭示了基于BibLaTeX标准样式定制样式的一般原理和开发方法，为BibLaTeX参考文献样式定制提供了完整示范。
 最后针对使用传统方法的用户需求，总结了基于thebibliography环境和基于bibtex程序的参考文献生成方法。}
 %old-bak-20190127针对\LaTeX 文档的参考文献相关问题，分析了参考文献生成的一般需求，给出基于biblatex宏包全套解决方案。从文献数据源文件准备，tex源文档的组成，tex/bib文件的编译，分章参考文献和书后文献表，文献表标题和内容格式，参考文献著录和标注样式，多语言文献，脚注题注小页环境中的引用，脚注旁注中的文献表，文献表分类筛选打印，beamer 类中的参考文献等方面详实地介绍了biblatex参考文献生成方法，并提供所有示例代码，为用户提供参考。介绍了biblatex-gb7714-2015样式包的设计思路和实现方法，给出了一个参考文献样式定制项目示例，介绍了bbx和cbx文件开发的方法、步骤和过程，揭示了基于biblatex标准样式定制参考文献的一般原理，为定制参考文献样式提供完整示范。
 %old-bak-20171031:针对\LaTeX 文档的中文参考文献问题，对其需求展开分析，提出利用biblatex宏包的解决思路，并针对性地给出了各项需求的解决方案(包括示例代码)，为\LaTeX 文档参考文献生成提供便利。
 
                                                 %关键词,keywords
                                                 %多个关键词用\kongge隔开
-\guanjianci{\LaTeX{} \kongge 参考文献 \kongge biblatex}
+\guanjianci{\LaTeX{} \kongge 参考文献 \kongge BibLaTeX宏包}
                                                 %use \kongge as separation
 
                                           %收稿等时间,第一/通信作者简介,
@@ -68,13 +73,14 @@
 multibib(用于单文档内生成多文献表)\cite{Hansen2008--}，
 natbib(用于标注并提供著录样式)\cite{Arseneau2010--}，
 mcitesplus(用于标注)\cite{Shell2013--}，
-inlinebib(用于文献表置于脚注中)\cite{Seindal1994--}等。这些工具从多个方面提供了需求功能，但多个宏包同时使用可能不兼容等局限。另外，由于使用bibtex/bibtex8程序本身的原因，非utf-8编码的bib文件无法使用中文的引用关键字，中文文献排序往往也需要附加很多特殊处理，甚至当参考文献量足够大时可能出现内存不足的问题。
+inlinebib(用于文献表置于脚注中)\cite{Seindal1994--}等。这些工具从多个方面提供了需求功能，但多个宏包同时使用可能存在不兼容等问题。另外，由于使用bibtex/bibtex8程序本身的原因，非utf-8编码的bib文件无法使用中文的引用关键字，中文文献排序往往也需要附加很多特殊处理，甚至当参考文献量足够大时可能出现内存不足的情况。
 
-而biblatex宏包\cite{Lehman2015}旨在提供了一套完整的方案，既解决传统方法的一些局限，也覆盖大量辅助宏包的功能，更提供如动态数据修改等大量新功能。biblatex的强大和完善使它成为\LaTeX{} 参考文献生成的一个绝佳选择。由于使用习惯及存量bst广泛应用，传统方法无法完全取代，但由于biblatex的大量优点，基于biblatex的方法呈逐渐流行态势，目前CTAN 上面已经有包括APA、MLA、science、ieee、nature、iso690、gb7714-2015 等数十种第三方样式可以选用，结合biblatex的强大定制功能，利用biblatex一个宏包完全可以简单而直接满足所有可能需求。
+而biblatex宏包\cite{Lehman2015}旨在提供了一套完整的方案，既能解决传统方法的一些局限，也能避免大量使用辅助宏包，更能提供很多新功能，比如动态数据修改等。biblatex的强大和完善使它成为\LaTeX{} 参考文献生成的一个绝佳选择。由于使用习惯及存量bst广泛应用，传统方法无法完全取代，但由于biblatex的大量优点，基于biblatex的方法呈逐渐流行态势，目前CTAN 上面已经有包括APA、MLA、science、ieee、nature、iso690、gb7714-2015 等数十种第三方样式可以选用，结合biblatex的强大定制功能，利用biblatex一个宏包完全可以简单而直接满足\LaTeX{}文档参考文献相关所有可能需求。
 
-然而正是由于biblatex的完整性，biblatex宏包相当的庞大，其说明文档(\href{https://github.com/hushidong/biblatex-zh-cn}{中译版})长达300页。对于初学者或者无深度需求的使用者来说，biblatex手册就像一个技术说明书，详实的介绍宏包功能和接口，但却没有提供一个像lshort这样的简单入门教程。类似biblatex-gb7714-2015这样的样式包\cite{胡振震2016}，虽然也介绍了一些biblatex的使用方法但并不详细。%其重点主要还在样式包的设计、实现和使用上。
+然而正是由于biblatex的完整性，biblatex宏包相当的庞大，其说明文档(\href{https://github.com/hushidong/biblatex-zh-cn}{中译版})长达300页。对于初学者或者无深度需求的使用者来说，biblatex手册就像一个技术说明书，详实的介绍宏包功能和接口，但却没有提供一个像lshort这样的简单入门教程。
+而类似biblatex-gb7714-2015这样的参考文献biblatex样式包\cite{胡振震2016}，虽然也介绍了一些biblatex的使用方法但却并不详细。%其重点主要还在样式包的设计、实现和使用上。
 
-总的来说，对于biblatex参考文献生成目前还没有较为系统的入门手册
+总的来说，对于biblatex参考文献生成，目前还没有较为系统的入门手册
 \footnote{准确的说是中文入门手册，因为：\par
 biblatex 3.12版以后，宏包作者提供了一个简单的
 \href{https://github.com/plk/biblatex/blob/dev/doc/latex/biblatex/biblatex-quickstart.tex}{入门教程}\href{run:exampleandimage/biblatex-quickstart.pdf}{（见pdf文档）}\par
@@ -85,7 +91,7 @@ biblatex 3.12版以后，宏包作者提供了一个简单的
 
 %事实上随着biblatex宏包及其biber后端程序的完善，利用它可以满足对于参考文献的绝大多数功能需求。如果利用一个宏包就能完成以前多个宏包才能实现的功能，那么问题实际上就简化了，这正是用户所期待的。利用biblatex宏包“简单化、便利化”地满足\LaTeX 文档写作中的各种中文参考文献需求正是本文写作的初衷所在。
 
-需要提示的是: 本文所有的示例和测试都基于texlive发行版，2014/2015/2016/2017/2018均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装和使用可以参考texlive安装手册\cite{Berry2016--}
+需要提示的是: 本文所有的示例和测试都基于texlive发行版，2014/2015/2016/2017/2018及以后版本均可，文档均采用UTF-8编码，编译使用xelatex+biber，texlive的安装和使用可以参考texlive安装手册\cite{Berry2016--}
 以及\href{http://bbs.ctex.org/forum.php}{ctex论坛ctex论坛}
 或\href{http://www.latexstudio.net/}{latex sudio}上分享的各种方法。
 
@@ -93,12 +99,13 @@ biblatex 3.12版以后，宏包作者提供了一个简单的
 \section{为什么使用biblatex}
 
 
-\subsection{latex参考文献基本原理}\label{sec:latex:ref}
+\subsection{\LaTeX{}参考文献基本原理}\label{sec:latex:ref}
 
-\LaTeX{} 中参考文献生成主要借助于\verb|\thebibliography|环境。这个环境可以手工在tex 源文档中输入，也可以利用外部程序 bibtex 程序生成。
+\LaTeX{} 中参考文献生成主要借助于\verb|\thebibliography|环境。这个环境可以手工在tex 源文档中输入，也可以利用外部程序生成，如 bibtex 程序。
 
-首先我们看一下手工写 \verb|\thebibliography| 环境的方法。在环境中每一条文献用\verb|\bibitem| 命令组织，典型的 \verb|\thebibliography| 环境
-如例\ref{eg:env:biblio}所示。
+首先我们看一下手工写 \verb|\thebibliography| 环境的方法。典型的 \verb|\thebibliography| 环境如例 \ref{eg:env:biblio} 所示。
+在该环境中每一条文献都用一条\verb|\bibitem| 命令组织，其第一个可选参数信息可以用于生成引用标注标签(如例中的\{Baker et~al.(1995)Baker and Jackson\})，其后的必选参数则是该条参考文献的引用关键词(如例中的\{baker\})，最后跟着的是用于生成参考文献表的著录内容。
+
 
 \begin{codetex}{典型的thebibliography环境}{eg:env:biblio}
 \begin{thebibliography}{2}
@@ -108,79 +115,85 @@ biblatex 3.12版以后，宏包作者提供了一个简单的
 \end{thebibliography}
 \end{codetex}
 
-第一遍编译时，由于\verb|\bibitem| 命令的宏替换，文献latex编译程序将在 aux 文件中写入对应的标签生成命令\verb|\bibcite| 。第二遍编译时，latex会读入 aux 文件并根据\verb|\bibcite| 命令生成对应引用关键词的标签，编译过程中当遇到\verb|\cite|命令，则调用对应引用关键词的标签，以生成引用标签。
+在文档编译过程中，第一遍编译时，基于\verb|\bibitem| 命令的宏替换，\TeX{}编译程序(如pdflatex、xelatex、lualatex等)将在 aux 文件中写入对应每条\verb|\bibitem| 命令的标签生成命令\verb|\bibcite|。第二遍编译时，\TeX{}编译程序会读入 aux 文件并根据\verb|\bibcite| 命令生成对应引用关键词的标签，
+编译过程中当遇到\verb|\cite|命令(该命令的参数中给出了当前引用文献的引用关键词)，则调用对应引用关键词的标签，以生成引用的标注标签。
 
-基于bibtex的参考文献生成方法，本质上是类似的，只是利用了外部程序bibtex生成\verb|\thebibliography|环境。
-在tex源文档中，利用命令\verb|\bibliographystyle|命令指定bibtex程序需要使用的bst文件，
-利用命令\verb|\bibliography|命令指定bibtex需要处理的bib文件，在第一步latex编译中，编译程序将这两个文件信息写入到aux文件中。接着运行bibtex程序，该程序会读取 aux 文件中的两个指定文件，并处理生成一个bbl 文件，该文件中包含\verb|\thebibliography| 环境。第二遍latex编译时，latex读取bbl 文件，并利用\verb|\bibitem|命令将标签生成命令\verb|\bibcite|写入到aux文件中。第三遍latex编译时，latex再次读取aux文件并依据\verb|\cite|命令将标签输出。
+基于外部工具 bibtex 的参考文献生成方法，本质上是类似的，也需要\verb|\thebibliography| 环境。只是利用了外部程序 bibtex 生成该环境，而不是在tex源文档中手工写入。
+在tex源文档中，利用命令 \verb|\bibliographystyle| 命令指定 bibtex 程序需要使用的bst文件，
+利用命令\verb|\bibliography|命令指定 bibtex 程序需要处理的bib文件。在源文档第一步编译中，\TeX{}编译程序将这两个文件信息写入到 aux 文件中。接着运行 bibtex 程序，该程序会读取 aux 文件中的两个指定文件，并处理生成一个 bbl 文件，该文件中包含 \verb|\thebibliography| 环境。源文档第二遍编译时，\TeX{}编译程序读取 bbl 文件，并利用\verb|\bibitem|命令将标签生成命令 \verb|\bibcite| 写入到aux文件中。源文档第三遍编译时，\TeX{}编译程序再次读取aux文件并依据 \verb|\cite| 命令将标签输出。
 
-其中参考文献的著录格式由\verb|\thebibliography|环境的\verb|\bibitem|命令必选参数后跟着的文献内容决定，比如例\ref{eg:env:biblio}中的第一条参考文献的格式是\{baker\}之后的内容决定的，因此可以采用手动输入方式来实现需要的格式，或者由满足要求的bst样式文件来生成。而引用文献的标注标签格式则由\verb|\bibcite|命令的定义及其参数决定。该命令的定义在latex中有原始的定义，一些宏包比如natbib，jurabib等会对其重新定义以生成满足某种要求的格式。但如果该命令的输入参数中如果没有足够的信息，那么再多的格式要求也会巧妇难为无米之炊。因此要实现一些特殊的格式就需要为其提供足够的文献信息。而这一信息又来源于\verb|\bibitem|命令的写入aux操作，
-\verb|\bibitem| 命令通常会把其后跟着的[]中的可选参数内容当做\verb|\bibcite|命令的参数，因此标签生成的重点之一是在\verb|\bibitem| 后面的[]内写入足够文献信息，同样这也可以手工写入，也可以利用样式文件bst完成。对于natbib宏包来说，通常需要在\verb|\bibitem| 命令后的[]中写入三个信息：作者的缩写信息、由()包围的年份信息、以及作者的详细信息，其中()作为定界符来读取这三个信息。因此利用natbib宏包生成标注标签时，通常要对\verb|\bibitem| 后面[]的内容做文章，无论是通过手工写的方法还是通过bst样式文件生成。jurabib宏包也有类似情况，只是其解析方式更为复杂，需要写入更多的信息，以便在标签生成时生成更多的内容，比如文献的题名等。
+其中参考文献的著录格式由 \verb|\thebibliography| 环境的 \verb|\bibitem| 命令必选参数后跟着的文献内容决定，比如例 \ref{eg:env:biblio} 中的第一条参考文献的格式是\{baker\}之后的内容决定的，因此可以采用手动输入方式来实现需要的格式，或者由满足要求的bst样式文件来生成。而引用文献的标注标签格式则由 \verb|\bibcite| 命令的定义及其参数决定。该命令的定义在latex中有原始的定义，一些宏包比如natbib，jurabib等会对其重新定义以生成满足某种要求的格式。但如果该命令的输入参数中如果没有足够的信息，那么再多的格式要求也会巧妇难为无米之炊。因此要实现一些特殊的格式就需要为其提供足够的文献信息。而这一信息又来源于 \verb|\bibitem| 命令的写入aux操作，\verb|\bibitem| 命令通常会把其后跟着的[]中的可选参数内容当做 \verb|\bibcite| 命令的参数，因此引用的标注标签生成的关键之一是在 \verb|\bibitem| 后面的[]内写入足够文献信息，同样这也可以手工写入，也可以利用样式文件bst生成。
+对于natbib宏包来说，通常需要在 \verb|\bibitem| 命令后的[]中写入三个信息：作者的缩写信息、由()包围的年份信息、以及作者的详细信息，其中()作为定界符来读取这三个信息。因此利用natbib宏包生成标注标签时，通常要在 \verb|\bibitem| 后面的[]内做文章，无论是通过手工写的方法还是通过bst样式文件生成。jurabib宏包也有类似情况，只是其解析方式更为复杂，需要写入更多的信息，以便在标签生成时生成更多的内容，比如文献的题名等。
 
-总结起来，\LaTeX{} 参考文献生成的基本方法是利用\verb|\thebibliography|环境写参考文献的著录格式，并利用\verb|\bibitem| 命令将其可选参数信息输出作为引用标签处理的基础来生成正文中的参考文献引用标签。其中如果要采用非手工方式生成该环境，那么就要利用外部程序bibtex和参考文献样式bst文件以及参考文献的数据源bib文件。其中bib文件是以BibTeX格式统一规范的文本文件，该格式简单且通用，是默认的参考文献数据源标准，bib文件作为文本文件也非常容易编辑，
-关于该格式在第\ref{sec:bib:file}节还有详细介绍。而bst则是与bibtex程序配合使用的样式文件，以一种能被bibtex程序识别的语法实现，该语法与tex基本语法迥异，因此一般用户学习起来不太容易，因此要设计某种样式的bst文件也相对困难。而bibtex程序则是用于处理bib文件生成bbl文件的程序，通常由tex发行版附带。
+总结起来，\LaTeX{} 参考文献生成的基本方法是利用 \verb|\thebibliography| 环境写参考文献的著录格式，并利用 \verb|\bibitem| 命令将其可选参数信息输出，作为引用文献标注标签生成的基础在正文中生成参考文献引用标签。如果要采用非手工方式生成该环境，那么就要利用外部程序 bibtex 和参考文献样式bst文件以及参考文献的数据源bib文件。其中bib文件是以 BibTeX 格式统一规范的文本文件，该格式简单且通用，是默认的参考文献数据源标准，bib文件作为文本文件也非常容易编辑，
+关于该格式在第 \ref{sec:bib:file} 节还有详细介绍。而bst则是与 bibtex 程序配合使用的样式文件，以一种能被 bibtex 程序识别的语法实现，该语法与 TeX 基本语法迥异，因此一般用户学习起来不太容易，因此要设计某种样式的bst文件也相对困难。而 bibtex 程序则是用于处理bib文件生成bbl文件的程序，通常由 TeX 发行版(如Texlive、MacTex等)附带。
 
 
-\subsection{biblatex参考文献生成的基本原理}
+\subsection{BibLaTeX参考文献生成的基本原理}
 
-基于biblatex的参考文献生成方法，从根子上就不再利用\verb|thebibliography|环境，但操作方式有点类似于基于bibtex的方法，相似点在于同样利用外部程序处理参考文献数据源，也同样需要利用辅助文件。
-biblatex 的设计出发点就是要达成两个主要目的，
+基于BibLaTeX的参考文献生成方法，从根子上就不再利用\verb|thebibliography|环境，但操作方式有点类似于传统的基于bibtex程序的方法，相似点在于同样利用外部程序处理参考文献数据源，也同样需要利用辅助文件。
+BibLaTeX 的设计出发点就是要达成两个主要目的，
 一是要避免传统参考文献生成方法过度的读写辅助文件，
-二是要利用tex命令实现对参考文献信息和格式的完全控制。
+二是要利用TeX/LaTeX命令实现对参考文献信息和格式的完全控制。
 
-基于bibtex的方法总共有四遍编译，第一遍latex将信息写入aux、文件，第二遍bibtex读取aux文件将信息写入bbl文件，第三遍latex读取bbl文件将信息写入aux文件，第四遍编译latex再次读取aux文件。
-这在biblatex设计者看来是没有必要的，既然要实现对参考文献信息的完全控制，那么将参考文献信息放在内存中是最好的方式，也没有必要过多的读写文件。如果参考文献信息能够以一种合适的方式读入内存，并能在tex宏中应用，那么就可以解决问题。
-因此biblatex设计并实现了这种新的方式，在第一遍latex编译时，将需要的信息写入到bcf文件中，然后利用外部程序biber读取该文件，并处理bib文件得到一个bbl文件，其内包含biblatex宏包设计的能被tex宏读取并利用的固定格式的信息，这一信息包含了所有的参考文献信息，可以很方便地用于参考文献著录表和参考文献引用标注的输出。第二遍编译时，latex读取bbl文件，biblatex识别并利用其中的信息输出引用标签和文献表。这种新的方式仅用一次latex编译过程中的aux文件写入，一次外部程序编译，和第二次的latex编译就实现了参考文献生成，相比传统的基于bibtex的方法少了一次latex 编译，同时也实现了将全部参考文献信息保存到内存中以便进一步利用的目的。
+基于bibtex程序的方法总共有四步编译，第一步\TeX{}编译程序将信息写入aux、文件，第二步bibtex程序读取aux文件和bib文件并将信息写入bbl文件，第三步\TeX{}编译程序读取bbl文件将信息写入aux文件，第四步\TeX{}编译程序再次读取aux文件，来生成文献表和文献引用标注标签。
+这在BibLaTeX设计者看来是没有必要的，既然要实现对参考文献信息的完全控制，那么将参考文献信息放在内存中是最好的方式，也没有必要过多的读写文件。如果参考文献信息能够以一种合适的方式读入内存，并能在tex宏中应用，那么就可以解决问题。
 
-如前所述，参考文献生成包含两个部分，一个是著录文献表，一个是正文中的引用标注。对于latex传统方法，前者以手工写或者bibtex结合bst文件生成，后者则由标注宏包如natbib读取手动写或者bibtex结合bst文件给出的标签信息生成。而biblatex由于已经把全部参考文献信息读取到内存中，因此可以由tex宏完全控制。biblatex提供了所有这些参考文献信息的控制接口，著录表格式由一系列宏进行控制，标注格式也由一系列宏进行控制，前者通常放在bbx文件中，后者则放在cbx文件中，一些通用的宏则放在biblatex.sty, biblatex.def, standard.bbx, english.lbx, blx-dm.def等文件中（这些文件也用于在格式修改时查看原始定义）。
+因此BibLaTeX设计并实现了这种新的方式，在第一步编译时，\TeX{}编译程序将需要的信息写入到bcf文件中，然后在第二步编译中，利用外部程序Biber读取该文件，并处理bib文件得到一个bbl文件(其内包含BibLaTeX宏包设计的能被tex宏读取并利用的固定格式的信息，这一信息包含了所有的参考文献信息，可以很方便地用于参考文献著录表和参考文献引用标注的输出)。第三步编译时，\TeX{}编译程序读取bbl文件，BibLaTeX宏包识别并利用其中的信息输出引用标签和文献表。这种新的方式仅用两次次源文档编译和一次外部程序Biber编译，就实现了参考文献生成，相比传统的基于BibTeX程序的方法，既减少了一次源文档编译，同时也实现了将全部参考文献信息保存在内存中并进一步利用的目的。
 
-简单来说，对于著录文献表，biblatex通过driver控制条目中的域(项)和顺序，通过fieldformat 控制各个项的格式，其中利用一套异步标点控制机制和一套本地化字符串系统辅助。对于标注标签，则通过各类cite命令及其内部接口进行控制，同样使用标点控制和本地化字符串机制。此外，biblatex充分利用tex的局部化机制，提供各种局部化设置方式，比如利用文境refcontext区分不同的数据和排序机制，利用各cite命令和bibliography和biblist环境区分各种分隔符的输出格式，利用各类条目类型的驱动环境设置域的不同输出格式。可以说，biblatex 因为解决了参考文献全部信息的控制问题，为利用tex宏控制参考文献和引用标签提供了无限可能，只有想不到，没有做不到。
+如前所述，参考文献生成包含两个部分，一个是著录文献表，一个是正文中的引用标注。
+对于\LaTeX{} 传统方法，前者以手工写或者bibtex程序结合bst文件生成，后者则由标注宏包如natbib等读取手动写入或者bibtex程序结合bst文件给出的标签信息生成。而BibLaTeX由于已经把全部参考文献信息读取到内存中，因此可以由tex宏完全控制。BibLaTeX提供了所有这些参考文献信息的控制接口，著录表格式由一系列宏进行控制，标注格式也由一系列宏进行控制，前者通常放在bbx文件中，后者则放在cbx文件中，一些通用的宏则放在biblatex.sty, biblatex.def, standard.bbx, english.lbx, blx-dm.def等文件中（在格式修改时可在这些文件中查看原始的格式定义）。
+
+简单来说，对于著录文献表，BibLaTeX通过driver控制条目中的域(项)和顺序，通过fieldformat 控制各个项的格式，其中利用一套异步标点控制机制和一套本地化字符串系统辅助。对于标注标签，则通过各类cite命令及其内部接口进行控制，同样使用标点控制和本地化字符串机制。此外，BibLaTeX充分利用tex的局部化机制，提供各种局部化设置方式，比如利用文境refcontext区分不同的数据和排序机制，利用各cite命令和bibliography和biblist环境区分各种分隔符的输出格式，利用各类条目类型的驱动(即driver)环境设置域的不同输出格式。可以说，biblatex 因为解决了参考文献全部信息的控制问题，为利用tex宏控制参考文献和引用标签提供了无限可能，只有想不到，没有做不到。
 
 
 \subsection{biblatex参考文献生成的优缺点}
 
-如前所述，biblatex通过写bcf文件(格式实际为xml)为biber提供处理信息，biber根据这些信息处理bib文件中相关条目，完成筛选、排序等操作，并将处理结果写入bbl文件中，接着biblatex再次读取bbl中的完整数据以进一步处理输出。biblatex基于这样一种新的机制实现了更简化的文献编译，实现了参考文献信息的完全tex宏控制，还实现了大量功能以覆盖其它辅助宏包。这有赖于biblatex宏包的全面设计以及后端程序biber的强大支持。总结起来biblatex加上其后端程序biber具有如下主要特点:
+如前所述，在源文档编译中BibLaTeX宏包通过写bcf文件(格式实际为xml)为biber提供处理信息，Biber根据这些信息处理bib文件中相关条目，完成筛选、排序、转换等操作，并将处理结果写入bbl文件中，再次进行源文档编译时，BibLaTeX宏包则读取bbl中的完整数据以进一步处理输出。BibLaTeX宏包基于这样一种新的机制实现了更简化的文献编译，实现了参考文献信息完全由tex宏控制，还实现了其它大量功能来替代传统参考文献生成方法所需的其它辅助宏包。这些功能的实现，有赖于BibLaTeX宏包的全面设计以及后端程序Biber的强大支持。总结起来BibLaTeX加上其后端程序Biber具有如下主要特点:
 
 \begin{itemize}
-  \item biblatex 包含许多用于人文社科类的样式，用于生成人文社科类的文献表和标注标签。而基于bibtex的方法引用标注主要包括作者年制和数字顺序编码制，缺乏人文社科类文献常用的作者标题制或者脚注样式，需要利用类似jurabib这样的宏包以及专门的bst文件。
+  \item BibLaTeX 包含许多用于人文社科类的样式，用于生成人文社科类的文献表和标注标签。而基于bibtex程序的方法引用标注主要包括作者年制和数字顺序编码制，缺乏人文社科类文献常用的作者标题制或者脚注样式，需要利用类似jurabib这样的宏包以及专门的bst文件。
 
-  \item biblatex 提供便捷的参考文献格式控制机制，包括友好的宏包选项控制和简单的tex宏格式修改，非常易学。而传统的方法则要么手工改写文献表内容，要么修改bst样式文件，而学习bst文件采用的与tex语法迥异的语法并不是一件轻松的事情。
+  \item BibLaTeX 提供便捷的参考文献格式控制机制，包括友好的宏包选项控制和简单的tex宏格式修改，非常易学。而传统的方法则要么手工改写文献表内容，要么修改bst样式文件，而学习bst文件采用的与tex语法迥异的语法并不是一件轻松的事情。
 
-  \item biblatex 提供完全的unicode支持，提供自动的编码转换，提供自动的姓名和姓名列表非模糊处理，支持可定制的数据继承规则，提供非常灵活的数据映射(动态处理)。
+  \item BibLaTeX 提供完全的unicode支持，提供自动的编码转换，提供自动的姓名和姓名列表非模糊处理，支持可定制的数据继承规则，提供非常灵活的数据映射(动态处理)。
 
-  \item biblatex 提供强大排序功能，支持排序定制，支持unicode字符的排序，更支持本地语言的排序调整，比如中文的按笔画数排序等，可以实现丰富的效果。而基于bibtex的方法能支持utf-8编码的bib 文件，但不支持非ASCII字符的排序。
+  \item BibLaTeX 提供强大排序功能，支持排序定制，支持unicode字符的排序，更支持本地语言的排序调整，比如中文的按笔画数排序等，可以实现丰富的效果。而基于bibtex的方法能支持utf-8编码的bib 文件，但不支持非ASCII字符的排序。
 
-  \item biblatex 使用的后端biber，具有处理大文献量的能力，不用担心bibtex可能存在的内存问题。biber还支持远程的参考文献数据库。
+  \item BibLaTeX 使用的后端biber，具有处理大文献量的能力，不用担心bibtex可能存在的内存问题。biber还支持远程的参考文献数据库。
 
-  \item biblatex 兼容 BibTeX 格式外，还支持更多更广泛的条目类型和域。也支持除BibTeX 外的更多格式的文献数据库，也支持其他格式的文献数据的输出和转换。
+  \item BibLaTeX 兼容 BibTeX 格式外，还支持更多更广泛的条目类型和域。也支持除BibTeX 外的更多格式的文献数据库，也支持其他格式的文献数据的输出和转换。
 
-  \item biblatex 提供参考文献分节、分类筛选等功能。在文档中打印多个文献表非常方便，而不再需要使用其它宏包，比如chapterbib等。
+  \item BibLaTeX 提供参考文献分节、分类筛选等功能。在文档中打印多个文献表非常方便，而不再需要使用其它宏包，比如chapterbib等。
 
-  \item biblatex 是包含biber程序的一个大型宏包。biblatex 提供了覆盖natbib、jurabib、chapterbib、multibib、mcite、inlinecite 等宏包的完整功能体系。
+  \item BibLaTeX 是包含biber程序的一个大型宏包。BibLaTeX 提供了覆盖natbib、jurabib、chapterbib、multibib、mcite、inlinecite 等宏包的完整功能体系。
 
 \end{itemize}
 
-当然也不存在十全十美的事物，biblatex 也存在一些局限，包括：
+当然也不存在十全十美的事物，BibLaTeX 也存在一些局限，包括：
 
 \begin{itemize}
- \item 虽然biblatex已经取得了广泛应用，但一些期刊和出版商长期维护使用专门设计的bibtex样式bst文件，因此可能不接收使用biblatex的文档。
+ \item 虽然BibLaTeX已经取得了广泛应用，但一些期刊和出版商长期维护使用专门设计的配合bibtex 程序使用的bst样式文件，因此可能不接收使用BibLaTeX的文档。
 
- \item biblatex 生成处理完的参考文献信息，不是thebibliography环境，而是biblatex预设的格式，因此其代码并不能像thebibliography环境中的内容一般可以直接拷贝进文档使用。
+ \item BibLaTeX 生成处理完的参考文献信息，不是thebibliography环境，而是BibLaTeX预设的格式，因此其代码并不能像thebibliography环境中的内容一般可以直接拷贝进源文档使用。
 
- \item biblatex 还在不断更新和升级，尽管已经基本稳定，但可能存在后向兼容问题。比如随着biblatex的升级，一些基于老版本biblatex的第三方样式可能会无法使用，而基于新版本biblatex的样式可能无法应用于老版本biblatex的环境，这需样式作者持续维护。
+ \item BibLaTeX 还在不断更新和升级，尽管已经基本稳定，但可能存在后向兼容问题。比如随着BibLaTeX的升级，一些基于老版本BibLaTeX的第三方样式可能会无法使用，而基于新版本BibLaTeX的样式可能无法应用于老版本BibLaTeX的环境，这需样式作者持续维护。
 
- \item biblatex 因为功能强大且全面，说明文档很大很全，有点类似技术说明书，但作为初级用户的入门却并不合适，而对于宏包作者这一类的用户，biblatex 宏包的代码实现和解析说明相对较少，也不利于这类人员深入学习和参与维护。
+ \item BibLaTeX 因为功能强大且全面，说明文档很大很全，有点类似技术说明书，但作为初级用户的入门却并不合适，而对于宏包作者这一类的用户，BibLaTeX 宏包的代码实现和解析说明相对较少，也不利于这类人员深入学习和参与维护。
 \end{itemize}
 
-从前述的优缺点可以看到，虽然biblatex宏包还并不完美，但基于biblatex生成参考文献的确可以获得很多优势，因此对于一般用户来说，使用biblatex不失为一种好的选择。
+从前述的优缺点可以看到，虽然BibLaTeX宏包还并不完美，但基于BibLaTeX生成参考文献的确可以获得很多优势，因此对于一般用户来说，使用BibLaTeX不失为一种好的选择。
+
+
 
 \section{参考文献常见需求与解决方案}
 
 \subsection{参考文献生成的常见需求}
-\LaTeX 中文写作对于参考文献一般会有哪些需求？最直接地，我们会想到文章投稿时的参考文献格式要求，比如: 参考文献标题的字体字号前后间距段落格式; 参考文献内容的字体字号; 各条目的间距; 条目的内容格式如文献标识符、标点等; 双语参考文献; 上标、带年份、带页码等标注要求等等。在书籍之类的文档排版中有时也会遇到比如: 分章参考文献表; 文后参考文献总表; 参考文献的目录链接; 脚注中引用参考文献; 脚注中直接显示参考文献; 在合适位置按需插入文献表等等。还有一些比如文献的排序;PDF文档中标注和文献条目的正反超链接等。总结起来可能包括如下常见需求:
+
+\LaTeX 中文写作对于参考文献一般会有哪些需求？最直接地，我们会想到文章投稿时的参考文献格式要求，比如: 参考文献标题的字体字号前后间距段落格式; 参考文献内容的字体字号; 各条目的间距; 条目的内容格式如文献标识符、标点等; 双语参考文献; 上标、带年份、带页码等标注要求等等。在书籍之类的文档排版中有时也会遇到比如: 分章参考文献表; 文后参考文献总表; 参考文献的目录链接; 脚注中引用参考文献; 脚注中直接显示参考文献; 在合适位置按需插入文献表等等。还有一些比如文献的排序; PDF文档中标注和文献条目的正反超链接等。总结起来可能包括如下常见需求:
 %，这里根据本文作者的理解，按照重要程度列出:
 %(注意这里所列的问题可能并不全面，仅列出了本文作者所知道的一些问题，更多未遇问题只能以后完善，也希望大家帮助一起完善)
-\begin{enumerate}
+\begin{itemize}
   \item 参考文献表基本生成方法-数据源文件准备(手动、利用winedt、利用texstudio 、Jabref、随\LaTeX 文档生成)
   \item 参考文献表基本生成方法-文档的组成(基本结构、宏包加载、样式包加载、文献引用、文献表打印)
   \item 参考文献表基本生成方法-文档的编译(手动、利用winedt、利用texstudio、脚本)
@@ -194,14 +207,17 @@ biblatex 的设计出发点就是要达成两个主要目的，
   \item 脚注题注小页环境中的引用
   \item 脚注旁注中的文献表
   \item beamer类中的参考文献
-\end{enumerate}
+\end{itemize}
 
 
 下面针对前述提出的需求，一一进行解答。解决方案主要应用于一般文档类(book，report，article)，beamer类的问题放到最后一小节中专门介绍。
 
 \subsection{参考文献数据文件准备}\label{sec:bib:file}
-\LaTeX 文档中生成参考文献除了利用 thebibliography 环境手工输入参考文献条目信息这一简单方式外，bibliography+bibliographystyle+bibtex 方式或者 biblatex方式都需要准备一个参考文献数据源文件即bib文件。这一文件内保存有各条参考文献的信息，每一条参考文献记录都是一个bibtex item(bibtex项)，一条参考文献记录基本格式如下:
-\begin{codetex}{参考文献信息基本格式即bibtex格式}{fmt:bibtex}
+\LaTeX 文档中生成参考文献除了利用 thebibliography 环境手工输入参考文献条目信息这一简单方式外，bibliography+bibliographystyle+bibtex 方式或者 biblatex方式都需要准备一个参考文献数据源文件即bib文件。(这里需要区分一下的是bibtex程序和BibTeX格式，bibtex程序是前面介绍过的传统参考文献生成方法中用于生成 thebibliography环境信息的外部程序，类似于BibLaTeX宏包提供的biber程序，这个程序并不是唯一的，大家都可以写一个这样的程序来实现类似的功能，比如笔者用python写的\href{https://github.com/hushidong/biblatex-map}{bibmap} 程序，也能够输出thebibliography环境来生成参考文献，只是参考文献格式定义不使用bst而使用py文件罢了。而BibTeX格式则是参考文献数据源bib文件的内部组织格式，是通用的，BibLaTeX宏包和biber程序同样使用这种格式的文件，bibtex程序、biber程序同样也使用。)
+
+bib文件内保存有各条参考文献的信息，每一条参考文献记录都是一个BibTeX item(BibTeX项)，一条参考文献记录基本格式如下:
+
+\begin{codetex}{参考文献信息基本格式即BibTeX格式}{fmt:bibtex}
 @ARTICLE{entrykey,
   author =       {Author A and Author B and Author C and others},
   title =        {A title of a paper},
@@ -213,10 +229,10 @@ biblatex 的设计出发点就是要达成两个主要目的，
 }
 \end{codetex}
 
-其中\verb|@|符号后面紧跟着条目的类型比如article(期刊文章)，book(专著)等，编组符号\{后紧跟的是该条参考文献信息的bibtex key即引用关键字，在cite标注（引用）命令中用该关键字来表示对此文献的引用。逗号后面跟着的是构成参考文献记录的各个域的信息，比如作者域，题名域等等，参考文献信息放在各个域名等号后面的编组内，一些域的录入比如author域的英文名录入是有特殊格式要求的，具体可以参考biblatex宏包手册和biblatex-gb7714-2015样式包手册\cite{胡振震2016}中关于域信息录入的说明。
+其中\verb|@|符号后面紧跟着条目的类型比如article(期刊文章)，book(专著)等，编组符号\{后紧跟的是该条参考文献信息的bibtex key即引用关键词，在cite标注（引用）命令中使用该关键词来表示对此文献的引用。逗号后面跟着的是构成参考文献记录的各个域的信息，比如作者域，题名域等等，参考文献信息放在各个域名等号后面的编组内，一些域(比如author域)对于信息录入是有特殊格式要求的(比如英文姓名的两种不同方式)，具体可以参考biblatex宏包手册和biblatex-gb7714-2015样式包手册\cite{胡振震2016}中关于域信息录入的说明。
 
-尽管biblatex在传统bibtex格式基础上增加了很多新的条目类型和域，但它完全兼容传统的BibTeX格式文件，出于兼容性考虑，我们在准备bib文件时，可以完全按照\href{https://en.wikipedia.org/wiki/BibTeX}{传统的BibTeX格式规范}来进行。BibTeX格式中有两个基本概念：一是条目类型(Entry type)，即一个参考文献条目的类型，是book(专著)，是inbook(专著析出的文献)，或其它类型。二是域(Field)，即纪录参考文献信息并组成参考文献条目的信息项，比如author(作者)，title(题名)，或者其它。BibTeX格式中条目类型和域
-如表\ref{tab:bibtex:fmt}、\ref{tab:bibtex:field}所示，这些条目和域是bibtex附带的默认样式bst文件能识别的条目类型和域，而第三方的bst文件有可能支持其它条目类型和域，比如一些bst样式为了兼容biblatex的条目和域而做的处理。biblatex 虽然支持更多的条目类型和域，详见biblatex手册，但通常情况下BibTeX默认的条目和域已够用。
+尽管biblatex在传统BibTeX格式基础上增加了很多新的条目类型和域，但它完全兼容传统的BibTeX格式文件，出于兼容性考虑，我们在准备bib文件时，可以完全按照\href{https://en.wikipedia.org/wiki/BibTeX}{传统的BibTeX格式规范}来进行。BibTeX格式中有两个基本概念：一是条目类型(Entry type)，即一个参考文献条目的类型，是book(专著)，是inbook(专著析出的文献)，或其它类型。二是域(Field)，即纪录参考文献信息并组成参考文献条目的信息项，比如author(作者)，title(题名)，或者其它。BibTeX格式中条目类型和域
+如表\ref{tab:bibtex:fmt}、\ref{tab:bibtex:field}所示，这些条目和域是bibtex附带的默认样式bst文件能识别的条目类型和域，而第三方的bst文件有可能支持其它条目类型和域，比如一些bst样式为了兼容biblatex增加的条目类型和域而做的处理。biblatex 虽然支持更多的条目类型和域(详见biblatex手册)，但通常情况下BibTeX默认的条目类型和域已够用。
 
 \begin{table}[!htb]
 \centering
@@ -396,7 +412,8 @@ The year of publication (or, if unpublished, the year of creation) \\ \hline
 \end{figure}
 
 \subsubsection{利用texstudio生成}
-texstudio软件可以在多平台使用，linux下因为没有winedt所以比较常用，用其生成bib文件也很方便，它也提供各种条目类型的信息模板(图\ref{bib:texstudio})。texstudio软件下载地址\url{https://sourceforge.net/projects/texstudio/?source=navbar}。
+texstudio软件可以跨平台使用，linux下因为没有winedt所以比较常用，用其生成bib文件也很方便，它也提供各种条目类型的信息模板(图\ref{bib:texstudio})。texstudio软件下载地址：
+\url{https://sourceforge.net/projects/texstudio/?source=navbar}。
 
 \begin{figure}[!htb]
   \centering
@@ -426,10 +443,14 @@ texstudio软件可以在多平台使用，linux下因为没有winedt所以比较
 \end{figure}
 
 类似工具还有：Papers\footnote{\url{http://papersapp.com}}、
-Mendeley\footnote{\url{http://www.mendeley.com}}、zotero等。
+Mendeley\footnote{\url{http://www.mendeley.com}}、
+zotero\footnote{\url{https://www.zotero.org/}}等。
+
+
 
 \subsubsection{随\LaTeX 文档生成}
-\LaTeX 提供了filecontents环境允许在\LaTeX 文档编译的时候自动将信息写入文件中，自然这也可以用来生成bib文件。比如在导言区加入如下代码，可以生成一个example.bib源文件。
+\LaTeX 提供了filecontents环境允许在\LaTeX 文档编译的时候自动将信息写入文件中，自然这也可以用来生成bib文件。比如在导言区加入如下代码，可以生成一个example.bib文件。
+
 \begin{codetex}{利用filecontents环境随latex文档生成bib}{bib:genwithlatex}
 \usepackage{filecontents}
 \begin{filecontents}{example.bib}
@@ -443,14 +464,6 @@ Mendeley\footnote{\url{http://www.mendeley.com}}、zotero等。
   Date                     = {2000-04-12},
   Journaltitle             = {北京青年报}
 }
-@Book{顾炎武1982--,
-  Title                    = {昌平山水记},
-  Author                   = {顾炎武},
-  Publisher                = {北京古籍出版社},
-  Year                     = {1982},
-  Location                 = {北京},
-  Titleaddon               = {东京考古录}
-}
 \end{filecontents}
 \end{codetex}
 
@@ -462,43 +475,45 @@ Mendeley\footnote{\url{http://www.mendeley.com}}、zotero等。
   \item 必应学术（必应学术 – 学无止境，术有乾坤）、百度学术（百度学术 – 保持学习的态度）类似于google学术。
   \item CiteSeerX搜索引擎\footnote{\url{http://citeseerx.ist.psu.edu}}。
   \item 从一些学术期刊官网直接获取bib文件，比如IEEE，Springer，Elsevier等
-  \item 使用文献助手工具，地址:\url{http://cite.latexstudio.net}
+  \item 使用文献助手工具，地址: \url{http://cite.latexstudio.net}
 \end{enumerate}
 
 熟练使用这些方法，应该可以进一步提高工作效率。说明一下: latexstudio网站原创、收集、整理了很多latex方面的知识、信息和资源，内容不一，对不同程度的latex爱好者都具有一定的参考价值，各位朋友可以了解学习。
 
 
 \subsubsection{从pdf或文本文件转换bib文件}
-批量生成参考文献数据以构成bib文件，还有一种方式是从参考文献表文本转换。比如从一个包含GB/T 7714-2015格式的参考文献表的pdf文件中，讲文献表拷贝到一个文本文件中，比如 textfilename 文件，其中每一条文献信息构成一个行。然后利用biblatex-gb7714-2015样式宏包附带的perl脚本gb7714texttobib.pl将其转换为bib文件比如bibfilename。该脚本的使用命令为:
+批量生成参考文献数据以构成bib文件，还有一种方式是从参考文献表文本转换。比如从一个包含GB/T 7714-2015格式的参考文献表的pdf文件中，将文献表拷贝到一个文本文件中(比如：textfilename.txt 文件)，其中每一条文献信息构成一个行。然后利用biblatex-gb7714-2015样式宏包附带的perl脚本gb7714texttobib.pl将其转换为bib文件(比如：bibfilename.bib)。则对应的脚本使用命令为:
 
 \begin{codetex}{利用gb7714texttobib.pl将参考文献文本转换为bib文件}{code:trans2bib}
-perl gb7714texttobib.pl in=textfilename out=bibfilename
+perl gb7714texttobib.pl in=textfilename.txt out=bibfilename.bib
 \end{codetex}
 
 其中in=后面是输入的参考文献文本文件，out=后面是输出的bib文件。
 
 \subsubsection{利用biber转换输出新的bib文件}
-对于使用biblatex的用户来说，当需要从一个大的bib数据库，输出其中的部分文献数据到一个新的bib文件时，可以利用biber命令选项\verb|--output-format=bibtex|。事实上，因为平时的积累我们通常会维护一个参考文献数据库，但写文章的时候只是引用其中的部分文献，当需要提交文章时，我们提交仅包含引用文献数据的bib文件即可，这可以通过biber轻松完成。例给出了一个biber命令示范，其中jobname是当前引用文献的tex文档名，运行该命令后会得到一个\verb|jobname_biber.bib|的文件包含有该文档所引用文献的数据。
+对于使用biblatex的用户来说，当需要从一个大的bib数据库中抽取部分文献数据到一个新的bib文件时，可以利用biber命令选项 \verb|--output-format=bibtex|。事实上，因为平时的积累我们通常会维护一个大的参考文献数据库，但写文章的时候只是引用其中的部分文献，当需要提交文章时，我们提交仅包含引用文献数据的bib文件即可，这可以通过biber轻松完成。例\ref{code:biber:trans}给出了一个biber命令示范，其中jobname是当前引用文献的tex文档名，
+运行该命令后会得到一个 \verb|jobname_biber.bib| 的文件，包含有该文档所引用的文献的数据。
 
 \begin{codetex}{利用biber转换出新的bib文件}{code:biber:trans}
 biber --output-format=bibtex jobname.bcf
 \end{codetex}
 
-\subsubsection{利用biblatex-map修改bib文件}
+\subsubsection{利用bibmap程序修改bib文件}
 
 对于bib文件经常会有批量处理需求，一是从一个大的bib数据库，提取少量的要引用的文献；二是对bib文件中的条目内容进行修改。
-对于这两个需求，笔者利用python重写了bib文件解析器，并借鉴biblatex的动态数据修改的模式，实现了一套bib文件快速修改的工具。
+对于这两个需求，笔者利用python重写了bib文件解析器，并借鉴biblatex的动态数据修改的模式，实现了一个bib文件快速修改的工具。
 因为数据修改的基本逻辑与biblatex的类似，
-所以命名为\href{https://github.com/hushidong/biblatex-map}{biblatex-map}。具体使用方法见其说明文档。
+所以命名为\href{https://github.com/hushidong/biblatex-map}{bibmap}。具体使用方法见其说明文档。
 
 
 
 
 \subsection{\LaTeX 文档的组成}
-\LaTeX 文档源文件是由具有某种结构和模式的代码所构成，参考文献自然也遵守这样的结构和模式。
+\LaTeX{}文档的源文件是由具有某种结构和模式的代码所构成的，需要生成参考文献表的\LaTeX{}文档自然也遵守这样的结构和模式。
 
 \subsubsection{文档源文件基本结构}
 \LaTeX 文档源文件的代码基本结构由导言区和正文区构成，导言区位于documentclass命令与begin\{document\}命令之间，而正文区位于begin\{document\}命令和end\{document\}命令之间。宏包在导言区加载，具体文档内容在正文区编辑。
+
 \begin{codetex}{文档源文件的代码基本结构}{code:doc:structrue}
 \documentclass{article}%文档类
 
@@ -515,8 +530,10 @@ biber --output-format=bibtex jobname.bcf
 \end{document}
 \end{codetex}
 
-\subsubsection{biblatex宏包、参考文献数据源和样式的加载}
-利用 biblatex 宏包生成参考文献可以说非常简单，只要在上述\LaTeX 基本文档基础上载入biblatex宏包和bib数据源，选择需要的参考文献样式，然后在正文需要的地方引用bib文件中准备的参考文献，然后在文档合适位置比如文档末尾打印参考文献表即可，例\ref{code:doc:structrue}和图\ref{fig:eg:ref}给出了示例代码及其结果。
+
+\subsubsection{biblatex宏包和样式的加载、指定参考文献数据源}
+利用 biblatex 宏包生成参考文献可以说非常简单，只要在上述\LaTeX{}基本文档基础上载入biblatex宏包，选择需要的参考文献样式，并指定bib数据源，然后在正文中引用bib文件中的参考文献，然后在文档合适位置(比如文档末尾)打印参考文献表。
+例\ref{code:doc:structrue}和图\ref{fig:eg:ref}给出了示例代码及其结果。
 
 \begin{codetex}{biblatex参考文献生成最小工作示例}{code:doc:structrue}
 \documentclass{article}%文档类
@@ -528,9 +545,8 @@ biber --output-format=bibtex jobname.bcf
 %加载hyperref宏包，使用超链接
 \usepackage[colorlinks=true,pdfstartview=FitH,linkcolor=blue,anchorcolor=violet,citecolor=magenta]{hyperref}
 %加载biblatex宏包，使用参考文献
-%其中后端backend使用biber
 %标注(引用)样式citestyle，著录样式bibstyle都采用gb7714-2015样式
-\usepackage[backend=biber,bibstyle=gb7714-2015,%nature,%
+\usepackage[bibstyle=gb7714-2015,%nature,%
 citestyle=gb7714-2015%,backref=true%
 ]{biblatex}
 %biblatex宏包的参考文献数据源加载方式
@@ -561,7 +577,7 @@ citestyle=gb7714-2015%,backref=true%
 \end{figure}
 \end{refsection}
 
-其中，biblatex宏包和参考文献数据源都在导言区加载(例\ref{code:pkg:load})，宏包加载命令为usepackage，数据源加载命令为addbibresource。
+其中，biblatex宏包和参考文献数据源都在导言区加载(例\ref{code:pkg:load})，宏包加载命令为usepackage，数据源指定命令为addbibresource。
 
 \begin{codetex}{biblatex宏包、数据源和样式的加载}{code:pkg:load}
 %biblatex宏包加载
@@ -575,13 +591,18 @@ citestyle=gb7714-2015%,backref=true%
 \addbibresource[location=local]{example.bib}
 \end{codetex}
 
-其中，参考文献样式作为biblatex宏包的可选参数加载，即用bibstyle选项加载著录样式，用citestyle选项加载标注样式，当两者使用同名样式时，可以用一个选项style表示，例\ref{code:pkg:load}中bibstyle和citestyle都选择使用gb7714-2015样式。实际上，标注样式和著录样式分开加载有时是很有用的，有朋友可能想用gb7714-2015的参考文献著录样式，但引用标注又不想要用上标？最简单的方式是著录样式使用gb7714-2015样式，而标注样式使用其他样式比如numeric-comp。当然修改gb7714-2015的标注样式文件中cite等命令也可以实现。参考文献样式还有许多，可以使用biblatex宏包提供的标准样式(标准样式详见biblatex手册Standard Styles一节)，或者使用其它作者提供的定制样式，比如nature，science等，具体参见\label{sec:bib:style}节，用户可以根据需要选择使用。
+其中，参考文献样式作为biblatex宏包的可选参数加载，即用bibstyle选项加载著录样式，用citestyle选项加载标注样式，当两者使用同名样式时，可以用一个选项style表示，
+例\ref{code:pkg:load}中bibstyle和citestyle都选择使用gb7714-2015样式。
+有时标注样式和著录样式单独指定会很有用的，比如有人可能想用gb7714-2015的参考文献著录样式，但引用标注又不想要用上标？最简单的方式是著录样式使用gb7714-2015样式，而标注样式使用其他样式比如author-year。当然修改gb7714-2015的标注样式文件中cite等命令也可以实现相同目的。
 
-为利用 biblatex 的高级功能，后端 backend 应尽量采用 biber 而不用 bibtex (如果backend为bibtex8，则biblatex宏包利用bibtex8和aux文件进行编译(\LaTeX 传统方法)，而backend为biber则是利用biber和bcf文件进行编译)。
+可用的参考文献样式还有许多，既可以使用biblatex宏包提供的标准样式(详见biblatex手册Standard Styles一节)，也可以使用第三方提供的定制样式，比如nature，science等，
+具体参见\label{sec:bib:style}节，用户可以根据需要选择使用。
+
+为利用 biblatex 的高级功能，后端 backend 应尽量采用 biber 而不用 bibtex (如果backend为bibtex8，则biblatex宏包利用bibtex8程序和aux文件进行编译，而backend为biber则是利用biber程序和bcf文件进行编译)。
 
 另外，biblatex宏包还提供一系列宏包选项，用于控制文献著录表，标注的标签等内容，详细内容参考biblatex手册宏包选项一节。
 
-值得注意的是: 参考文献数据库源文件即bib文件可以是本地的，也可以是网络上的(具体参考biblatex手册Bibliography Commands一节中关于addbibresource命令的说明)。本地的数据源可以指定绝对路径或者相对路径，注意其中目录层级之间的间隔符用/而不是\textbackslash ，windows下默认复制的间隔符是\textbackslash ，需要将其改为/。数据源还可以制定标签，以便不同的参考文献节中使用不同的文献源。数据源添加示例见例\ref{ref:addresource}。
+值得注意的是: 参考文献数据库源文件即bib文件可以是本地的，也可以是网络上的(具体参考biblatex手册Bibliography Commands一节中关于addbibresource命令的说明)。本地的数据源可以指定绝对路径或者相对路径，注意其中目录层级之间的间隔符用/而不是\textbackslash ，windows下默认复制的间隔符是\textbackslash ，需要将其改为/。数据源还可以指定标签，以便在不同参考文献分节中使用不同的文献源。数据源添加方式，见例\ref{ref:addresource}。
 
 \begin{codetex}{添加参考文献数据源的两种方式}{ref:addresource}
 \addbibresource{bibfile1.bib} %本地数据源
@@ -605,8 +626,10 @@ section contents
 \end{refsection}
 \end{codetex}
 
-\subsubsection{文献的标注（引用）}
-文献的标注（引用）可以采用\LaTeX 提供的cite命令(注意biblatex对其进行了重定义)，也可以使用biblatex提供的其它命令比如parencite等，也可以采用参考文献样式包提供的定制命令比如gb7714-2015样式提供的pagescite，yearpagescite等。在文档中引用文献仅需要在合适的位置插入标注（引用）命令，命令的必选参数是所引用参考文献的bibtex键(引用关键字)。比如:
+
+
+\subsubsection{文献的引用（标注）}
+文献的引用（标注）可以采用\LaTeX 提供的cite命令(注意biblatex对其进行了重定义)，也可以使用biblatex提供的其它命令比如parencite、textcite等，也可以采用参考文献样式包提供的定制命令，比如gb7714-2015样式提供的pagescite，yearpagescite等。在文档中引用文献仅需要在合适的位置插入引用（标注）命令，命令的必选参数是所引用参考文献的bibtex键(即引用关键词)。比如:
 
 \begin{codetex}{参考文献的引用命令}{ref:cite:cmd}
 详见文献\cite{Peebles2001-100-100}\parencite{Miroslav2004--}
@@ -615,7 +638,8 @@ section contents
 见赵耀东\yearpagescite[][205]{赵耀东1998--}和Simon\yearpagescite[][15]{Simon2001--}的文献。
 \end{codetex}
 
-当需要在参考文献表中打印不标注的文献时，可以使用nocite命令引入这些文献。其参数是具体条目的引用关键词(bibtex键)或者星号，星号表示将bib文件中所有的参考文献引入。使用命令如:
+当需要在参考文献表中打印不标注的文献时，可以使用nocite命令引入这些文献。其参数是具体条目的引用关键词(bibtex键)或者星号，星号表示将bib文件中所有的参考文献引入。
+使用命令如\ref{ref:nocite:cmd}所示。
 
 \begin{codetex}{不标注的文献的引用命令}{ref:nocite:cmd}
 参考文献表中打印不标注的文献引入\nocite{Miroslav2004--,蔡敏2006--}。
@@ -623,6 +647,7 @@ section contents
 \end{codetex}
 
 另外，在biblatex中使用动态文献集也能产生类似nocite命令的效果，即打印文献表时也会自动输出定义在动态文献集中的文献。
+
 
 \subsubsection{文献表的打印（输出）}
 
@@ -632,12 +657,13 @@ section contents
 \printbibliography[heading=bibliography,title=参考文献]
 \end{codetex}
 
-注意：printbibliography可以有很多可选参数，用于复杂的文献表控制，具体见biblatex宏包手册。
+注意：printbibliography有很多可选参数，用于复杂的文献表控制，具体见biblatex宏包手册。
+
 
 \subsubsection{参考文献正反超链接}
 
-当加载hyperref宏包后，biblatex宏包除了提供正向超链接外还能提供功能强大的反向超链接。使用方式也很简单，就是使用backref选项。
-例\ref{ref:hyperlink:back}给出了代码:
+当加载hyperref宏包后，biblatex宏包会自动提供正向超链接，若需要实现的反向超链接，则需要添加backref选项，如例\ref{ref:hyperlink:back}所示。
+
 \begin{codetex}{参考文献反向超链接选项}{ref:hyperlink:back}
 \usepackage[backend=biber,bibstyle=gb7714-2015,citestyle=gb7714-2015,%
 backref=true%
@@ -650,14 +676,17 @@ backref=true%
 \href{run:exampleandimage/test-backref.tex}{test-backref.tex}。
 
 
-\subsection{\LaTeX 文档的编译}
-文档的编译与\LaTeX 传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，准备参考文献数据用的命令为biber filename。 编译命令可以利用软件调用，也可以自行在命令行输入，后面给出利用winedt、texstudio、命令行、和脚本等不同方式的具体操作过程。
 
-需要注意，无论采用哪种方式编译，如果参考文献数据中存在一些特殊符号比如\&等，编译时会报错。对于这个问题除了手动修改bib文件中参考文献信息这一种方法外，还有两种自动处理方式，一是利用jabref，jabref有bibtex和biblatex两种模式，在biblatex模式下，对于一些特殊字符的输入，比如\&，jabref会自动将其转换为\textbackslash\&。二是使用gb7714-2015样式，在bib数据源不经任何处理的情况下，gb7714-2015样式也能自动处理一些特殊字符。
+\subsection{文档的编译}
+
+文档的编译与\LaTeX{}传统方法一致，只是中间的参考文献编译过程略有变化，biblatex宏包使用biber后端时，编译参考文献数据用的命令为biber filename。 编译命令可以利用软件调用，也可以在命令行手工输入。后面将介绍利用winedt、texstudio、命令行和脚本等不同方式进行编译的具体操作过程。
+
+需要注意，无论采用哪种方式编译，如果参考文献数据中存在一些特殊符号比如\&等，编译时会报错。对于这个问题除了手动修改bib文件中参考文献信息这一种方法外，还有两种自动处理方式，一是利用jabref，jabref有bibtex和biblatex两种模式，在biblatex模式下，对于一些特殊字符的输入，比如\&，jabref会自动将其转换为\textbackslash\&。二是利用biber等工具自动处理，比如使用gb7714-2015样式，在bib数据源不经任何处理的情况下，由gb7714-2015样式的设定，biber工具也能自动处理一些特殊字符。
+
 
 \subsubsection{编译命令}
 
-一般情况下采用xelatex进行编译，命令为:
+一般情况下采用xelatex或lualatex进行编译，命令为:
 \begin{codetex}{xelatex编译命令}{cmd:xelatex}
     xelatex jobname.tex
     biber jobname
@@ -673,9 +702,12 @@ backref=true%
     pdflatex jobname.tex
 \end{codetex}
 
-但要注意的是使用pdflatex进行编译，可能因为某些样式比如authoryear，使用了xstring宏包中的一些命令，进而导致错误，但numeric类样式通常没有问题。这一问题在biblatex更新到3.12版本后取消xstring宏包后得以解决。
+但要注意的是：使用pdflatex进行编译，可能因为某些样式比如authoryear，使用了xstring宏包中的一些命令，进而导致错误，但numeric类样式通常没有问题。这一问题在biblatex更新到3.12版本后取消xstring宏包后得以解决。
 
-中文用户编译还需要注意编码问题。utf-8编码的文档，采用xelatex编译没有任何注意事项，但使用pdflatex编译时，需要给ctex宏包加载UTF8选项，比如\verb|\usepackage[UTF8]{ctex}|，该选项在文档类加载时给出也可，比如\verb|\documentclass[[UTF8]{article}|，同时\emph{引用文献时使用的引用关键词必须是英文}，若使用中文将报错。当文档使用其他编码时，xelatex编译通常需要指定一个文档编码，比如windows环境下的GB2312编码的文档需要指定\verb|\XeTeXinputencoding "GBK"|，否则会显示乱码。使用pdflatex进行编译时，如果biblatex不能正确的处理编码问题，那么需要为其明确的指定texencoding和bibencoding选项。比如windows环境下的GB2312编码的文档，需要指定\verb|\usepackge[texencoding=GBK]{biblatex}|。
+中文用户编译还需要注意编码问题。utf-8编码的文档，采用xelatex编译没有任何注意事项，但使用pdflatex编译时，需要给ctex宏包加载UTF8选项，比如\verb|\usepackage[UTF8]{ctex}|，该选项在文档类加载时给出也可，比如\verb|\documentclass[[UTF8]{article}|，同时\emph{引用文献时使用的引用关键词必须是英文}，若使用中文将报错。
+
+当文档使用其他编码时，xelatex编译通常需要指定一个文档编码，比如windows环境下的GBK/GB2312编码的文档需要指定 \verb|\XeTeXinputencoding "GBK"|，否则会显示乱码。使用pdflatex进行编译时，如果biblatex不能正确的处理编码问题，那么需要为其明确的指定texencoding和bibencoding选项。比如windows环境下的GBK/GB2312编码的文档，
+需要指定 \verb|\usepackge[texencoding=GBK]{biblatex}|。
 
 参考测试文档:
 \href{run:exampleandimage/test-gbk-pdflatex.tex}{test-gbk-pdflatex.tex}，
@@ -689,17 +721,19 @@ backref=true%
 \end{codetex}
 
 
-\subsubsection{利用winedt}
+\subsubsection{利用winedt编译}
+
 当文档准备好之后，第一步点击winedt工具栏的xelatex按钮(\parbox{1.2cm}{\includegraphics[width=1.2cm]{button-compiler-winedt}}图中红框内的按钮)完成第一遍\LaTeX 编译；
-第二步，打开命令行(可以用winedt菜单accessories下command prompt项)输入命令biber filename完成参考文献数据准备；
-第三步，再次点击xelatex编译按钮，完成编译，如果存在反向超链接，那么再次用xelatex编译一遍可以得到正确结果。
+第二步，打开命令行(可以用winedt菜单accessories下command prompt项)输入命令biber filename完成参考文献编译；
+第三步，再次点击xelatex编译按钮完成编译，如果存在反向超链接，那么需再次用xelatex编译一遍才可得到正确结果。
 
 由于可以使用latexmk进行一步编译，因此如果在winedt操作界面上增加一个功能按钮，该按钮对应的命令为latexmk，那么只要点击一下按钮就可以实现一键编译
 \footnote{https://blog.csdn.net/xenonhu/article/details/80010659}，具体参见：
 \href{https://blog.csdn.net/xenonhu/article/details/80010659}{Winedt 一键编译 LaTeX 文档}。
 
+
 \subsubsection{利用texstudio}
-texstudio可以多平台使用，在windows和linux下均可。texstudio可以通过利用元命令构建编译命令实现一键编译，进入选项菜单的设置texstudio项，首先在常规选项卡下设置语言为zh\_cn将texstudio界面语言转变为中文，然后在构建选项卡设置默认的编译器为xelatex，设置默认文献工具为biber(图\ref{texstudio:defaulttool})，然后点击构建并查看的配置按钮(\parbox{0.5cm}{\includegraphics[width=0.5cm]{texstudio-cmd-set}})，设置工具栏构建并查看按钮(\parbox{0.5cm}{\includegraphics[width=0.5cm]{texstudio-cmd-build}})对应的命令由5个元命令构成(图\ref{texstudio:compilerchain})。这样点击构建并查看按钮即可完成一键编译功能。其编译的过程提示信息如例\ref{texstudio:onekeycompile}所示(环境为windows 7 x64+texlive 2016+tex studio 2.10.8)。
+texstudio可以跨平台使用，在windows和linux下均可。texstudio可以通过利用元命令构建编译命令实现一键编译，进入选项菜单的设置texstudio，首先在常规选项卡下设置语言为zh\_cn将texstudio界面语言转变为中文，然后在构建选项卡设置默认的编译器为xelatex，设置默认文献工具为biber(图\ref{texstudio:defaulttool})，然后点击构建并查看的配置按钮(\parbox{0.5cm}{\includegraphics[width=0.5cm]{texstudio-cmd-set}})，设置工具栏构建并查看按钮(\parbox{0.5cm}{\includegraphics[width=0.5cm]{texstudio-cmd-build}})对应的命令由5个元命令构成(图\ref{texstudio:compilerchain})。如此，在编译时只要点击：构建并查看按钮即可完成一键编译功能。其编译的过程提示信息如例\ref{texstudio:onekeycompile}所示(环境为windows 7 x64+texlive 2016+tex studio 2.10.8)。
 
 \begin{codetex}{texstudio一键编译过程提示}{texstudio:onekeycompile}
 开始 : xelatex.exe -synctex=1 -interaction=nonstopmode "test".tex
@@ -748,7 +782,8 @@ INFO - WARNINGS: 3
   \caption{texstudio配置构建并查看命令}\label{texstudio:compilerchain}
 \end{figure}
 
-linux(以deepin linux x64 v15+texlive 2016+texsudio为例)下texstudio的设置是类似的，但要正常编译还有一个关键问题，即还需要设置路径，这不是系统环境的路径设置，而是要告诉texstudio编译工具所在的路径，这同样在菜单选项下的设置texstudio项中设置，仍然进入构建选项卡，左下角点选显示高级选项，然后设置命令(\$PATH)为/usr/local/texlive/2016/bin/x86\_64-linux，如图\ref{texstudio:path:linux}所示。
+linux(以deepin linux x64 v15+texlive 2016+texsudio为例)下texstudio的设置是类似的，但要正常编译还有一个关键问题，即设置编译工具的路径，这不是系统环境的路径设置，而是要告诉texstudio 编译工具所在的目录，这同样在菜单选项下的texstudio设置项中设置，仍然进入构建选项卡，左下角点选显示高级选项，然后设置命令(\$PATH)为
+/usr/local/texlive/2016/bin/x86\_64-linux，如图\ref{texstudio:path:linux}所示。
 
 \begin{figure}[!htb]
   \centering
@@ -756,9 +791,10 @@ linux(以deepin linux x64 v15+texlive 2016+texsudio为例)下texstudio的设置�
   \caption{linux下texstudio设置命令路径}\label{texstudio:path:linux}
 \end{figure}
 
+
 \subsubsection{命令行或脚本}
 
-命令行编译本质上是在命令行手动输入命令，命令过程仍然是一遍xelatex编译，biber编译，两遍xelatex编译，命令如下:
+命令行编译本质上是在命令行手动输入命令进行编译。过程仍然是一遍xelatex编译，biber编译，两遍xelatex编译，命令如下:
 
 \begin{codetex}{命令行手动输入的命令}{cmd:prompt}
 xelatex.exe -no-pdf -interaction=nonstopmode "test".tex
@@ -767,9 +803,9 @@ xelatex.exe -no-pdf -interaction=nonstopmode "test".tex
 xelatex.exe -synctex=1 -interaction=nonstopmode "test".tex
 \end{codetex}
 
-注意其中的-no-pdf选项表示不生成pdf文档，-interaction=nonstopmode选项表示出现错误不中断编译，-synctex=1选项表示pdf文档与tex源文档进行跳转关联。
+其中：-no-pdf选项表示不生成pdf文档，-interaction=nonstopmode选项表示出现错误不中断编译，-synctex=1选项表示pdf文档与tex源文档进行跳转关联。
 
-利用脚本编译原理是一样的，只是利用编译脚本文件进行自动编译，注意:linux下的脚本文件需要添加一下路径。比如:
+利用脚本编译原理是一样的，只是利用编译脚本文件进行自动编译(注意:linux下的脚本文件需要添加一下路径)。比如:
 \begin{codetex}{window下的bat脚本文件}{bat:file:cmd}
 @echo off
 :: compile the tex file
@@ -802,11 +838,11 @@ rm -r *.aux *.bbl *.blg *.log *.out *.toc *.bcf *.xml *.synctex *.nlo *.nls *.ba
 \end{codetex}
 
 
-\subsubsection{常见编译出错问题}
+\subsubsection{常见的编译出错问题}
 
 编译出现问题从多数读者的实践看主要包括3类：
 
-一是编译命令使用不当。由于一些读者对传统基于bibtex的方法与基于biblatex的方法的差别并不清楚，以为编译的命令与传统方法一致，会使用bibtex程序而不是biber程序对文献进行编译，这就导致编译失败。这种情况下把编译命令改正确即可。（附带说明一下，其实基于biblatex的方法使用bibtex程序编译文献也是可以，把后端程序设置改为bibtex就可以，只是会失去很多功能特性，特别是对中文的一些支持会失效，所以并不提倡使用。）
+一是编译命令使用不当。由于一些读者对传统基于bibtex的方法与基于biblatex的方法的差别并不了解，以为编译的命令与传统方法一致，会使用bibtex程序而不是biber程序对文献进行编译，这就导致编译失败。这种情况下把编译命令改正确即可。（附带说明一下，其实基于biblatex的方法使用bibtex程序编译文献也是可以，把后端程序设置改为bibtex就可以，只是会失去很多功能特性，特别是对中文的一些支持会失效，所以并不提倡使用。而且要特别注意：使用bibtex后端，不是转换成传统的基于bibtex的方法，不能使用各种bst文件，换成bibtex后端仍然使用cbx/bbx样式）。
 
 二是编译过程不完整。有时从以前编译过的文档中进行编译，可能由于biblatex升级等缘故，原有的信息会导致出错。或者由于更换样式，而各个样式的输入输出不一样，导致编译失败。或者有时在tex文档中使用filecontents来写bib文件，但更改bib内容后，xelatex编译不修改bib文件，导致没有新的文献条目而出错。这种情况下处理很简单，把所有的辅助文件清理干净，重新编译即可。
 
@@ -852,29 +888,25 @@ biber运行一半就结束了，log信息如下所示：
 在windows下，那么其实随便用个清理软件把临时文件夹清理一下就行。直接点就是找到 \verb|par-<hex_encoded_username>/cache-*| 缓存文件夹然后删除它。参考问题见
 \href{https://tex.stackexchange.com/questions/140814/biblatex-biber-fails-with-a-strange-error-about-missing-recode-data-xml-file/140815#140815}{biblatex-biber-fails-with-a-strange-error-about-missing-recode-data-xml-file}。
 
-可能还有一些其它的不太常见的问题，比如biblatex更新失败等，tex编译环境安装不完整等，这些问题可以采用重装texlive，重新更新biblatex等方法解决。
+可能还有一些其它的不太常见的问题，比如biblatex更新失败，tex编译环境安装不完整等，这些问题可以采用重装texlive，重新更新biblatex等方法解决。
 
 \subsection{分章参考文献和书后参考文献}
 
-分章参考文献在书籍写作中是一种比较常见的需求。在 LaTeX 传统方法中，利用thebibliography 环境是可实现的，但所有文献内容都需要手动输入，且格式只能在 bibitem 内设置，对于文献量较大时这是不适合的。
+分章参考文献在书籍写作中是一种比较常见的需求。在 LaTeX 传统方法中，利用thebibliography 环境是可实现的，但所有文献内容都需要手动输入，且格式只能在 bibitem 内设置，在文献量较大时显然是不适合的。
 
-而利用 bibliographystyle 和 bibliography 命令生成的参考文献可以与thebibliography 环境同时存在，生成多个不同的文献表，可以插入多个文献表但却是相同的，这是因为编译文档时，所有的信息都是写入一个 aux 文件中的。所以要实现分章参考文献表，需要使用 chapterbib 或 multibib 宏包，使用 chapterbib 时要把需要生成文献表的章放到单独的 tex 子文档中，然后用 include 命令包含进主文档，这样可以生成多个 aux 文件以便生成分章参考文献表。而使用 biblatex 宏包可以很方便的在一个 \LaTeX 文档中实现多种形式的参考文献划分，其中分章参考文献可以利用refsection环境或者宏包选项来实现。
+而利用 bibliographystyle 和 bibliography 命令生成的参考文献可以与thebibliography 环境同时存在，生成多个不同的文献表，可以插入多个文献表但却是相同的，这是因为编译文档时，所有的信息都是写入一个 aux 文件中的。所以要实现分章参考文献表，需要使用 chapterbib 、multibib 等宏包，使用 chapterbib 时要把需要生成文献表的章放到单独的 tex 子文档中，然后用 include 命令包含进主文档，这样可以生成多个 aux 文件以便生成分章参考文献表。其核心原理是利用多个aux文件区分不同部分的参考文献，bibunits、multibib宏包尽管能在一个源文档(非主文档和子文档的形式)生成分章参考文献，也是通过写多个aux文件实现的。
+
+而 biblatex 宏包的机制则要灵活的多，不再依赖多aux文件划分来实现文献的分章，可以很方便的在一个 \LaTeX 文档中实现多种形式的参考文献划分，包括利用refsection、refsegment环境或者宏包选项等。
 
 \subsubsection{利用 refsection 环境分章}
 
-利用 refsection 环境可以显式的设置需要打印参考文献的文档结构部分，比如把chapter 的所有内容放在 refsection 环境内，那么在该 refsection 中使用参考文献打印命令 printbibliography 就会得到该环境内的参考文献信息，
+利用 refsection 环境可以显式的设置需要划分的参考文献的文档结构部分，比如把 chapter 的所有内容放在 refsection 环境内，然后在其中引用参考文献，并使用参考文献打印命令 printbibliography 就会得到该环境内的参考文献表。
 例\ref{bib:refsection}给出的代码，
 结果如图\ref{bib:refsection:resa}，\ref{bib:refsection:resb}所示。
 
 \begin{codetex}{分章参考文献}{bib:refsection}
 \documentclass{report}%%file:egrefsection.tex
 \usepackage{ctex}
-\usepackage[paperwidth=12cm,paperheight=6cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm]{geometry}
-\usepackage{titlesec}
-\titleformat{\chapter}{\zihao{4}\heiti}{\thechapter}{1em}{}
-\titlespacing*{\chapter}{0pt}{0.0\baselineskip}{0.5\baselineskip}[0pt]
-\titleformat{\section}{\zihao{5}\heiti}{\thesection}{1em}{}
-\titlespacing*{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
 \usepackage[backend=biber,style=gb7714-2015]{biblatex}
 \addbibresource[location=local]{example.bib}
 
@@ -912,20 +944,15 @@ biber运行一半就结束了，log信息如下所示：
 \end{figure}
 
 \subsubsection{利用宏包选项 refsection 分章}
-除了利用 refsection 环境显式方法外，还可以利用宏包选项 refsection=chapter 等来设置需要区分打印参考文献的文档结构，这里设置 refsection=chapter 表示以章为单位区分打印参考文献，也可以设置成 section，那么就是以节为单位进行区分打印。
+
+除了利用 refsection 环境显式方法外，还可以利用宏包选项 refsection=chapter 等来设置需要划分的打印参考文献的文档结构，这里设置 refsection=chapter 表示以章为单位区分打印参考文献，也可以设置成 section，那么就是以节为单位进行区分打印。
 例\ref{bib:opt:refsection}给出的代码，结果如图\ref{bib:refsection:resc}所示，可以看到其结果与图\ref{bib:refsection:resa}完全一致。
 
-需要注意的时，因为使用refsection选项需要利用chapter或section这样的命令进行文献分节处理，所以biblatex会对这些命令进行重定义，因此也就导致了与其它需要重定义这些命令的宏包的可能冲突，比如titlesec宏包。当然这种冲突也只是在使用refsection选项的情况下，当不使用该选项时，biblatex也不会做patch，因此也就不会产生冲突。
+需要注意的是，biblatex使用refsection选项(而不是显式的refsection环境)，实质是对chapter或section等命令进行patch来进行文献分节处理，所以会对这些命令进行重定义，因此会导致与其它需重定义这些命令的宏包的冲突，比如titlesec宏包。当然这种冲突也只是在使用refsection选项的情况下，当不使用该选项时，biblatex也不会做patch，因此也就不会产生冲突。
 
 \begin{codetex}{利用宏包选项实现分章参考文献}{bib:opt:refsection}
 \documentclass{report}%%file:egrefsectionb.tex
 \usepackage{ctex}
-\usepackage[paperwidth=12cm,paperheight=6cm,top=0cm, bottom=1.5cm, left=1cm,right=1cm]{geometry}
-\usepackage{titlesec}
-\titleformat{\chapter}{\zihao{4}\heiti}{\thechapter}{1em}{}
-\titlespacing*{\chapter}{0pt}{0.0\baselineskip}{0.5\baselineskip}[0pt]
-\titleformat{\section}{\zihao{5}\heiti}{\thesection}{1em}{}
-\titlespacing*{\section}{0pt}{0.5\baselineskip}{0.5\baselineskip}[0pt]
 \usepackage[backend=biber,refsection=chapter,style=gb7714-2015]{biblatex}
 \addbibresource[location=local]{example.bib}
 
@@ -952,9 +979,10 @@ biber运行一半就结束了，log信息如下所示：
 
 \subsubsection{统一的全局参考文献}
 
-biblatex 参考文献利用 refsection 很容易生成分章节的参考文献，但如果要生成一个全局的参考文献，那么可以不使用任何的 refsection 或者使用一个 refsection 包含全部的文档(注意: 两种方法一般情况下都是可行的，但在 beamer 类第二种方法不能使用，见第\ref{sec:bib:inbeamer}节的说明)。
+biblatex 利用 refsection 很容易生成分章节的参考文献。如果要生成一个全局的参考文献表，那么可以不使用任何的 refsection 或者使用一个 refsection 包含全部的文档内容 (注意: 这两种方法一般情况下都是可行的，但在 beamer 类第二种方法不能使用，见第\ref{sec:bib:inbeamer}节的说明)。
 
-但还有一种情况是既要生成分章参考文献又要有一个全局的参考文献。那么最简单的方式在文末利用 printbibliography 的 section 选项对所有的 refsection 同时打印一遍，代码如例\ref{bib:global:refsection}所示，但这样的方式更像是文献表堆积，不像一个统一的文献表，且其中的各章的文献引用标注序号不是全局的，只是各refsection 内部的序号。
+但还有一种需求是，既要生成分章参考文献，又要有一个全局的参考文献。那么最简单的方式是在文末利用 printbibliography 的 section 选项对所有的 refsection 同时打印一遍，
+代码如例\ref{bib:global:refsection}所示，但这样的方式更像是文献表堆积，不像一个统一的文献表，且其中的各章的文献引用标注序号不是全局的，只是各refsection 内部的序号。
 
 \begin{codetex}{利用refsection的全局参考文献}{bib:global:refsection}
 \printbibliography[section=1,heading=subbibliography,title=第一章参考文献]
@@ -965,7 +993,7 @@ biblatex 参考文献利用 refsection 很容易生成分章节的参考文献�
 
 这个问题可以在 refsection 外使用 nocite 后再打印一个全局文献表来解决，也可以用refsegment 代替 refsection 来解决。
 
-refsegment 与 refsection 作用很像，也用于划分，但其内部的文献序号是全文统一的。每一个 segment 都有一个编号(从1开始)，用 printbibliography 命令打印在某个refsegment 环境内的使用参考文献，只需要给出 segment=编号整数 的一个值，该值表示第几个 refsegment 环境。而在 refsegment 环境外的参考文献默认在 segment=0 的segment 内，若 printbibliography 命令中给出 segment=0 则打印不在任一refsegment 环境内的文献，若不给出 segment 参数则遍历所有可以打印的参考文献，包括各个 refsegment 内的文献。
+refsegment 与 refsection 作用很像，也用于划分，但其内部的文献序号是全文统一的。每一个 segment 都有一个编号(从1开始)，而在 refsegment 环境外的参考文献默认都在 segment=0 的segment 内。用 printbibliography 命令打印在某个refsegment 环境内的使用参考文献，只需要给出 segment=编号整数 的一个值，该值表示第几个 refsegment 环境。若 printbibliography 命令中给出 segment=0 则打印不在任一refsegment 环境内的文献，若不给出 segment 参数则遍历所有可以打印的参考文献，包括各个 refsegment 内的文献。
 
 注意: refsection 内部不可以有 refsection ，即 refsection 不可嵌套，但其内部可以使用 refsegment。printbibliography 命令也可以对 refsection 内的所有refsegment 遍历打印，也可以指定 refsection 内的某一个 refsegment 中的文献，只要给出 segment 参数，当 printbibliography 在 refsection 外打印其内 refsegment 中的文献，则还需指定 section 参数。
 
@@ -991,22 +1019,24 @@ refsegment 与 refsection 作用很像，也用于划分，但其内部的文献
 	\caption{全局参考文献综合示例}\label{fig:eg:global:complex}
 \end{figure}
 
+
 \subsection{参考文献著录和标注样式}\label{sec:bib:style}
 
-参考文献著录和标注样式是排版的主要内容之一，但对于普通用户来说只要学会选择使用即可，因为其格式已经由样式作者所设定。当然如果用户需要在某种样式的基础上有进一步的修改，那么完全可以开展这方面的工作。其中著录样式的在*.bbx文件中修改，而标注样式在*.cbx文件中修改。
+参考文献著录和标注样式是排版的主要内容之一，但对于普通用户来说只要学会选择使用即可，因为其格式已经由样式所设定。当然如果用户需要在某种样式的基础上有进一步的修改，那么完全可以开展这方面的工作。其中著录样式的在*.bbx文件中修改，而标注样式在*.cbx文件中修改。
 
 \subsubsection{标准样式}
-biblatex提供了一些标准的样式，比如numeric，authoryear，这两个样式是比较常用的，也是样式作者定制自定义样式的重要基础。biblatex还提供了更多著录样式，比如alphabetic，authortitle，verbose等，详见 biblatex 手册 Bibliography Styles 一节。标注样式也还有 numeric-comp，numeric-verb，alphabetic，authortitle 等，详见 biblatex 手册 Citation Styles 一节。
 
-\emph{特别需要强调的是numeric-comp，authoryear-comp是针对顺序编码和作者年制的两个标签压缩样式，顺序编码制的压缩样式主要针对多篇文献传递给一个标注命令的情况，而作者年制的压缩样式除了给一个标注命令传递多篇文献外，还需要连续引用文献具有相同作者，而要使相同作者的文献连续，可以通过手动方式给出，也可以通过自动排序方式实现}。
+biblatex 附带了一些标准的样式，比如numeric，authoryear，这两个样式是比较常用的，也是样式作者定制自定义样式的重要基础。其它著录样式，比如alphabetic，authortitle，verbose等也可在一些场合使用(详见 biblatex 手册 Bibliography Styles 一节)。标注样式除了numeric，authoryear外，也还有 numeric-comp，numeric-verb，alphabetic，authortitle 等(详见 biblatex 手册 Citation Styles 一节)。
+
+\emph{特别需要强调的是：numeric-comp，authoryear-comp是针对顺序编码和作者年制的两个标签压缩样式，顺序编码制的压缩样式主要针对多篇文献传递给一个标注命令的情况，而作者年制的压缩样式除了给一个标注命令传递多篇文献外，还要求连续引用的文献具有相同作者，而要使相同作者的文献连续，可以通过手动方式给出，也可以通过自动排序方式实现}。
 
 读者可以参考biblatex附带的96个示例文件，也可以测试这些样式的效果，以便在需要的时候选择使用。而且著录和标注可以分别使用不同的样式，著录是一种，而标注则是另一种，实际使用的例子
 可以参考：\href{https://github.com/sjtug/SJTUThesis/issues/300}{参考文献的顺序}。
 
 
-\subsubsection{常用样式}
+\subsubsection{其它常用样式}
 
-除标准样式外，在texlive安装目录中或者ctan上面可以找到更多的常用样式，比如符合国外的APA、MLA标准，国内的GB/T 7714-2015等标准的样式，也有一些针对某些期刊的文献样式，比如nature，science，nejm等等，也有一些是作者自己兴趣所做形成了自己喜欢的风格，比如:biblatex-caspervector样式包。用户可以测试各样式包，并按需使用，进一步也可以参考其代码，修改自己需要的样式。表\ref{tab:styles:blx}列出了这些常用的样式。
+除标准样式外，在texlive安装目录中或者ctan上面可以找到更多的常用样式，比如国外的APA、MLA样式，国内的GB/T 7714-2015等标准的样式，也有一些针对某些期刊的文献样式，比如：nature，science，nejm等等，也有一些是第三方作者所做的具有自己风格的样式，比如：biblatex-caspervector样式包。用户可以测试各样式包，并按需使用，进一步也可以参考其代码，修改自己需要的样式。表\ref{tab:styles:blx}列出了这些常用的样式。
 
 % Table generated by Excel2LaTeX from sheet 'Sheet1'
 \begin{table}[!htb]
@@ -1045,17 +1075,18 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
 
 
 \subsubsection{biblatex-gb7714-2015样式包}
-目前符合GB/T 7714-2015标准的 biblatex 样式，是本文作者制作的 biblatex-gb7714-2015 样式包，分顺序制和作者年制两类。其加载方式见例\ref{code:pkg:load}。
+
+目前符合GB/T 7714-2015标准的 biblatex 样式，是本文作者开发的 biblatex-gb7714-2015 样式包，分顺序制和作者年制两类。其加载方式见例\ref{code:pkg:load}。
 
 该样式包，实现了GB/T 7714-2015标准的完整要求，包括两种编制方式下的各类型参考文献著录格式和标注格式等基本内容，还包括:自动判断文献类型和载体、自动并判断区分文献语言、双语对照文献，带页码的标注格式，作者年制下文献的自动排序和仅有年的标注格式，两种编码制方式下责任者缺省不同处理，其他信息缺省时的自动处理，一些信息如页码卷期自动解析等功能。
 
 该样式包增加了标签的对齐方式(gbalign选项)、出版项缺省时的处理(gbpub选项)、作者缺省时的处理(gbnoauthor选项)、作者姓名格式的调整(gbnamefmt选项)、文献类型和载体标识的输出控制(gbtype选项)、析出文献标识符\texttt{//}控制(gbpunctin选项)、GBK编码文档兼容性(gbcodegbk选项)、域的默认格式还原(gbfieldstd选项)、标题的超链接控制(gbtitlelink选项)等。能通过标注和著录分别采用著者-出版年制（即作者年制）、顺序编码制样式实现特殊的参考文献格式，并尽最大可能利用biblatex的选项来实现一些特殊需求，比如文献表中作者数量大于3、标注中仅给出第一作者的姓、参考文献表按拼音或笔画排序等等。
 
-该样式包可与biblatex v2.8 (contained in texlive2014) 以上所有版本配合使用(注意 ctex 2.9.4 的用户需升级 biblatex)。兼容传统的参考文献条目类型，比如www/electronic/conference/mastersthsis/phdthsis/techreport/standard，并根据国标要求增加了newspaper(报纸析出的文献)、database(数据库)、dataset(数据集)、 software(软件)、map(舆图)、archive(档案)等类型。兼容适用于不同样式的bib数据源，可与gbt7714宏包的bst样式使用的bib文件无缝衔接。
+该样式包可与biblatex v2.8 (texlive2014发行版附带) 以上所有版本配合使用 (注意 ctex 2.9.4 的用户若想使用需升级 biblatex)。兼容传统的参考文献条目类型，比如www/electronic/conference/mastersthsis/phdthsis/techreport/standard，并根据国标要求增加了newspaper(报纸析出的文献)、database(数据库)、dataset(数据集)、 software(软件)、map(舆图)、archive(档案)等类型。兼容适用于不同样式的bib数据源，可与gbt7714宏包的bst样式使用的bib文件无缝衔接。
 
-关于参考文献数据录入准备、条目类型的域构成、样式包使用说明等更多的内容详见\cite{胡振震2016}。在使用需要注意一种情况，即再一部作品中，同时存在上标标注和非上标标注，在标准样式下有supercite命令提供上标模式，而cite和parencite命令提供非上标模式。而在gb7714-2015样式中，supercite和cite命令提供上标模式，而parencite命令提供非上标模式。
+关于参考文献数据录入准备、条目类型的域构成、样式包使用说明等更多的内容详见\cite{胡振震2016}。在使用时还需要注意一种情况，即在一部作品中，同时存在上标标注和非上标标注，在标准样式下有supercite命令提供上标模式，而cite和parencite命令提供非上标模式。而在gb7714-2015样式中，supercite和cite命令提供上标模式，而parencite命令提供非上标模式。
 
-关于该样式包的安装和升级，在2017年以后tex发行版本中，biblatex-gb7714-2015样式宏包不再需要安装，直接使用，因为texlive和miktex均已收录。而老版本的texlive 比如texlive 2016及以下版本下可以离线方式安装，使用如下步骤:
+关于该样式包的安装，在2017年以后tex发行版本中，不再需要安装，可直接使用，因为texlive和miktex均已收录。而老版本的texlive 比如texlive 2016及以下版本下可以采用离线方式安装，步骤如下:
 
 (a) 在ctan上面下载biblatex-gb7714-2015宏包，下载地址:https://www.ctan.org/pkg/biblatex-gb7714-2015
 
@@ -1063,13 +1094,16 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
 
 (c) 运行texhash或者mktexlsr命令，刷新文件名数据库。
 
-因为texlive每年更新一次，老的版本就会冻结，一般情况下，老版本texlive中宏包时无法通过tlmgr升级到最新的版本的。因此通常的方式是下载新的宏包用离线下载的方式覆盖安装。但一般情况下不需要如此处理。如果使用最新的发行版，那么可以使用tlmgr更新宏包，步骤如下:
+关于该样式包的升级，一般情况下可利用发行版的升级工具升级。比如使用最新的texlive发行版，那么可以使用tlmgr更新宏包，步骤如下:
 
 (a) 打开tlmgr-gui，在选项通用里面设置国内的ctan镜像源，比如\url{http://mirrors.ustc.edu.cn/CTAN/systems/texlive/tlnet}
 
-(b) 点击，加载缺省软件包仓库。加载完成后可能要求升级tlmgr，那么先升级tlmgr。
+(b) 点击加载缺省软件包仓库(注意加载完成后可能要求升级tlmgr，那么可先升级tlmgr)。
 
-(c) 在完成加载后，在匹配文本框填入biblatex-gb7714-2015，搜索安装即可。
+(c) 在完成加载后，在匹配文本框填入biblatex-gb7714-2015，搜索更新即可。
+
+因为texlive每年更新一次，老的版本则会冻结，所以一般情况下，老版本texlive中宏包是无法通过tlmgr升级到最新的版本的。因此通常的方式是下载新的宏包，用离线下载的方式覆盖安装，即将下载的cbx/bbx文件覆盖系统中tex发行版内对应的cbx/bbx文件。
+
 
 \subsubsection{标注命令}
 
@@ -1099,9 +1133,8 @@ biblatex提供了一些标准的样式，比如numeric，authoryear，这两个�
 \nocite{*}%BibTeXwildcardOK,butusewithcaution
 \end{codetex}
 
-biblatex通过相应的处理模块，给出功能相同语法相同的命令。
-
-此外，biblatex还提供更多标注命令，以及强大的标注命令定制功能，biblatex-gb7714-2015中的蝉蛹标注命令，如例\ref{eg:cite:cmds}所示，更多命令及其说明详见biblatex-gb7714-2015.pdf。
+biblatex 也提供功能类似、语法相似的命令(或直接给出，或通过相应的模块给出)。
+除此之外，biblatex还提供具有特点的更多标注命令，以及强大的标注命令定制功能。而这些标注命令常常是与样式相关的，因为这些样式通常会重定义标注命令。biblatex-gb7714-2015中的常用标注命令，如例\ref{eg:cite:cmds}所示，更多命令及其说明详见biblatex-gb7714-2015.pdf。
 
 \begin{codetex}{常见的标注命令}{eg:cite:cmds}
 1. 不带页码的引用(上标，方括号包围):
@@ -1142,7 +1175,7 @@ biblatex通过相应的处理模块，给出功能相同语法相同的命令。
 
 另外一个应用场景是第\ref{sec:sort:bibandcite}节提到的示例，标注和文献表使用不同的排序。比如要求标注排序使用ynt，而文献表排序使用nyt。
 
-需要注意：默认情况下，用于标注的数据来自于打印该条目的最后一个参考文献表所在的著录文境。对于某些没有在文献表中打印条目但又以某种方式给出的标注命令，它们默认从文档开始时建立的全局文境获取数据。要覆盖这一行为，可以手动将标注命令放在 refcontext 环境内，但是这样容易出错并且很繁琐。而 assignrefcontext 这些命令可以用来设置一个由 keywords、categories 或 entrykeys 构成的逗号分隔列表，使带有这些指定关键字、或属于任何指定类别 、或指定引用关键字的条目可以从 refcontext key/values 指出的特定文境获取数据，这些 refcontext key/values 选项会被解析为对应的 refcontext 选项。
+需要注意：默认情况下，用于标注的数据来自于打印该条目的最后一个参考文献表所在的著录文境。对于某些没有在文献表中打印条目但又以某种方式给出的标注命令，它们默认从文档开始时建立的全局文境获取数据。要覆盖这一行为，可以手动将标注命令放在 refcontext 环境内，但是这样容易出错并且很繁琐。而 assignrefcontext 这些命令可以用来设置一个由 keywords、categories 或 entrykeys 构成的逗号分隔列表，使带有这些指定关键词、或属于任何指定类别 、或指定引用关键词的条目可以从 refcontext key/values 指出的特定文境获取数据，这些 refcontext key/values 选项会被解析为对应的 refcontext 选项。
 
 
 
@@ -6008,7 +6041,7 @@ thebibliography 环境显式的将其中的内容插入，而不管其中的参�
    \cite{zhao2003}、\citet{Nemec1997-209-214}、\citep{Chiani1998-2998-3008}
 
   \bibliography{\jobname}
-\end{document} 
+\end{document}
 \end{codetex}
 
 
@@ -6171,19 +6204,19 @@ chapterbib也提供了cbunit和\verb|\cbinput|命令，可以不基于include方
 
 bibunits宏包提供了多参考文献表（参考文献分节、局部参考文献表）功能。参考文献分节可以是章(chapter)、节（section）或bibunit环境。宏包自动的将每一分节的文献引用信息写入到独立的辅助文件（aux）中便于bibtex处理。同时也可以生成一个全局的参考文献表。
 
-文献的分节通常使用bibunit环境，也可以利用\verb|\bibliographyunit[\chapter]|或
-\verb|\bibliographyunit[\section]|使chapter或section变成为一个文献分节。在节内部引用文献，并使用\verb|\putbib[BibTeX files]|命令输出文献表。
+文献的分节通常使用bibunit环境，也可以利用 \verb|\bibliographyunit[\chapter]| 或
+ \verb|\bibliographyunit[\section]| 使chapter或section变成为一个文献分节。在节内部引用文献，并使用 \verb|\putbib[BibTeX files]| 命令输出文献表。
 每个文献节可以使用指定的样式（即给环境带上一个可选参数，
-比如\verb|\begin{bibunit}[plainnat]|）或者使用默认的样式（
-使用\verb|\defaultbibliographystyle{style}|来指定）。
+比如 \verb|\begin{bibunit}[plainnat]|）或者使用默认的样式（
+使用 \verb|\defaultbibliographystyle{style}| 来指定）。
 文献数据库（.BIB文件）除了使用putbib指定也可以使用默认的文件
-（使用\verb|\defaultbibliography{BibTeX files}|指定，使用默认的文件时，putbib命令无需再给出文件名参数）。
+（使用 \verb|\defaultbibliography{BibTeX files}| 指定，使用默认的文件时，putbib命令无需再给出文件名参数）。
 
-全局的文献可以利用\verb|\cite*|或\verb|\nocite*|命令来引用，
-然后使用全局的（即不在bibunit环境中的）\verb|\bibliography[BibTeX files]|和
- \verb|\bibliographystyle[style]|来输出，注意这两个命令需要放在begin{document}后面。
+全局的文献可以利用 \verb|\cite*| 或 \verb|\nocite*| 命令来引用，
+然后使用全局的（即不在bibunit环境中的） \verb|\bibliography[BibTeX files]| 和
+ \verb|\bibliographystyle[style]| 来输出，注意这两个命令需要放在 begin\{document\}后面。
  一个示例如下：
- 
+
 \begin{codetex}{采用bibunits生成局部和全局参考文献示例}{eg:bib:bibunits}
 
 \begin{filecontents*}{\jobname.bib}
@@ -6244,7 +6277,7 @@ bibunits宏包提供了多参考文献表（参考文献分节、局部参考文
 \cite*{zhao2003,Nemec1997-209-214,Chiani1998-2998-3008}
 \bibliography{\jobname}
 
-\end{document} 
+\end{document}
 \end{codetex}
 
 
