@@ -1716,6 +1716,44 @@ biblatex-gb7714-2015.PDF。
 }
 \end{codetex}
 
+
+
+\subsubsection{表格形式的参考文献表}
+
+一般数据中的参考文献表从内容上看是文本字符串，从格式上看是由一个一个段落构成的。通常latex中的参考文献表是一个有list环境构成的文本块，内部的每一项是由list环境设置参数确定格式的段落。所谓我们调整文献表的段落格式是：(1)通过对thebibliography环境重定义(过程中设置list环境的参数)，这是传统参考文献生成的方法。(2)通过定义defbibenvironment命令重定义bibliography环境来实现的，这是基于biblatex生成参考文献的方法。
+
+而我们有时有需求希望将参考文献放大一个框架里面，如果参考文献表作为整体放入，那么实现是比较简单的，只要在在参考文献表外面加上需要的框架即可。然而如果要将参考文献表中的每条参考文献单独的放入框架中，比如将参考文献表以表格形式来显示，即将每一条参考文献作为表格的一行来显示，显然这是一个比较麻烦的问题。
+
+传统参考文献生成的方法，由于thebibliography环境是显示的核心，必须要对其做定义修改，比如在其内部使用表格，同时仍然兼具文献引用关联和超链接的功能。对于每条参考文献则需要显式的给出表格内容所需格式即加入\verb|&|、\verb|\\|、\verb|\hline|等命令，这通过手写或者修改bst样式来直接在bbl文件中输出。上述虽然应该都可以实现，但确是一个相当复杂的。
+
+而基于biblatex生成参考文献的方法，由于其完全获取参考文献信息的特点在这种复杂任务中是有优势的，可以比较方便的实现上述目标)。下面我们来介绍怎么操作。
+
+biblatex生成参考文献完全是在tex环境中进行，因此每一条参考文献的输出实质上是一个递归的解析数据并输出数据的过程，在这个过程中如果我们能够在输出的过程中添加上表格格式的标识命令，并在全部参考文献信息外面套上一个表格环境就能够得到表格形式的参考文献表。而这个功能是由biblatex-ext 宏包完成了，因此对于我们使用者来说，问题就会简单得多了，只要学会使用即可。
+
+表格形式的文献输出命令为：\verb|\printbibtabular|，
+其参数类似于\verb|\printbibliography|，用法也相同。
+
+其输出格式本质上是由\verb|\defbibtabular|定义的bibtabular环境决定的，所以我们要生成什么样的表格就是要定义什么样的bibtabular环境。
+
+比如：
+
+\begin{codetex}{一个简单的表格式参考文献表设置}{bib:tabular:bbl}
+\defbibtabular{bibtabular}
+  {\begin{longtable}{|c|p{0.85\textwidth}|}
+     \hline
+     序号 & 文献目录 \\
+     \hline}
+  {\end{longtable}}
+  {\anchor{\printfield{labelnumber}} & \driver{}\\\hline}
+\end{codetex}
+
+基于上述设置，我们就可以利用printbibtabular输出一个两列的简单表格。
+
+具体实践代码见：\url{https://blog.csdn.net/xenonhu/article/details/121696116}
+
+示例参考：biblatex-ext 宏包提供实现了表格化的功能，我修改后的国防科大开题报告模板(在github上)。
+
+
 \subsubsection{参考文献表内断行和分页问题}
 
 如果把文献表中的一个参考文献条目看做一个段落，有时我们不希望在这个段落中分页，而让该参考文献完整的处于一个页面中，无论是在前一页底部还是后一页的顶部。这个段落分页的机制，本质是有tex内部机制控制的，类似于上一小节说的断行问题，可以通过设置内部的惩罚阈值来控制。
@@ -1875,7 +1913,31 @@ Small caps	小大写字母模式（一个句子中除首字母大写外其它全
 \lstinline!\usepackage[backend=biber,style=gb7714-2015ay,sortcite,sorting=ynt]{biblatex}!，然后在文献打印前加
 \lstinline!\newrefcontext[sorting=nyt]!
 
-\paragraph{文献数据项的输出} 如果要取消url，doi，isbn等信息项的输出，可以设置相应的选项为false。
+\paragraph{文献数据项的输出控制} 如果要取消url，doi，isbn等信息项的输出，可以设置相应的选项为false。比如：url=false。数据项的输出控制还可以从其它四个层次进行控制：
+
+一是数据动态修改层次，在动态数据修改中将数据去除。
+
+\begin{codetex}{利用动态数据修改来去除数据域}{eg:deldata:dmd}
+\DeclareStyleSourcemap{
+    \maps[datatype=bibtex]{
+        \map{
+        \step[fieldset=url, null]
+        }
+    }
+}
+\end{codetex}
+
+二是数据准备层次，在数据应用前利用钩子将数据域去掉
+\begin{codetex}{利用钩子在数据应用前去除数据域}{eg:deldata:clear}
+\AtEveryBibitem{\clearfield{url}\clearlist{location}}
+\end{codetex}
+
+三是在驱动层次，直接修改dirver去掉数据域，或者利用选项来控制，前面利用选项的控制其实就是在这一层次。
+
+四是在域输出宏层次，直接修改域的输出宏使其不输出即可。
+
+三四两种涉及驱动和输出宏的修改，后面会有通用的介绍，这里不再说明。
+
 
 \paragraph{标注后面的标点控制} 在英文有时因为习惯问题会有标点的问题，比如句尾出现脚注的标签，需要把它放到句点后面。有时可能也需要把标注标签放到句点后面。这时需要用autopunct选项来扫描标注后面的标点。下面的例子给出了在句尾的脚注文献与标点的处理。
 
