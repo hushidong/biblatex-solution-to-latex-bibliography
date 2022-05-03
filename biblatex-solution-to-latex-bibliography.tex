@@ -1690,31 +1690,6 @@ biblatex-gb7714-2015.PDF。
   \caption{以当前条目为基准对齐的参考文献表环境}\label{bib:env:gb}
 \end{figure}
 
-\subsubsection{参考文献表行溢出问题}
-
-参考文献表中各条参考文献有可能长度大于文本宽度，因此会涉及到断行的问题。一般情况下，断行不会出现问题。但有的时候，特别是在biblatex-gb7714-2015 1.0g版以前，诸如inbook等类型标题标识符后的//后没有空格导致其后紧跟的单词无法断行，进而导致行的溢出。这种情况下，可以采用设置更大的tolerance值来解决，或者可以利用命令 hyphenation 指定断行点。这些设置可以与文献表打印命令放在一个编组内，如例\ref{bib:biblist:outbox}所示。
-
-当因为url网址过长及断行不当导致溢出时，可以通过设置三个阀值来让其在数字，大写字母，小写字母后面断行，如例\ref{bib:url:outbox}所示。有时尽管url没有导致行溢出，但也设置url断行阀值，这也是为了让url内容更紧凑避免有些地方出现较大空格导致不美观。
-
-当然biblatex还提供了一些阀值来增加断行的灵活性，比如abbrvpenalty、highnamepenalty、lownamepenalty等，但一般不需要使用。
-
-\begin{codetex}{参考文献表行溢出问题解决}{bib:biblist:outbox}
-{
-%\hyphenation{Proce-edings}
-\hyphenpenalty=5000 %断词阈值，值越大越不容易出现断词
-\tolerance=500 %丑度，10000为最大无溢出盒子，参考the texbook 第6章
- \hbadness=100  %如果丑度超过hbadness这一阀值，那么就会发出警告
-\printbibliography[heading=subbibintoc,title=【参考文献】]
-}
-\end{codetex}
-
-\begin{codetex}{参考文献表url导致行溢出问题解决}{bib:url:outbox}
-{
-\setcounter{biburlnumpenalty}{100}
-\setcounter{biburlucpenalty}{100}
-\setcounter{biburllcpenalty}{100}
-}
-\end{codetex}
 
 
 
@@ -1754,6 +1729,35 @@ biblatex生成参考文献完全是在tex环境中进行，因此每一条参考
 示例参考：biblatex-ext 宏包提供实现了表格化的功能，我修改后的国防科大开题报告模板(在github上)。
 
 
+
+\subsubsection{参考文献表行溢出问题}
+
+参考文献表中各条参考文献有可能长度大于文本宽度，因此会涉及到断行的问题。一般情况下，断行不会出现问题。但有的时候，特别是在biblatex-gb7714-2015 1.0g版以前，诸如inbook等类型标题标识符后的//后没有空格导致其后紧跟的单词无法断行，进而导致行的溢出。这种情况下，可以采用设置更大的tolerance值来解决，或者可以利用命令 hyphenation 指定断行点。这些设置可以与文献表打印命令放在一个编组内，如例\ref{bib:biblist:outbox}所示。
+
+当因为url网址过长及断行不当导致溢出时，可以通过设置三个阀值来让其在数字，大写字母，小写字母后面断行，如例\ref{bib:url:outbox}所示。有时尽管url没有导致行溢出，但也设置url断行阀值，这也是为了让url内容更紧凑避免有些地方出现较大空格导致不美观。
+
+当然biblatex还提供了一些阀值来增加断行的灵活性，比如abbrvpenalty、highnamepenalty、lownamepenalty等，但一般不需要使用。
+
+\begin{codetex}{参考文献表行溢出问题解决}{bib:biblist:outbox}
+{
+%\hyphenation{Proce-edings}
+\hyphenpenalty=5000 %断词阈值，值越大越不容易出现断词
+\tolerance=500 %丑度，10000为最大无溢出盒子，参考the texbook 第6章
+ \hbadness=100  %如果丑度超过hbadness这一阀值，那么就会发出警告
+\printbibliography[heading=subbibintoc,title=【参考文献】]
+}
+\end{codetex}
+
+\begin{codetex}{参考文献表url导致行溢出问题解决}{bib:url:outbox}
+{
+\setcounter{biburlnumpenalty}{100}
+\setcounter{biburlucpenalty}{100}
+\setcounter{biburllcpenalty}{100}
+}
+\end{codetex}
+
+
+
 \subsubsection{参考文献表内断行和分页问题}
 
 如果把文献表中的一个参考文献条目看做一个段落，有时我们不希望在这个段落中分页，而让该参考文献完整的处于一个页面中，无论是在前一页底部还是后一页的顶部。这个段落分页的机制，本质是有tex内部机制控制的，类似于上一小节说的断行问题，可以通过设置内部的惩罚阈值来控制。
@@ -1762,7 +1766,7 @@ biblatex生成参考文献完全是在tex环境中进行，因此每一条参考
 \verb|\interlinepenalty|用于控制在段落内分页的期望程度。
 \verb|\clubpenalty| 用于附加控制在段落的第一行分页的期望程度。
 \verb|\widowpenalty| 用于附加控制在段落的最后一行分页的期望程度。
-数值越小则越希望断行，数值越大则越不希望断行，设置为10000，在tex表示无限大，就是强制不断行。
+数值越小则越希望分开，数值越大则越不希望分开，设置为10000，在tex表示无限大，就是强制不分开。
 
 在biblatex中默认设置为：
 \begin{codetex}{一个参考文献条目段落内部的断行}{bib:paragraph:break}
