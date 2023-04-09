@@ -1020,6 +1020,165 @@ refsegment 与 refsection 作用很像，也用于划分，但其内部的文献
 \end{figure}
 
 
+\subsubsection{正文和附录区分的参考文献表}
+
+有时一些学位论文会要求区分正文和附录中的参考文献，也就是要生成不同的文献表。若只是两个常规的文献表，那么是容易实现的，只要使用两个refsection就可以。
+
+但很多时候附录文献表对于文献条目的顺序数字标签是有要求的，不如附录A中，要求标签为A1,A2这样的形式，而附录B中，则要求是B1,B2这样的形式，这种情况下需要特殊的处理。
+
+这时要使用refcontext。refcontext可以用在临时调整参考文献的排序等方面，
+也可以用于给文献条目的标签加上前缀(prefix)。
+
+我们用一个例子来表示：
+
+\begin{codetex}{区别于正文的附录带前缀参考文献示例}{eg:bibliography:appendix}
+\documentclass{ctexbook}
+\usepackage[paperheight=8cm,vmargin=0.5cm]{geometry}
+\usepackage{xcolor}
+\usepackage[colorlinks]{hyperref}
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}%sorting=nyt
+
+\begin{filecontents}[force]{\jobname.bib}
+@Book{Peebles2001-100-100,
+  Title                    = {Probability, random variable, and random signal Principles and \LaTeX{}},
+  Address                  = {New York},
+  Author                   = {von Peebles, Jr., P. Z.},
+  Edition                  = {4},
+  Pages                    = {100},
+  Publisher                = {McGraw-Hill},
+  Year                     = {2001}
+}
+
+@Book{蔡敏2006--,
+  Title                    = {UML基础和Rose建模教程},
+  Address                  = {北京},
+  Author                   = {蔡敏 and 徐慧慧 and 黄柄强},
+  Publisher                = {人民邮电出版社},
+  Year                     = {2006},
+  Month                    = {1}
+}
+\end{filecontents}
+\addbibresource{\jobname.bib}
+\DeclareRefcontext{ap}{labelprefix=A}
+\let\cleardoublepage\clearpage
+
+\begin{document}
+\chapter{正文}
+\begin{refsection}
+正文内容
+\cite{Peebles2001-100-100}
+\cite[49]{蔡敏2006--}
+\printbibliography
+\end{refsection}
+
+\appendix
+\chapter{附录一}
+\newrefcontext{ap}
+\begin{refsection}
+附录内容
+\cite{Peebles2001-100-100}
+\cite[49]{蔡敏2006--}
+\printbibliography[heading=subbibliography]
+\end{refsection}
+
+\chapter{附录二}
+\newrefcontext[labelprefix=B]
+\begin{refsection}
+附录内容
+\cite{Peebles2001-100-100}
+\cite[49]{蔡敏2006--}
+\printbibliography[heading=subbibliography]
+\end{refsection}
+\end{document} 
+\end{codetex}
+
+这样会形成3个文献表，一个正文的，两个则分别是附录一和二的。
+
+上述各个附录中采用单独的文献表，所以使用refcontext时，标签是不容易冲突的，但若要求附录要使用一个全局的文献表，又要求各个附录中文献的标签前缀不一样，此时直接如上面例子的方式使用refcontext是不行的。此时还要配合refsection或者refsegment来实现。下面给出例子：
+
+
+\begin{codetex}{各附录不同前缀的附录单文献表示例}{eg:bibliography:appendixb}
+\documentclass{article}
+\begin{filecontents}[force]{\jobname.bib}
+@article{A,title={A}}
+@article{B,title={B}}
+@article{C,title={C}}
+@article{D,title={D}}
+@article{E,title={E}}
+@article{F,title={F}}
+\end{filecontents}
+\usepackage[style=gb7714-2015,defernumbers=true]{biblatex}%
+\addbibresource{\jobname}
+
+\begin{document}
+\section{mainbody}
+text\cite{A}
+text\cite{B}
+\printbibliography
+
+\appendix
+\begin{refsection}
+\begin{refsegment}
+\section{appendix 1}
+text\cite{C}
+text\cite{D}
+\end{refsegment}
+
+\begin{refsegment}
+\section{appendix 2}
+text\cite{E,F}
+\end{refsegment}
+
+\newrefcontext[labelprefix={A.}]
+\printbibliography[segment=1]
+\vspace{-1.3\baselineskip}
+\newrefcontext[labelprefix={B.}]
+\printbibliography[heading=none,segment=2]
+\end{refsection}
+\end{document} 
+
+%%%%%%%%%%%%%%%%%或者
+
+\documentclass{article}
+\begin{filecontents}[force]{\jobname.bib}
+@article{A,title={A}}
+@article{B,title={B}}
+@article{C,title={C}}
+@article{D,title={D}}
+@article{E,title={E}}
+@article{F,title={F}}
+\end{filecontents}
+\usepackage[style=gb7714-2015]{biblatex} %,defernumbers=true
+\addbibresource{\jobname}
+
+\begin{document}
+\section{mainbody}
+text\cite{A}
+text\cite{B}
+\printbibliography
+
+\appendix
+\begin{refsection}
+\section{appendix 1}
+text\cite{C}
+text\cite{D}
+\end{refsection}
+
+\begin{refsection}
+\section{appendix 2}
+text\cite{E,F}
+\end{refsection}
+
+\newrefcontext[labelprefix={A.}]
+\printbibliography[section=1]
+\newrefcontext[labelprefix={B.}]
+\vspace{-1.3\baselineskip}
+\printbibliography[heading=none,section=2]
+\end{document} 
+\end{codetex}
+
+
+
 \subsection{参考文献著录和标注样式}\label{sec:bib:style}
 
 参考文献著录和标注样式是排版的主要内容之一，但对于普通用户来说只要学会选择使用即可，因为其格式已经由样式所设定。当然如果用户需要在某种样式的基础上有进一步的修改，那么完全可以开展这方面的工作。其中著录样式的在*.bbx文件中修改，而标注样式在*.cbx文件中修改。
@@ -1895,6 +2054,15 @@ Small caps	小大写字母模式（一个句子中除首字母大写外其它全
 \subsubsection{修改指定作者的格式}
 
 详见：\url{https://blog.csdn.net/xenonhu/article/details/120853247}
+
+\subsubsection{修改文献表中日期的格式}
+
+详见：\url{https://blog.csdn.net/xenonhu/article/details/86933525}
+
+
+\subsubsection{修改文献表中标点的全半角形式(中英文形式)}
+
+详见：\url{https://blog.csdn.net/xenonhu/article/details/124686522}
 
 \subsection{专题：参考文献格式的修改}
 
@@ -4899,6 +5067,81 @@ biber动态数据处理，详见biblatex说明文档Dynamic Modification of Data
 \def\blx@opt@uniquelist@minyear{2}
 \end{texlist}
 无论选项是否给出，上面定义选项中的代码都会自动执行，当选项不给出，则自动调用默认的参数(因为代码中直接使用了输入参数，当没有输入参数，自然就会使用默认参数)来进行处理，显然这里是true。
+
+
+\subsection{国标文档的完整复现}
+
+参考：tgbcitation，tgbcitationay等。
+
+
+一个简单示例：对某个cite命令的输出做修改。这里采用直接修改该命令的输出宏的方式进行的。另一种思路是对当前的cite命令做判断，然后重定义输出宏即可。
+
+\begin{texlist}
+\documentclass{article}
+\usepackage{xeCJK}
+\usepackage[style=gb7714-2015]{biblatex}
+\addbibresource{ref.bib}
+\begin{filecontents}[force]{ref.bib}
+@book{xxx,
+  author       = {蒋有绪 and 郭泉水 and 马娟 and others},
+  title        = {中国森林群落分类及其群落特征},
+  address      = {北京},
+  publisher    = {科学出版社},
+  year         = {1998},
+}
+
+@book{yyy, author = {Ammar Sohail and Arif Hidayat and Muhammad Aamir Cheema and David Taniar},}
+
+\end{filecontents}
+
+\DeclareDelimFormat[cite,parencite,textcite,citeauthor*]{andothersdelim}{}
+
+\DeclareNameFormat{namefmtwithoutother}{%
+  \ifgiveninits
+    {\usebibmacro{name:family}
+      {\namepartfamily}
+      {\space}
+      {\namepartprefix}
+      {\namepartsuffix}}
+    {\usebibmacro{name:family}
+      {\namepartfamily}
+      {\space}
+      {\namepartprefix}
+      {\namepartsuffix}}%
+}
+
+\DeclareCiteCommand*{\citeauthor}
+  {\boolfalse{citetracker}%
+   \boolfalse{pagetracker}%
+   \usebibmacro{prenote}}
+  {\ifciteindex
+     {\indexnames{labelname}}
+     {}%
+   \printnames[namefmtwithoutother][1-1]{labelname}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+
+\begin{document}
+\citeauthor*{xxx}
+
+\citeauthor*{yyy}
+
+\cite{xxx}
+
+\cite{yyy}
+
+\parencite{xxx}
+
+\textcite{xxx}
+
+\citep{xxx}
+
+\citet{xxx}
+
+\printbibliography
+\end{document}
+\end{texlist}
 
 
 \subsection{一个项目示例}
